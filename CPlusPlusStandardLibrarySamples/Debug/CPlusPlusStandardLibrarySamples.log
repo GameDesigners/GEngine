@@ -1,0 +1,116 @@
+﻿  Main.cpp
+D:\OneDrive\CPlusPlus\LitStl\GStlMicro.h(15,1): error C2008: '[': unexpected in macro definition
+D:\OneDrive\CPlusPlus\LitStl\GStlMicro.h(15,1): warning C4005: 'GDELETE': macro redefinition
+D:\OneDrive\CPlusPlus\LitStl\GStlMicro.h(14): message : see previous definition of 'GDELETE'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(45,4): error C2059: syntax error: ']'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(53,18): error C2988: unrecognizable template declaration/definition
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(53,18): error C2143: syntax error: missing ';' before '<'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(53,18): error C2059: syntax error: '<'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(53,23): error C2039: 'use_count': is not a member of '`global namespace''
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(54,1): error C2143: syntax error: missing ';' before '{'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(54,1): error C2447: '{': missing function header (old-style formal list?)
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(63,14): error C2988: unrecognizable template declaration/definition
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(63,14): error C2143: syntax error: missing ';' before '<'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(63,4): error C2040: 'GEngine::GSharedPtr': 'T &' differs in levels of indirection from 'size_t'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(63,14): error C2059: syntax error: '<'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(63,19): error C2039: '=': is not a member of '`global namespace''
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(64,1): error C2143: syntax error: missing ';' before '{'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(64,1): error C2447: '{': missing function header (old-style formal list?)
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(70,14): error C2988: unrecognizable template declaration/definition
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(70,14): error C2143: syntax error: missing ';' before '<'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(70,4): error C2040: 'GEngine::GSharedPtr': 'T &' differs in levels of indirection from 'size_t'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(70,14): error C2059: syntax error: '<'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(70,19): error C2039: '*': is not a member of '`global namespace''
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(71,1): error C2143: syntax error: missing ';' before '{'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(71,1): error C2447: '{': missing function header (old-style formal list?)
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(76,14): error C2988: unrecognizable template declaration/definition
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(76,14): error C2143: syntax error: missing ';' before '<'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(76,4): error C2040: 'GEngine::GSharedPtr': 'T *' differs in levels of indirection from 'size_t'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(76,14): error C2059: syntax error: '<'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(76,19): error C2039: '->': is not a member of '`global namespace''
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(77,1): error C2143: syntax error: missing ';' before '{'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.inl(77,1): error C2447: '{': missing function header (old-style formal list?)
+D:\OneDrive\CPlusPlus\LitStl\GMemory.h(55,1): error C2988: unrecognizable template declaration/definition
+D:\OneDrive\CPlusPlus\LitStl\GMemory.h(55,1): error C2059: syntax error: '}'
+D:\OneDrive\CPlusPlus\LitStl\GMemory.h(55,1): error C2143: syntax error: missing ';' before '}'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(13,2): error C2065: 'GPair': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(13,8): error C2062: type 'int' unexpected
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(14,33): error C2065: 'p1': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(14,66): error C2065: 'p1': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(16,2): error C2065: 'GPair': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(16,8): error C2062: type 'int' unexpected
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(17,2): error C2065: 'GPair': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(17,8): error C2062: type 'int' unexpected
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(18,37): error C2065: 'p1': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(18,70): error C2065: 'p1': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(19,37): error C2065: 'p2': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(19,70): error C2065: 'p2': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(20,37): error C2065: 'p3': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(20,70): error C2065: 'p3': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(23,9): error C2065: 'p2': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(23,13): error C2065: 'p3': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(24,37): error C2065: 'p1': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(24,70): error C2065: 'p1': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(25,37): error C2065: 'p2': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(25,70): error C2065: 'p2': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(26,37): error C2065: 'p3': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(26,70): error C2065: 'p3': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(30,2): error C2065: 'GTuple': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(30,9): error C2062: type 'double' unexpected
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(31,42): error C2065: 'g_get': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(31,51): error C2065: 't1': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(31,67): error C2563: mismatch in formal parameter list
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(31,67): error C2568: '<<': unable to resolve function overload
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(31,67): message : could be 'std::basic_ostream<_Elem,_Traits> &std::endl(std::basic_ostream<_Elem,_Traits> &)'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(32,42): error C2065: 'g_get': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(32,51): error C2065: 't1': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(32,67): error C2563: mismatch in formal parameter list
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(32,67): error C2568: '<<': unable to resolve function overload
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(32,67): message : could be 'std::basic_ostream<_Elem,_Traits> &std::endl(std::basic_ostream<_Elem,_Traits> &)'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(33,42): error C2065: 'g_get': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(33,51): error C2065: 't1': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(33,67): error C2563: mismatch in formal parameter list
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(33,67): error C2568: '<<': unable to resolve function overload
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(33,67): message : could be 'std::basic_ostream<_Elem,_Traits> &std::endl(std::basic_ostream<_Elem,_Traits> &)'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(37,2): error C2065: 'GTuple': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(37,9): error C2062: type 'double' unexpected
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(38,42): error C2065: 'g_get': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(38,51): error C2065: 't2': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(38,67): error C2563: mismatch in formal parameter list
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(38,67): error C2568: '<<': unable to resolve function overload
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(38,67): message : could be 'std::basic_ostream<_Elem,_Traits> &std::endl(std::basic_ostream<_Elem,_Traits> &)'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(39,42): error C2065: 'g_get': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(39,51): error C2065: 't2': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(39,67): error C2563: mismatch in formal parameter list
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(39,67): error C2568: '<<': unable to resolve function overload
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(39,67): message : could be 'std::basic_ostream<_Elem,_Traits> &std::endl(std::basic_ostream<_Elem,_Traits> &)'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(40,42): error C2065: 'g_get': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(40,51): error C2065: 't2': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(40,67): error C2563: mismatch in formal parameter list
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(40,67): error C2568: '<<': unable to resolve function overload
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(40,67): message : could be 'std::basic_ostream<_Elem,_Traits> &std::endl(std::basic_ostream<_Elem,_Traits> &)'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(41,42): error C2065: 'g_get': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(41,51): error C2065: 't2': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(41,67): error C2563: mismatch in formal parameter list
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(41,67): error C2568: '<<': unable to resolve function overload
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(41,67): message : could be 'std::basic_ostream<_Elem,_Traits> &std::endl(std::basic_ostream<_Elem,_Traits> &)'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(45,2): error C2065: 'GTuple': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(45,9): error C2062: type 'int' unexpected
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(46,42): error C2065: 'g_get': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(46,51): error C2065: 't3': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(46,67): error C2563: mismatch in formal parameter list
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(46,67): error C2568: '<<': unable to resolve function overload
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(46,67): message : could be 'std::basic_ostream<_Elem,_Traits> &std::endl(std::basic_ostream<_Elem,_Traits> &)'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(47,42): error C2065: 'g_get': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(47,51): error C2065: 't3': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(47,67): error C2563: mismatch in formal parameter list
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(47,67): error C2568: '<<': unable to resolve function overload
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(47,67): message : could be 'std::basic_ostream<_Elem,_Traits> &std::endl(std::basic_ostream<_Elem,_Traits> &)'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(52,2): error C2065: 'GSharedPtr': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(52,18): error C2275: 'std::string': illegal use of this type as an expression
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(52): message : see declaration of 'std::string'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(52,26): error C3861: 'pNico': identifier not found
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(53,2): error C2065: 'GSharedPtr': undeclared identifier
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(53,18): error C2275: 'std::string': illegal use of this type as an expression
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(53): message : see declaration of 'std::string'
+D:\OneDrive\CPlusPlus\CPlusPlusStandardLibrarySamples\Main.cpp(53,12): fatal error C1003: error count exceeds 100; stopping compilation
