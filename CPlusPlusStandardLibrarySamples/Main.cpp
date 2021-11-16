@@ -121,13 +121,18 @@ int main()
 	//USE_CUSTOM_SMART_POINT();
 
 	
-	Function1();
+	//Function1();
 
 	/*GDebugMem Alloc;
 	Alloc.PrintMemCallAndReleaseLog();*/
-	printf("\n");
+	/*printf("\n");
 	for (size_t i = 0; i < 32; i++)
-		printf("%p\n", frames[i]);
-	getchar();
+		printf("%p\n", frames[i]);*/
+
+	int* p = GNEW int;
+	*p = 10;
+	int* p2 = GNEW int;
+
+	//getchar();
 	return 0;
 }

@@ -1,18 +1,14 @@
 #ifndef GSTLMICRO_H
 #define GSTLMICRO_H
+#include "GSystem.h"
+
 
 #define GSTL_EXPORTS
-
 #ifdef GSTL_EXPORTS
 #define GSTL_API __declspec(dllexport) 
 #else 
 #define GSTL_API __declspec(dllimport) 
 #endif
-
-
-#define GNEW      new
-#define GDELETE   delete
-
 
 
 

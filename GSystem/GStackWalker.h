@@ -56,7 +56,7 @@ namespace GEngine
 			enum
 			{
 				STACKWALK_MAX_NAMELEN = 1024,
-				STACK_MAX_RECORD = 32,
+				STACK_MAX_RECORD = 300,
 			};
 
 			typedef struct CallstackEntry

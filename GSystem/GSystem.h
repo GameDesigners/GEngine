@@ -14,10 +14,12 @@
 #define GSYSTEM_API __declspec(dllimport) 
 #endif
 
+#define GASSERT(x)  assert(x)
+#define GNEW        new
+#define GDELETE     delete
+
 namespace GEngine
 {
-#define GASSERT(x)  assert(x)
-
 	namespace GSystem
 	{
 		FORCEINLINE VOID GOutputDebugString(const TCHAR* pcString, ...)
