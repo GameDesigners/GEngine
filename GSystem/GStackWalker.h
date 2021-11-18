@@ -90,8 +90,8 @@ namespace GEngine
 			BOOL ShowCallStack(HANDLE hProcess, DWORD dwThreadId);
 			void ShowMessage(CallstackEntry cs);
 
-			void GetStackFrameEntryAddressArray(HANDLE hProcess, DWORD dwThreadId, DWORD64 frames[STACK_MAX_RECORD]);
-			void PrintCallStackFramesLog(DWORD64 frames[STACK_MAX_RECORD], HANDLE hProcess = NULL);
+			void GetStackFrameEntryAddressArray(DWORD64 frames[STACK_MAX_RECORD]);
+			void PrintCallStackFramesLog(DWORD64 frames[STACK_MAX_RECORD]);
 
 		protected:
 			HANDLE  m_hProcess;

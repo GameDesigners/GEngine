@@ -1,6 +1,7 @@
 #ifndef GMEMMANAGER_H
 #define GMEMMANAGER_H
 #include "GSystem.h"
+#include "GStackWalker.h"
 
 namespace GEngine
 {
@@ -71,6 +72,8 @@ namespace GEngine
 
 			Block* m_pHeadBlock;
 			Block* m_pTailBlock;
+			GStackWalker m_sw;
+
 			bool InsertBlock(Block* pBlock);
 			bool RemoveBlock(Block* pBlock);
 		};

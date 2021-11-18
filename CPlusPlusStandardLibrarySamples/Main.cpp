@@ -88,7 +88,7 @@ void GetStackCallRecord()
 	GStackWalker sw;
 	if (sw.IsInitialized())
 	{
-		sw.GetStackFrameEntryAddressArray(GetCurrentProcess(), GetCurrentThreadId(), frames);
+		sw.GetStackFrameEntryAddressArray(frames);
 		//sw.ShowCallStack(GetCurrentProcess(), GetCurrentThreadId());
 		sw.PrintCallStackFramesLog(frames);
 	}
@@ -119,7 +119,7 @@ int main()
 	//USE_CUSTOM_SMART_POINT();
 
 	
-	Function1();
+	//Function1();
 
 	/*GDebugMem Alloc;
 	Alloc.PrintMemCallAndReleaseLog();*/
@@ -127,13 +127,18 @@ int main()
 	for (size_t i = 0; i < 32; i++)
 		printf("%p\n", frames[i]);*/
 
-	/*int* p = GNEW int;
-	*p = 10;
+	int* p = GNEW int;
 	int* p2 = GNEW int;
+
+	//GDELETE p;
+	//GDELETE p2;
+	/*
+	*p = 10;
+	
 	*p2 = 100;
 
-	printf("%d ; %d", *p, *p2);
-	GDELETE p;*/
+	printf("%d ; %d", *p, *p2);*/
+
 
 	//getchar();
 	return 0;

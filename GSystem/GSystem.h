@@ -6,6 +6,7 @@
 #include <DbgHelp.h>
 #include <stdarg.h>
 #include <tchar.h>
+#include <stdio.h>
 
 #define GSYSTEM_EXPORTS
 #ifdef GSYSTEM_EXPORTS
@@ -27,11 +28,13 @@ namespace GEngine
 		class GSYSTEM_API GSystem
 		{
 		private:
-			static TCHAR ms_logBuffer[GSYSTEM_LOG_BUFFER_SIZE];
+			static TCHAR ms_logBufferW[GSYSTEM_LOG_BUFFER_SIZE];
+			static CHAR ms_logBufferA[GSYSTEM_LOG_BUFFER_SIZE];
 			static DWORD ms_dwMainThreadID;
 
 		public:
-			static TCHAR* GetLogBuffer();
+			static TCHAR* GetLogBufferW();
+			static CHAR* GetLogBufferA();
 			static DWORD GetMainThreadID();
 		};
 
@@ -242,7 +245,7 @@ namespace GEngine
 		}
 
 		/// <summary>
-		/// char字符串转为TCHAR字符串
+		/// char字符串转为TCHAR字符串(注意要释放返回字符串的内存)
 		/// </summary>
 		/// <param name="Str">char字符串</param>
 		/// <returns>TCHAR字符串</returns>
@@ -256,7 +259,7 @@ namespace GEngine
 		}
 
 		/// <summary>
-		/// TCHAR字符串转为char字符串
+		/// TCHAR字符串转为char字符串(注意要释放返回字符串的内存)
 		/// </summary>
 		/// <param name="Str">TCHAR字符串</param>
 		/// <returns>char类型字符串</returns>
@@ -273,13 +276,24 @@ namespace GEngine
 		/// </summary>
 		/// <param name="pcString">打印格式</param>
 		/// <param name="...">格式中的数值(可变参数)</param>
-		FORCEINLINE VOID GOutputDebugString(const TCHAR* pcString, ...)
+		FORCEINLINE VOID GOutputDebugStringW(const TCHAR* pcString, ...)
 		{
 			char* pArgs = (char*)&pcString + sizeof(pcString);
-			_vstprintf_s(GSystem::GetLogBuffer(), GSYSTEM_LOG_BUFFER_SIZE, pcString, pArgs);
-			OutputDebugString(GSystem::GetLogBuffer());
+			_vstprintf_s(GSystem::GetLogBufferW(), GSYSTEM_LOG_BUFFER_SIZE, pcString, pArgs);
+			OutputDebugString(GSystem::GetLogBufferW());
 		}
 
+		/// <summary>
+		/// 向Output控制台格式打印某个CHAR字符串
+		/// </summary>
+		/// <param name="pcString">打印格式</param>
+		/// <param name="...">格式中的数值(可变参数)</param>
+		FORCEINLINE VOID GOutputDebugStringA(const CHAR* pcString, ...)
+		{
+			char* pArgs = (char*)&pcString + sizeof(pcString);
+			vsnprintf(GSystem::GetLogBufferA(), GSYSTEM_LOG_BUFFER_SIZE, pcString, pArgs);
+			OutputDebugStringA(GSystem::GetLogBufferA());
+		}
 
 
 		//内存操作函数

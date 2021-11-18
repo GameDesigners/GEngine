@@ -1,10 +1,5 @@
 #include "GMemManager.h"
-#include "GStackWalker.h"
-
 using namespace GEngine::GSystem;
-
-static HANDLE  s_Process = NULL;
-
 
 GDebugMem::GDebugMem()
 {
@@ -39,22 +34,18 @@ void* GDebugMem::Allocate(size_t uiSize, size_t uiAlignment, bool bIsArray)
 		//处理第一段数据---->Block
 		Block* block = (Block*)pAddr;
 		
-		//GStackWalker sw(NULL, GetCurrentProcessId(), GetCurrentProcess());		//获取此处分配内存的堆栈地址并记录到Block中
-		//if (sw.GetSymAndInitSym() == FALSE || sw.LoadModules() == FALSE)
-		//	GOutputDebugString(TEXT("GetSymAndInitSym Or LoadModules Fail"));
-		//else 
-		//{
-		//	DWORD64 frameAddrs[CALLSTACK_NUM] = { NULL };
-		//	sw.GetStackFrameEntryAddressArray(GetCurrentProcess(), GetCurrentThreadId(), frameAddrs);
-		//	sw.PrintCallStackFramesLog(frameAddrs);
-		//	size_t numStackCallLayer = 0;
-		//	while (frameAddrs[numStackCallLayer] != NULL && numStackCallLayer < CALLSTACK_NUM)
-		//	{
-		//		block->pCallStackRecords[numStackCallLayer] = frameAddrs[numStackCallLayer];
-		//		numStackCallLayer++;
-		//	}
-		//	block->m_uiStackInfoNum = numStackCallLayer;
-		//}
+		if(m_sw.IsInitialized())
+		{
+			DWORD64 frameAddrs[CALLSTACK_NUM] = { NULL };
+			m_sw.GetStackFrameEntryAddressArray(frameAddrs);
+			size_t numStackCallLayer = 0;
+			while (frameAddrs[numStackCallLayer] != NULL && numStackCallLayer < CALLSTACK_NUM)
+			{
+				block->pCallStackRecords[numStackCallLayer] = frameAddrs[numStackCallLayer];
+				numStackCallLayer++;
+			}
+			block->m_uiStackInfoNum = numStackCallLayer;
+		}
 		
 		block->m_uiMemSize = uiSize;
 		block->m_bIsArray = bIsArray;
@@ -94,7 +85,7 @@ void* GDebugMem::Allocate(size_t uiSize, size_t uiAlignment, bool bIsArray)
 	}
 	else
 	{
-		GOutputDebugString(TEXT("malloc memory fail..."));
+		GOutputDebugStringW(TEXT("malloc memory fail..."));
 		return nullptr;
 	}
 }
@@ -149,7 +140,6 @@ bool GDebugMem::RemoveBlock(Block* pBlock)
 	if (pBlock == m_pHeadBlock)
 	{
 		m_pHeadBlock = pBlock->m_pNext;
-		m_pHeadBlock->m_pPrev = nullptr;
 		return true;
 	}
 	else if (pBlock == m_pTailBlock)
@@ -168,29 +158,52 @@ bool GDebugMem::RemoveBlock(Block* pBlock)
 
 void GDebugMem::PrintMemCallAndReleaseLog()
 {
+	//打印内存分配器统计的数据信息
+	GOutputDebugStringW(TEXT("****************************************MEM MANAGER****************************************\n"));
+	GOutputDebugStringW(TEXT("NEW(分配)调用的次数:%u\n"),m_uiNumNewCalls);
+	GOutputDebugStringW(TEXT("DEL(释放)调用的次数:%u\n"), m_uiNumDeleteCalls);
+	GOutputDebugStringW(TEXT("管理器剩余内存块数量:%u\n"), m_uiNumCurrentBlocks);
+	GOutputDebugStringW(TEXT("当前管理内存【字节】:%u\n"), m_uiNumBytes);
+	GOutputDebugStringW(TEXT("内存块大小峰值【字节】:%u\n"), m_uiMaxNumBytesInRecord);
+	GOutputDebugStringW(TEXT("内存块数量的峰值【块】:%u\n"), m_uiMaxNumBlocksInRecord);
+	GOutputDebugStringW(TEXT("\n\n"));
+
+
 	if (m_pHeadBlock != nullptr)
 	{
-		//GStackWalker sw(NULL, GetCurrentProcessId(), GetCurrentProcess());
-		//if (sw.GetSymAndInitSym() == FALSE || sw.LoadModules() == FALSE)
-		//	GOutputDebugString(TEXT("GetSymAndInitSym Or LoadModules Fail"));
-		//else 
-		//{
-		//	//存在内存泄漏问题,打印泄漏内存分配时的堆栈记录
-		//	Block* current = m_pHeadBlock;
-		//	while (current != nullptr)
-		//	{
-		//		sw.PrintCallStackFramesLog(current->pCallStackRecords);
-		//		current = current->m_pNext;
-		//	}
-		//}
-		Block* current = m_pHeadBlock;
-		while (current != nullptr)
+		GOutputDebugStringW(TEXT("内存泄露情况：\n"));
+		size_t index = 0;
+		if(m_sw.IsInitialized())
 		{
-			//sw.PrintCallStackFramesLog(current->pCallStackRecords);
-			GOutputDebugString(TEXT("有一处内存泄漏\n"));
-			current = current->m_pNext;
+			//存在内存泄漏问题,打印泄漏内存分配时的堆栈记录
+			Block* current = m_pHeadBlock;
+			while (current != nullptr)
+			{
+				GOutputDebugStringW(TEXT("内存泄漏[%d]\n"), index);
+				GOutputDebugStringW(TEXT("----------------------------------------------------------------------------------------------------------------------------------------\n"));
+				m_sw.PrintCallStackFramesLog(current->pCallStackRecords);
+				current = current->m_pNext;
+				index++;
+				GOutputDebugStringW(TEXT("\n"));
+			}
 		}
+		
+		//Block* current = m_pHeadBlock;
+		//while (current != nullptr)
+		//{
+		//	//sw.PrintCallStackFramesLog(current->pCallStackRecords);
+		//	GOutputDebugString(TEXT("有一处内存泄漏\n"));
+		//	current = current->m_pNext;
+		//}
 	}
+
+
+	GOutputDebugStringW(TEXT("\n\n内存块大小占比：\n"));
+	for (int index = 0; index < RECORD_NUM; index++)
+	{
+		GOutputDebugStringW(TEXT("2^%u  -->  %u块\n"), index, m_uiSizeRecords[index]);
+	}
+	GOutputDebugStringW(TEXT("**********************************************************************************************\n"));
 }
 
 

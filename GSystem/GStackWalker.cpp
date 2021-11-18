@@ -36,7 +36,7 @@ VOID GStackWalker::Initialize()
 {
 	m_bInitalizeSuc = GetSymAndInitSym() == TRUE && LoadModules() == TRUE;
 	if (!m_bInitalizeSuc)
-		GOutputDebugString(TEXT("GetSymAndInitSym Or LoadModules Fail"));
+		GOutputDebugStringW(TEXT("GetSymAndInitSym Or LoadModules Fail"));
 }
 
 /**
@@ -52,7 +52,7 @@ BOOL GStackWalker::InitSym(LPCSTR szSymPath)
 
 	if (SymInitialize(m_hProcess, m_szSymPath, FALSE) == FALSE)
 	{
-		GOutputDebugString(TEXT("m_szSymPath:%s\r\nGetLastError:%d\r\n"), m_szSymPath, GetLastError());
+		GOutputDebugStringW(TEXT("m_szSymPath:%s\r\nGetLastError:%d\r\n"), m_szSymPath, GetLastError());
 		return FALSE;
 	}
 	return TRUE;
@@ -337,8 +337,9 @@ void GStackWalker::ShowMessage(CallstackEntry entry)
 		printf("!%s", entry.FuncName);
 		printf("+0x%8p\r\n", entry.offsetFromSmybol);
 #else
-		GOutputDebugString(TEXT("call address：%p  %s!%s+0x%x  filename:%s  lines:%d \r\n"), entry.offset - 5, GPConstChar_To_PTCHAR(entry.moduleName), GPConstChar_To_PTCHAR(entry.FuncName), entry.offsetFromSmybol, GPConstChar_To_PTCHAR(entry.Lines.FileName), entry.Lines.LineNumber);
+		GOutputDebugStringA("call address：%p  %s!%s+0x%x  filename:%s  lines:%d \r\n", entry.offset - 5, entry.moduleName, entry.FuncName, entry.offsetFromSmybol, entry.Lines.FileName, entry.Lines.LineNumber);
 		printf("call address：%p  %s!%s+0x%x  filename:%s  lines:%d \r\n", entry.offset - 5, entry.moduleName, entry.FuncName, entry.offsetFromSmybol,entry.Lines.FileName,entry.Lines.LineNumber);
+
 #endif
 	}
 	else
@@ -351,10 +352,10 @@ void GStackWalker::ShowMessage(CallstackEntry entry)
 	}
 }
 
-void GStackWalker::GetStackFrameEntryAddressArray(HANDLE hProcess, DWORD dwThreadId, DWORD64 frames[STACK_MAX_RECORD])
+void GStackWalker::GetStackFrameEntryAddressArray(DWORD64 frames[STACK_MAX_RECORD])
 {
-	HANDLE hThread = OpenThread(THREAD_ALL_ACCESS, FALSE, dwThreadId);
-	GASSERT(hProcess != NULL);
+	HANDLE hThread = OpenThread(THREAD_ALL_ACCESS, FALSE, m_dwThreadId);
+	GASSERT(m_hProcess != NULL);
 	GASSERT(hThread != NULL);
 
 	int frameNum;
@@ -405,7 +406,7 @@ void GStackWalker::GetStackFrameEntryAddressArray(HANDLE hProcess, DWORD dwThrea
 	{
 		// 取下一个栈帧(StackWalk64(), SymFunctionTableAccess64(), SymGetModuleBase64())
 		//函数的三个回调函数可以传入自己的回调函数，也可以传入自己的函数    DbgHelp.dll 
-		if (!StackWalk64(ImageType, hProcess, hThread, &sf64, &c, MyReadProcMem, SymFunctionTableAccess64, SymGetModuleBase64, NULL))
+		if (!StackWalk64(ImageType, m_hProcess, hThread, &sf64, &c, MyReadProcMem, SymFunctionTableAccess64, SymGetModuleBase64, NULL))
 			break;
 
 		if (sf64.AddrPC.Offset != 0)
@@ -417,20 +418,19 @@ void GStackWalker::GetStackFrameEntryAddressArray(HANDLE hProcess, DWORD dwThrea
 
 	if (hThread != NULL && hThread != INVALID_HANDLE_VALUE)
 		ResumeThread(hThread);
+	if (hThread != nullptr)
+		CloseHandle(hThread);
 }
 
-void GStackWalker::PrintCallStackFramesLog(DWORD64 frames[STACK_MAX_RECORD], HANDLE hProcess)
+void GStackWalker::PrintCallStackFramesLog(DWORD64 frames[STACK_MAX_RECORD])
 {
 	GASSERT(frames != NULL);
-
-	if (hProcess == NULL)
-		hProcess = GetCurrentProcess();
 
 	IMAGEHLP_SYMBOL64* pSym = NULL;
 	pSym = (IMAGEHLP_SYMBOL64*)malloc(sizeof(IMAGEHLP_SYMBOL64) + STACKWALK_MAX_NAMELEN);
 	if (!pSym)
 	{
-		GOutputDebugString(TEXT("Memory Overflow..."));
+		GOutputDebugStringW(TEXT("Memory Overflow..."));
 		return;
 	}
 
@@ -442,7 +442,7 @@ void GStackWalker::PrintCallStackFramesLog(DWORD64 frames[STACK_MAX_RECORD], HAN
 	Module.SizeOfStruct = sizeof(IMAGEHLP_MODULE64);
 
 	size_t frameNum = 0;
-	while (frames[frameNum] != 0)
+	while (frames[frameNum] != 0&&frameNum<STACK_MAX_RECORD)
 	{
 		CallstackEntry csEntry;
 		csEntry.offset = frames[frameNum];
@@ -468,7 +468,7 @@ void GStackWalker::PrintCallStackFramesLog(DWORD64 frames[STACK_MAX_RECORD], HAN
 
 			IMAGEHLP_LINE lineInfo = { sizeof(IMAGEHLP_LINE) };
 			DWORD dwLineDisplacement;
-			if (SymGetLineFromAddr64(hProcess, frames[frameNum], &dwLineDisplacement, &lineInfo))
+			if (SymGetLineFromAddr64(this->m_hProcess, frames[frameNum], &dwLineDisplacement, &lineInfo))
 			{
 				csEntry.Lines = lineInfo;
 			}
