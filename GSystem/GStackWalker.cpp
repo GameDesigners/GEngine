@@ -12,17 +12,16 @@ BOOL GStackWalker::MyReadProcMem(HANDLE hProcess, DWORD64 qwBaseAddress, PVOID l
 }
 
 
-GStackWalker::GStackWalker(LPCSTR szSymPath, DWORD dwProcessId, HANDLE hProcess)
+GStackWalker::GStackWalker(DWORD dwThreadId, LPCSTR szSymPath)
 {
-	m_hProcess = hProcess;
-	m_dwProcessId = dwProcessId;
+	m_dwThreadId = dwThreadId!=NULL?dwThreadId:GSystem::GetMainThreadID();
+	m_szSymPath = szSymPath != NULL ? _strdup(szSymPath) : NULL;
+	m_hProcess = ::GetCurrentProcess();
+	m_dwProcessId = ::GetCurrentProcessId();
 	m_modulesLoaded = FALSE;
-	m_dwThreadId = 0;
+	m_bInitalizeSuc = false;
 
-	if (szSymPath != NULL)
-		m_szSymPath = _strdup(szSymPath);
-	else
-		m_szSymPath = NULL;
+	Initialize();
 }
 
 GStackWalker::~GStackWalker()
@@ -33,11 +32,18 @@ GStackWalker::~GStackWalker()
 }
 
 
+VOID GStackWalker::Initialize()
+{
+	m_bInitalizeSuc = GetSymAndInitSym() == TRUE && LoadModules() == TRUE;
+	if (!m_bInitalizeSuc)
+		GOutputDebugString(TEXT("GetSymAndInitSym Or LoadModules Fail"));
+}
 
 /**
- * 当SymInitialize 第三个参数为FALSE，手动调用SymLoadModule64 函数加载模块，此时第一个参数为任意非唯一的数值，用于标志符号
- * 否则 第一个 hProcess 必须为进程句柄，自动加载进程的所有模块的调试符号，SymInitialize 使用UserSearchPath 指定的路径找符号文件
- * 多个路径以分号(;)分割
+ * 当SymInitialize 第三个参数为FALSE，手动调用SymLoadModule64 函数加载模块，
+ * 此时第一个参数为任意非唯一的数值，用于标志符号
+ * 否则 第一个 hProcess 必须为进程句柄，自动加载进程的所有模块的调试符号，
+ * SymInitialize 使用UserSearchPath 指定的路径找符号文件多个路径以分号(;)分割
  */
 BOOL GStackWalker::InitSym(LPCSTR szSymPath)
 {
@@ -52,32 +58,30 @@ BOOL GStackWalker::InitSym(LPCSTR szSymPath)
 	return TRUE;
 }
 
-/**
- * 得到符号并初始化符号
- */
+
 BOOL GStackWalker::GetSymAndInitSym()
 {
 	if (m_modulesLoaded != FALSE)
 		return TRUE;
 
 	// 建立符号路径
-	char* szSymPath = NULL;
-	const size_t nSymPathLen = 4096;
-	szSymPath = (char*)malloc(nSymPathLen);
+	CHAR* szSymPath = (char*)malloc(SYMBOL_PATH_LEN);
 	if (szSymPath == NULL)
 	{
 		SetLastError(ERROR_NOT_ENOUGH_MEMORY);
 		return FALSE;
 	}
+
 	szSymPath[0] = 0;
+
 	// 首先将用户提供的符号路径添加进来
-	if (this->m_szSymPath != NULL)
+	if (m_szSymPath != NULL)
 	{
-		strcat_s(szSymPath, nSymPathLen, this->m_szSymPath);
-		strcat_s(szSymPath, nSymPathLen, ";");// 路径之间用";" 加以分割
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, m_szSymPath);
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, ";");// 路径之间用";" 加以分割
 	}
 
-	strcat_s(szSymPath, nSymPathLen, ".;");
+	GStrCat(szSymPath, SYMBOL_PATH_LEN, ";");
 
 	const size_t nTempLen = 1024;
 	char szTemp[nTempLen];
@@ -85,15 +89,15 @@ BOOL GStackWalker::GetSymAndInitSym()
 	if (GetCurrentDirectoryA(nTempLen, szTemp) > 0)
 	{
 		szTemp[nTempLen - 1] = 0;
-		strcat_s(szSymPath, nSymPathLen, szTemp);
-		strcat_s(szSymPath, nSymPathLen, ";");
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, szTemp);
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, ";");
 	}
 
 	// 得到主模块的路径
 	if (GetModuleFileNameA(NULL, szTemp, nTempLen) > 0)
 	{
 		szTemp[nTempLen - 1] = 0;
-		for (char* p = (szTemp + strlen(szTemp) - 1); p >= szTemp; --p)
+ 		for (char* p = (szTemp + GStrLen(szTemp) - 1); p >= szTemp; --p)
 		{
 			// 得到最右路径
 			if ((*p == '\\') || (*p == '/') || (*p == ':'))
@@ -102,49 +106,49 @@ BOOL GStackWalker::GetSymAndInitSym()
 				break;
 			}
 		}  // for (search for path separator...)
-		if (strlen(szTemp) > 0)
+		if (GStrLen(szTemp) > 0)
 		{
-			strcat_s(szSymPath, nSymPathLen, szTemp);
-			strcat_s(szSymPath, nSymPathLen, ";");
+			GStrCat(szSymPath, SYMBOL_PATH_LEN, szTemp);
+			GStrCat(szSymPath, SYMBOL_PATH_LEN, ";");
 		}
 	}
 	// 得到环境变量路径 系统符号路径
 	if (GetEnvironmentVariableA("_NT_SYMBOL_PATH", szTemp, nTempLen) > 0)
 	{
 		szTemp[nTempLen - 1] = 0;
-		strcat_s(szSymPath, nSymPathLen, szTemp);
-		strcat_s(szSymPath, nSymPathLen, ";");
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, szTemp);
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, ";");
 	}
 	// 得到 NT 交替符号路径
 	if (GetEnvironmentVariableA("_NT_ALTERNATE_SYMBOL_PATH", szTemp, nTempLen) > 0)
 	{
 		szTemp[nTempLen - 1] = 0;
-		strcat_s(szSymPath, nSymPathLen, szTemp);
-		strcat_s(szSymPath, nSymPathLen, ";");
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, szTemp);
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, ";");
 	}
 	// 得到系统根路径 及其 \\system32 子路径
 	if (GetEnvironmentVariableA("SYSTEMROOT", szTemp, nTempLen) > 0)
 	{
 		szTemp[nTempLen - 1] = 0;
-		strcat_s(szSymPath, nSymPathLen, szTemp);
-		strcat_s(szSymPath, nSymPathLen, ";");
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, szTemp);
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, ";");
 		// also add the "system32"-directory:
-		strcat_s(szTemp, nTempLen, "\\system32");
-		strcat_s(szSymPath, nSymPathLen, szTemp);
-		strcat_s(szSymPath, nSymPathLen, ";");
+		GStrCat(szTemp, nTempLen, "\\system32");
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, szTemp);
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, ";");
 	}
 
 	// 得到 系统驱动 环境变量
 	if (GetEnvironmentVariableA("SYSTEMDRIVE", szTemp, nTempLen) > 0)
 	{
 		szTemp[nTempLen - 1] = 0;
-		strcat_s(szSymPath, nSymPathLen, "SRV*");
-		strcat_s(szSymPath, nSymPathLen, szTemp);
-		strcat_s(szSymPath, nSymPathLen, "\\websymbols");
-		strcat_s(szSymPath, nSymPathLen, "*http://msdl.microsoft.com/download/symbols;");
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, "SRV*");
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, szTemp);
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, "\\websymbols");
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, "*http://msdl.microsoft.com/download/symbols;");
 	}
 	else	// 最后加入微软的官方在线符号表
-		strcat_s(szSymPath, nSymPathLen, "SRV*c:\\websymbols*http://msdl.microsoft.com/download/symbols;");
+		GStrCat(szSymPath, SYMBOL_PATH_LEN, "SRV*c:\\websymbols*http://msdl.microsoft.com/download/symbols;");
 
 	if (!InitSym(szSymPath))
 	{
@@ -202,6 +206,11 @@ BOOL GStackWalker::LoadModules()
 
 	m_modulesLoaded = TRUE;
 	return TRUE;
+}
+
+BOOL GStackWalker::IsInitialized()
+{
+	return m_bInitalizeSuc;
 }
 
 BOOL GStackWalker::ShowCallStack(HANDLE hProcess, DWORD dwThreadId)

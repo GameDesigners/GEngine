@@ -29,7 +29,7 @@ GDebugMem::~GDebugMem()
 
 void* GDebugMem::Allocate(size_t uiSize, size_t uiAlignment, bool bIsArray)
 {
-	size_t allocSize = sizeof(unsigned int) + uiSize + (unsigned int) + sizeof(Block);
+	size_t allocSize = sizeof(unsigned int) + uiSize + sizeof(unsigned int) + sizeof(Block);
 	char* pAddr = (char*)malloc(allocSize);
 
 	if (pAddr != nullptr)
@@ -104,10 +104,11 @@ void GDebugMem::Deallocate(char* pcAddr, unsigned int uiAlignment, bool bIsArray
 	//释放前进行内存验证。只有所有参数正确的时候才能进行释放操作
 	//若验证失败，程序则会Crash...
 	GASSERT(pcAddr);
-	Block* pBlock = (Block*)(pcAddr - sizeof(unsigned int) - sizeof(Block));
+	char* pAddr = pcAddr - (sizeof(unsigned int) + sizeof(Block));
+	Block* pBlock = (Block*)pAddr;
 	GASSERT(pBlock != nullptr);
-	GASSERT(*(pcAddr - sizeof(unsigned int)) == MEM_BEGIN_MASK);
-	GASSERT(*(pcAddr + pBlock->m_uiMemSize) == MEM_END_MASK);
+	GASSERT((*(unsigned int*)(pcAddr - sizeof(unsigned int))) == MEM_BEGIN_MASK);
+	GASSERT((*(unsigned int*)(pcAddr + pBlock->m_uiMemSize)) == MEM_END_MASK);
 	GASSERT(pBlock->m_bAlignment == (uiAlignment > 0 ? true : false));
 	GASSERT(pBlock->m_bIsArray == bIsArray);
 
@@ -117,8 +118,7 @@ void GDebugMem::Deallocate(char* pcAddr, unsigned int uiAlignment, bool bIsArray
 	m_uiNumDeleteCalls++;
 	m_uiNumBytes -= pBlock->m_uiMemSize;
 
-	char* pAdrr = (char*)pBlock;
-	free(pAdrr);
+	free(pAddr);
 }
 
 bool GDebugMem::InsertBlock(Block* pBlock)
@@ -128,6 +128,8 @@ bool GDebugMem::InsertBlock(Block* pBlock)
 	{
 		m_pHeadBlock = pBlock;
 		m_pTailBlock = pBlock;
+		pBlock->m_pNext = nullptr;
+		pBlock->m_pPrev = nullptr;
 		return true;
 	}
 	else if(m_pTailBlock!=nullptr)
@@ -135,6 +137,7 @@ bool GDebugMem::InsertBlock(Block* pBlock)
 		m_pTailBlock->m_pNext = pBlock;
 		pBlock->m_pPrev = m_pTailBlock;
 		m_pTailBlock = pBlock;
+		m_pTailBlock->m_pNext = nullptr;
 		return true;
 	}
 	return false;
@@ -184,7 +187,7 @@ void GDebugMem::PrintMemCallAndReleaseLog()
 		while (current != nullptr)
 		{
 			//sw.PrintCallStackFramesLog(current->pCallStackRecords);
-			GOutputDebugString(TEXT("有一处内存泄漏"));
+			GOutputDebugString(TEXT("有一处内存泄漏\n"));
 			current = current->m_pNext;
 		}
 	}

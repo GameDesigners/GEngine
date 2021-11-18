@@ -55,8 +55,9 @@ namespace GEngine
 
 			enum
 			{
-				STACKWALK_MAX_NAMELEN = 1024,
-				STACK_MAX_RECORD = 300,
+				STACKWALK_MAX_NAMELEN = 1024,   //对战路径名称最大长度（字符串）
+				STACK_MAX_RECORD = 64,          //堆栈记录最大层数
+				SYMBOL_PATH_LEN = 4096          //符号路径长度
 			};
 
 			typedef struct CallstackEntry
@@ -73,13 +74,19 @@ namespace GEngine
 			} CallstackEntry;
 
 		public:
-			GStackWalker(LPCSTR szSymPath = NULL, DWORD dwProcessId = GetCurrentProcessId(), HANDLE hProcess = GetCurrentProcess());
+			GStackWalker(DWORD dwThreadId = NULL, LPCSTR szSymPath = NULL);
 			~GStackWalker();
+
+
+		private:
+			VOID Initialize();
 			BOOL InitSym(LPCSTR szSymPath);
 			BOOL GetSymAndInitSym();
-
 			DWORD LoadModule(HANDLE hProcess, LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size);
 			BOOL LoadModules();
+
+		public:
+			BOOL IsInitialized();
 			BOOL ShowCallStack(HANDLE hProcess, DWORD dwThreadId);
 			void ShowMessage(CallstackEntry cs);
 
@@ -92,6 +99,8 @@ namespace GEngine
 			BOOL    m_modulesLoaded;
 			DWORD	m_dwThreadId;
 			LPSTR	m_szSymPath;
+
+			BOOL m_bInitalizeSuc;
 		};
 	}
 }

@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="GMemManager.cpp" />
     <ClCompile Include="GStackWalker.cpp" />
+    <ClCompile Include="GSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

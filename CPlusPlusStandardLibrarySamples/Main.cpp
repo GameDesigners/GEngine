@@ -85,12 +85,10 @@ void USE_CUSTOM_SMART_POINT()
 
 void GetStackCallRecord()
 {
-	GStackWalker sw(NULL, GetCurrentProcessId(), GetCurrentProcess());
-	if (sw.GetSymAndInitSym() == FALSE || sw.LoadModules() == FALSE)
-		printf("GetSymAndInitSym Or LoadModules Fail");
-	else 
+	GStackWalker sw;
+	if (sw.IsInitialized())
 	{
-		sw.GetStackFrameEntryAddressArray(GetCurrentProcess(), GetCurrentThreadId(),frames);
+		sw.GetStackFrameEntryAddressArray(GetCurrentProcess(), GetCurrentThreadId(), frames);
 		//sw.ShowCallStack(GetCurrentProcess(), GetCurrentThreadId());
 		sw.PrintCallStackFramesLog(frames);
 	}
@@ -121,7 +119,7 @@ int main()
 	//USE_CUSTOM_SMART_POINT();
 
 	
-	//Function1();
+	Function1();
 
 	/*GDebugMem Alloc;
 	Alloc.PrintMemCallAndReleaseLog();*/
@@ -129,9 +127,13 @@ int main()
 	for (size_t i = 0; i < 32; i++)
 		printf("%p\n", frames[i]);*/
 
-	int* p = GNEW int;
+	/*int* p = GNEW int;
 	*p = 10;
 	int* p2 = GNEW int;
+	*p2 = 100;
+
+	printf("%d ; %d", *p, *p2);
+	GDELETE p;*/
 
 	//getchar();
 	return 0;

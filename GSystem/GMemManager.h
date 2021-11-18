@@ -27,7 +27,7 @@ namespace GEngine
 				MEM_BEGIN_MASK = 0xDEADC0DE,
 				MEM_END_MASK = 0xDEADC0DE,
 				RECORD_NUM = 64,
-				CALLSTACK_NUM = 300
+				CALLSTACK_NUM = 64
 			};
 
 			class Block
