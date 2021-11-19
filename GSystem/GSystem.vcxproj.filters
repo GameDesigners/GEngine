@@ -23,6 +23,9 @@
     <ClInclude Include="GTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GMemManager.cpp">
@@ -35,6 +38,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GTimer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

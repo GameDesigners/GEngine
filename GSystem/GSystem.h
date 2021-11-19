@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #pragma comment(lib, "winmm.lib ")
+#pragma comment(lib,"Shlwapi.lib")
 
 #define GSYSTEM_EXPORTS
 #ifdef GSYSTEM_EXPORTS
@@ -21,7 +22,7 @@
 #define GNEW        new
 #define GDELETE     delete
 
-#define GSAVE_DELETE(x) if (x != nullptr)\
+#define GSAFE_DELETE(x) if (x != nullptr)\
 {\
     GDELETE x;\
 	x = nullptr;\
@@ -288,7 +289,7 @@ namespace GEngine
 		}
 
 		/// <summary>
-		/// TCHAR字符串转为char字符串(注意要释放返回字符串的内存)
+		/// TCHAR字符串转为char字符串
 		/// </summary>
 		/// <param name="Str">TCHAR字符串</param>
 		/// <returns>char类型字符串</returns>

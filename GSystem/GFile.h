@@ -11,7 +11,8 @@ namespace GEngine
 			enum : unsigned int
 			{
 				MAX_PATH_LENGTH = 256,  //路径最大长度
-				FILE_MODE_BUFFER = 5    //文件打开模式字符串缓冲长度
+				FILE_MODE_BUFFER = 5,   //文件打开模式字符串缓冲长度
+				FILE_STEAM_BUFFER = 1024  //文件流字符数组缓冲大小
 			};
 
 			enum class FileAccess
@@ -50,8 +51,8 @@ namespace GEngine
 			bool WriteChar(char c);
 			bool ReadChar(char& c);
 			bool Seek(StreamCurPos basePos, long offset);
-			bool WriteLine(StreamCurPos basePos, const TCHAR* str);
-			bool WriteLine(StreamCurPos basePos, const CHAR* str);
+			bool WriteLine(const TCHAR* str, StreamCurPos basePos = StreamCurPos::Current);
+			bool WriteLine(const CHAR* str, StreamCurPos basePos = StreamCurPos::Current);
 			bool ReadLine(StreamCurPos basePos, int readMaxSize, TCHAR** outstr);
 			bool ReadLine(StreamCurPos basePos, int readMaxSize, CHAR** outstr);
 			bool ReadAll(TCHAR** outstr);
@@ -64,9 +65,12 @@ namespace GEngine
 			static bool FileIsExit(const CHAR* filePath);
 
 		private:
-			PCHAR m_pcFileName;
+			PCHAR  m_pcFileName;
 			PTCHAR m_ptFileName;
-			FILE* m_phFileHandle;
+			FILE*  m_phFileHandle;
+
+			bool open(FileAccess opType, FileMode fileMode);
+
 		};
 	}
 }
