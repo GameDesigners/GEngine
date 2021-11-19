@@ -8,6 +8,7 @@
 #include "GStackWalker.h"
 #include "GMemManager.h"
 #include "GTimer.h"
+#include <GFile.h>
 
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
@@ -140,7 +141,7 @@ int main()
 
 	printf("%d ; %d", *p, *p2);*/
 
-	while (true)
+	/*while (true)
 	{
 		GTimer::GetTimer().UpdateFps();
 		printf("[DelatTime:%f]  [FPS:%f]  [RuningTime:%f]  [TotalTime:%f]",
@@ -149,7 +150,12 @@ int main()
 			GTimer::GetTimer().GetRuningTime(),
 			GTimer::GetTimer().GetTotalTime());
 		system("cls");
-	}
+	}*/
+
+	GFile file;
+	file.Open(TEXT("hello.txt"), GFile::FileAccess::ReadWrite, GFile::FileMode::TEXT);
+	file.WriteLine("hello world! :)");
+	file.WriteLine("ÄãºÃ");
 
 	//getchar();
 	return 0;
