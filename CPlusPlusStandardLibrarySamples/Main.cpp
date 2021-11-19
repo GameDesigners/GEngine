@@ -7,6 +7,7 @@
 #include "GMemory.h"
 #include "GStackWalker.h"
 #include "GMemManager.h"
+#include "GTimer.h"
 
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
@@ -127,8 +128,8 @@ int main()
 	for (size_t i = 0; i < 32; i++)
 		printf("%p\n", frames[i]);*/
 
-	int* p = GNEW int;
-	int* p2 = GNEW int;
+	/*int* p = GNEW int;
+	int* p2 = GNEW int;*/
 
 	//GDELETE p;
 	//GDELETE p2;
@@ -139,6 +140,16 @@ int main()
 
 	printf("%d ; %d", *p, *p2);*/
 
+	while (true)
+	{
+		GTimer::GetTimer().UpdateFps();
+		printf("[DelatTime:%f]  [FPS:%f]  [RuningTime:%f]  [TotalTime:%f]",
+			GTimer::GetTimer().GetDeltaTime(),
+			GTimer::GetTimer().GetFPS(),
+			GTimer::GetTimer().GetRuningTime(),
+			GTimer::GetTimer().GetTotalTime());
+		system("cls");
+	}
 
 	//getchar();
 	return 0;

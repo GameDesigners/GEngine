@@ -8,6 +8,8 @@
 #include <tchar.h>
 #include <stdio.h>
 
+#pragma comment(lib, "winmm.lib ")
+
 #define GSYSTEM_EXPORTS
 #ifdef GSYSTEM_EXPORTS
 #define GSYSTEM_API __declspec(dllexport) 
@@ -18,6 +20,18 @@
 #define GASSERT(x)  assert(x)
 #define GNEW        new
 #define GDELETE     delete
+
+#define GSAVE_DELETE(x) if (x != nullptr)\
+{\
+    GDELETE x;\
+	x = nullptr;\
+}\
+
+#define GSAFE_DELETE_ARRAY(x) if (x != nullptr)\
+{\
+	GDELETE[] x;\
+	x = nullptr;\
+}\
 
 namespace GEngine
 {
@@ -114,6 +128,22 @@ namespace GEngine
             #else
 			    return NULL;
             #endif
+		}
+
+		/// <summary>
+		/// 字符数组的复制
+		/// </summary>
+		/// <param name="dest">结果字符数组</param>
+		/// <param name="destlen">结果缓冲区长度</param>
+		/// <param name="source">源字符数组</param>
+		/// <returns>实际复制的长度</returns>
+		FORCEINLINE errno_t GStrCpy(CHAR* dest, size_t destlen, const CHAR* source)
+		{
+#ifdef WINDOWS
+			return strcpy_s(dest, destlen, source);
+#else
+			return NULL;
+#endif
 		}
 
 		/// <summary>
@@ -249,13 +279,12 @@ namespace GEngine
 		/// </summary>
 		/// <param name="Str">char字符串</param>
 		/// <returns>TCHAR字符串</returns>
-		FORCEINLINE TCHAR* GPConstChar_To_PTCHAR(const char* Str)
+		FORCEINLINE void GPConstChar_To_PTCHAR(const char* source, TCHAR* dest, int destMaxLen)
 		{
-			size_t size = MultiByteToWideChar(CP_ACP, 0, Str, -1, NULL, 0);
+			size_t size = MultiByteToWideChar(CP_ACP, 0, source, -1, NULL, 0);
+			size = size > destMaxLen ? destMaxLen : size;
 			ULONGLONG len = sizeof(TCHAR) * size;
-			TCHAR* str = GNEW TCHAR[len];
-			MultiByteToWideChar(CP_ACP, 0, (LPCCH)Str, -1, (LPWSTR)str, len);
-			return str;
+			MultiByteToWideChar(CP_ACP, 0, (LPCCH)source, -1, (LPWSTR)dest, len);
 		}
 
 		/// <summary>
@@ -263,12 +292,11 @@ namespace GEngine
 		/// </summary>
 		/// <param name="Str">TCHAR字符串</param>
 		/// <returns>char类型字符串</returns>
-		FORCEINLINE char* GPTCHAR_To_PConstChar(const TCHAR* Str)
+		FORCEINLINE void GPTCHAR_To_PConstChar(const TCHAR* source, CHAR* dest, int destMaxLen)
 		{
-			size_t size = WideCharToMultiByte(CP_ACP, NULL, (LPCWCH)Str, -1, NULL, 0, NULL, FALSE);
-			char* str = GNEW char[sizeof(char) * size];
-			WideCharToMultiByte(CP_ACP, NULL, (LPCWCH)Str, -1, (LPSTR)str, size, NULL, FALSE);
-			return str;
+			size_t size = WideCharToMultiByte(CP_ACP, NULL, (LPCWCH)source, -1, NULL, 0, NULL, FALSE);
+			size = size > destMaxLen ? destMaxLen : size;
+			WideCharToMultiByte(CP_ACP, NULL, (LPCWCH)source, -1, (LPSTR)dest, size, NULL, FALSE);
 		}
 
 		/// <summary>

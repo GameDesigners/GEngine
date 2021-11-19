@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -140,14 +140,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GFile.h" />
     <ClInclude Include="GMemManager.h" />
     <ClInclude Include="GStackWalker.h" />
     <ClInclude Include="GSystem.h" />
+    <ClInclude Include="GTimer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GFile.cpp" />
     <ClCompile Include="GMemManager.cpp" />
     <ClCompile Include="GStackWalker.cpp" />
     <ClCompile Include="GSystem.cpp" />
+    <ClCompile Include="GTimer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
