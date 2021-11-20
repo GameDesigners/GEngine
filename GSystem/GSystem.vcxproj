@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GFile.h" />
+    <ClInclude Include="GLog.h" />
     <ClInclude Include="GMemManager.h" />
     <ClInclude Include="GStackWalker.h" />
     <ClInclude Include="GSystem.h" />
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GFile.cpp" />
+    <ClCompile Include="GLog.cpp" />
     <ClCompile Include="GMemManager.cpp" />
     <ClCompile Include="GStackWalker.cpp" />
     <ClCompile Include="GSystem.cpp" />

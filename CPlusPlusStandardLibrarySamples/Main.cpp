@@ -153,9 +153,22 @@ int main()
 	}*/
 
 	GFile file;
-	file.Open(TEXT("hello.txt"), GFile::FileAccess::ReadWrite, GFile::FileMode::TEXT);
-	file.WriteLine("hello world! :)");
-	file.WriteLine("你好");
+	file.Open(TEXT("hello.txt"), GFile::FileAccess::ReadWrite, GFile::FileMode::BINARY);
+	/*file.WriteLine(TEXT("hello world! :)"));
+	file.WriteLine(TEXT("你好"));*/
+	file.WriteLine("你好\n");
+	file.WriteLine(TEXT("这里是GEngine引擎..."));
+	/*TCHAR wStr[100] = TEXT("你好呀，这里是GEngine引擎...");
+	CHAR* Str=GNEW CHAR[100];
+	GPTCHAR_To_PConstChar(wStr, Str, 100);
+	printf("%s\n", Str);
+
+	TCHAR* wStr1 = GNEW TCHAR[100];
+	GPConstChar_To_PTCHAR(Str, wStr1, 100);
+	wprintf(TEXT("%ws"), wStr1);
+
+	GSAFE_DELETE_ARRAY(wStr1)
+	GSAFE_DELETE_ARRAY(Str)*/
 
 	//getchar();
 	return 0;

@@ -286,6 +286,7 @@ namespace GEngine
 			size = size > destMaxLen ? destMaxLen : size;
 			ULONGLONG len = sizeof(TCHAR) * size;
 			MultiByteToWideChar(CP_ACP, 0, (LPCCH)source, -1, (LPWSTR)dest, len);
+			dest[size + 1] = '\0';
 		}
 
 		/// <summary>

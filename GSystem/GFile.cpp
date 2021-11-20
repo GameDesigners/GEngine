@@ -24,22 +24,25 @@ bool GFile::Open(const TCHAR* fileName, FileAccess opType, FileMode fileMode)
 		GOutputDebugStringW(TEXT("GFile::Open传入的文件路径为空。"));
 		return false;
 	}
-	GPTCHAR_To_PConstChar(fileName, m_pcFileName, MAX_PATH_LENGTH);
+	ConvertToCString buffer(fileName);
+	GStrCpy(m_pcFileName, MAX_PATH_LENGTH, buffer.result);
 	GStrCpy(m_ptFileName, MAX_PATH_LENGTH, fileName);
 	return open(opType, fileMode);
 }
 
 bool GFile::Open(const CHAR* fileName, FileAccess opType, FileMode fileMode)
 {
-	GPConstChar_To_PTCHAR(fileName, m_ptFileName, MAX_PATH_LENGTH);
+	if (fileName == nullptr)
+	{
+		GOutputDebugStringW(TEXT("GFile::Open传入的文件路径为空。"));
+		return false;
+	}
+	ConvertToTString buffer(fileName);
 	GStrCpy(m_pcFileName, MAX_PATH_LENGTH, fileName);
+	GStrCpy(m_ptFileName, MAX_PATH_LENGTH, buffer.result);
 	return open(opType, fileMode);
 }
 
-/// <summary>
-/// 强迫将缓冲区内的数据写回文件
-/// </summary>
-/// <returns></returns>
 bool GFile::Flush()
 {
 	if (m_phFileHandle != NULL)
@@ -48,25 +51,39 @@ bool GFile::Flush()
 		return false;
 }
 
-/// <summary>
-/// 写一个字符到流指针处
-/// </summary>
-/// <param name="c"></param>
-/// <returns></returns>
-bool GFile::WriteChar(char c)
+long GFile::GetFileStringLength()
 {
+	if (!IsOpen())
+		return false;
+
+	Seek(StreamCurPos::End, 0);
+	return ftell(m_phFileHandle);
+}
+
+bool GFile::WriteChar(char c,StreamCurPos basePos, long offset)
+{
+	Seek(basePos, offset);
 	return putc(c, m_phFileHandle) == 0;
 }
 
-/// <summary>
-/// 读取一个字符，流指针向前移动一位
-/// </summary>
-/// <param name="c">读取的字符</param>
-/// <returns>读取是否成功</returns>
-bool GFile::ReadChar(char& c)
+bool GFile::ReadChar(char& c, StreamCurPos basePos, long offset)
 {
-	c= getc(m_phFileHandle);
+	Seek(basePos, offset);
+	c = getc(m_phFileHandle);
 	return c != EOF;
+}
+
+bool GFile::WriteChar(TCHAR tc, StreamCurPos basePos, long offset)
+{
+	Seek(basePos, 0);
+	return putc(tc, m_phFileHandle) == 0;
+}
+
+bool GFile::ReadChar(TCHAR& tc, StreamCurPos basePos, long offset)
+{
+	Seek(basePos, offset);
+	tc = getc(m_phFileHandle);
+	return tc != EOF;
 }
 
 bool GFile::Seek(StreamCurPos basePos, long offset)
@@ -89,11 +106,9 @@ bool GFile::WriteLine(const TCHAR* str, StreamCurPos basePos)
 		GOutputDebugStringW(TEXT("写入字符串为空"));
 		return false;
 	}
-	const int strLen = GStrLen(str);
-	char* buffer = GNEW char[strLen];
-	GPTCHAR_To_PConstChar(str, buffer, strLen);
-	BOOL res = fputs(buffer, m_phFileHandle) == 0;
-	GSAFE_DELETE_ARRAY(buffer)
+	ConvertToCString buffer(str);
+	BOOL res = fputs(buffer.result, m_phFileHandle) == 0;
+	res = res && fputc('\n', m_phFileHandle) == 0;
 	Flush();
 	return res;
 }
@@ -101,33 +116,32 @@ bool GFile::WriteLine(const TCHAR* str, StreamCurPos basePos)
 bool GFile::WriteLine(const CHAR* str, StreamCurPos basePos)
 {
 	BOOL res = fputs(str, m_phFileHandle) == 0;
+	res = res && fputc('\n', m_phFileHandle) == 0;
 	Flush();
 	return res;
 }
 
-bool GFile::ReadLine(StreamCurPos basePos, int readMaxSize, TCHAR** outstr)
+bool GFile::ReadLine(TCHAR** outstr, int readMaxSize, StreamCurPos basePos)
 {
 	if (!IsOpen())
 		return false;
 
 	Seek(basePos, 0);
-	char* buffer = GNEW char[readMaxSize];
-	char* p = fgets(buffer, readMaxSize, m_phFileHandle);
-	GPConstChar_To_PTCHAR(p, *outstr, readMaxSize);
-	GSAFE_DELETE_ARRAY(buffer)
+	char* read_buffer = GNEW char[readMaxSize];
+	char* p = fgets(read_buffer, readMaxSize, m_phFileHandle);
+	ConvertToTString buffer(read_buffer);
+	GStrCpy(*outstr,readMaxSize,buffer.result);
+	GSAFE_DELETE_ARRAY(read_buffer)
 	return p != NULL;
 }
 
-bool GFile::ReadLine(StreamCurPos basePos, int readMaxSize, CHAR** outstr)
+bool GFile::ReadLine(CHAR** outstr, int readMaxSize, StreamCurPos basePos)
 {
 	if (!IsOpen())
 		return false;
 	if (outstr == nullptr)
 		return false;
-	if (*outstr != nullptr)
-		return false;
 	Seek(basePos, 0);
-
 	char* p = fgets(*outstr, readMaxSize, m_phFileHandle);
 	return p != NULL;
 }
@@ -142,10 +156,11 @@ bool GFile::ReadAll(TCHAR** outstr)
 	Seek(StreamCurPos::End, 0);
 	long str_size = ftell(m_phFileHandle);
 	Seek(StreamCurPos::Start, 0);
-	char* buffer = GNEW char[str_size];
-	size_t readCount = fread(buffer, str_size, sizeof(char), m_phFileHandle);
-    GPConstChar_To_PTCHAR(buffer,*outstr,str_size);
-	GSAFE_DELETE_ARRAY(buffer)
+	char* readBuffer = GNEW char[str_size];
+	size_t readCount = fread(readBuffer, str_size, sizeof(char), m_phFileHandle);
+	ConvertToTString buffer(readBuffer);
+	GStrCpy(*outstr, GStrLen(*outstr), buffer.result);
+	GSAFE_DELETE_ARRAY(readBuffer)
 	return readCount == str_size;
 }
 
@@ -206,6 +221,13 @@ bool GFile::Delete()
 
 }
 
+bool GFile::Close()
+{
+	if (m_phFileHandle != NULL)
+		return fclose(m_phFileHandle) == 0;
+	else
+		return false;
+}
 
 bool GFile::open(FileAccess opType, FileMode fileMode)
 {
@@ -222,40 +244,39 @@ bool GFile::open(FileAccess opType, FileMode fileMode)
 		return false;
 	}
 
-	char filemode[FILE_MODE_BUFFER] = { 0 };
+	//文件模式字符串
+	char _mode[FILE_MODE_BUFFER] = { 0 };
 
 	switch (opType)
 	{
 	case FileAccess::Read:
-		GStrCpy(filemode, FILE_MODE_BUFFER, "r");
+		GStrCpy(_mode, FILE_MODE_BUFFER, "r");
+		break;
 	case FileAccess::ReadWrite:
-		GStrCpy(filemode, FILE_MODE_BUFFER, "r+");
+		GStrCpy(_mode, FILE_MODE_BUFFER, "r+");
+		break;
 	case FileAccess::ReadWriteCreate:
-		GStrCpy(filemode, FILE_MODE_BUFFER, "w+");
+		GStrCpy(_mode, FILE_MODE_BUFFER, "w+");
+		break;
 	case FileAccess::Write:
-		GStrCpy(filemode, FILE_MODE_BUFFER, "w");
+		GStrCpy(_mode, FILE_MODE_BUFFER, "w");
+		break;
 	}
 
 	switch (fileMode)
 	{
 	case FileMode::BINARY:
-		GStrCat(filemode, FILE_MODE_BUFFER, "b");
+		GStrCat(_mode, FILE_MODE_BUFFER, "b");
+		break;
 	case FileMode::TEXT:
-		GStrCat(filemode, FILE_MODE_BUFFER, "t");
+		GStrCat(_mode, FILE_MODE_BUFFER, "t");
+		break;
 	}
 
 	if (m_phFileHandle != NULL)
 		fclose(m_phFileHandle);
 
-	return fopen_s(&m_phFileHandle, m_pcFileName, filemode) == 0;
-}
-
-bool GFile::Close()
-{
-	if (m_phFileHandle != NULL)
-		return fclose(m_phFileHandle) == 0;
-	else
-		return false;
+	return fopen_s(&m_phFileHandle, m_pcFileName, _mode) == 0;
 }
 
 
