@@ -23,10 +23,19 @@ namespace GEngine{
 		 */
 
 
+		/// <summary>
+		/// 容器基类
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
 		template<class T,GMemManagerFun MMFun=GMemObject::GetMemManager>
 		class GSTL_API GContainer : public GMemObject
 		{
+		public:
+			
 		protected:
+			GContainer() {};
+			~GContainer() {}
+
 			inline T* New(size_t Num)
 			{
 				if (Num < 0)
@@ -35,7 +44,6 @@ namespace GEngine{
 				GASSERT(newAddr != nullptr);
 				return newAddr;
 			}
-
 			inline void Delete(T* pAddr,int Num)
 			{
 				if (pAddr != nullptr)
@@ -52,8 +60,111 @@ namespace GEngine{
 					}
 				}
 			}
+
+		protected:
+			virtual bool empty() = 0;
+			virtual size_t size() = 0;
+			virtual size_t capcity() = 0;
+			virtual void clear() = 0;
 		};
 
+		template<class T> class GSTL_API _Iterator  //默认迭代器
+		{
+		public:
+			_Iterator() {}
+			_Iterator(T* val) : current(val) {}
+			~_Iterator() {}
+			virtual const T* operator++() { return ++current; }     //前置++
+			virtual const T* operator++(int) { return current++; }  //后置++、
+			virtual const T* operator--() { return --current; }     //前置--
+			virtual const T* operator--(int) { return current--; }  //后置--
+			virtual T& operator*()  { return *current; }            //解引用
+			virtual const T* operator+(size_t idx) { return current + idx; }
+			virtual const T* operator-(size_t idx) { return current - idx; }
+			virtual bool operator!=(const _Iterator& rhs)
+			{
+				return current != rhs.current;
+			}
+			virtual bool operator==(const _Iterator& rhs)
+			{
+				return current == rhs.current;
+			}
+		protected:
+			T* current;
+		};
+		template<class T> class GSTL_API _CIterator  //常量迭代器
+		{
+		public:
+			_CIterator() {}
+			_CIterator(T* val) : current(val) {}
+			~_CIterator() {}
+			virtual const T* operator++() { return ++current; }     //前置++
+			virtual const T* operator++(int) { return current++; }  //后置++、
+			virtual const T* operator--() { return --current; }     //前置--
+			virtual const T* operator--(int) { return current--; }  //后置--
+			virtual T operator*() { return *current; } //解引用
+			virtual const T* operator+(size_t idx) { return current + idx;}
+			virtual const T* operator-(size_t idx) { return current - idx;}
+			virtual bool operator!=(const _CIterator& rhs)
+			{
+				return current != rhs.current;
+			}
+			virtual bool operator==(const _CIterator& rhs)
+			{
+				return current == rhs.current;
+			}
+		protected:
+			T* current;
+		};
+		template<class T> class GSTL_API _RIterator  //反向迭代器
+		{
+		public:
+			_RIterator() {}
+			_RIterator(T* val) : current(val) {}
+			~_RIterator() {}
+			virtual const T* operator++() { return --current; }     //前置++
+			virtual const T* operator++(int) { return current--; }  //后置++、
+			virtual const T* operator--() { return ++current; }     //前置--
+			virtual const T* operator--(int) { return current++; }  //后置--
+			virtual T& operator*() { return *current;}      //解引用
+			virtual const T* operator+(size_t idx) { return current - idx; }
+			virtual const T* operator-(size_t idx) { return current + idx; }
+			virtual bool operator!=(const _RIterator& rhs)
+			{
+				return current != rhs.current;
+			}
+			virtual bool operator==(const _RIterator& rhs)
+			{
+				return current == rhs.current;
+			}
+
+		protected:
+			T* current;
+		};
+		template<class T> class GSTL_API _CRIterator  //反向常量迭代器
+		{
+		public:
+			_CRIterator() {}
+			_CRIterator(T* val) : current(val) {}
+			~_CRIterator() {}
+			virtual const T* operator++() { return --current; }     //前置++
+			virtual const T* operator++(int) { return current--; }  //后置++、
+			virtual const T* operator--() { return ++current; }     //前置--
+			virtual const T* operator--(int) { return current++; }  //后置--
+			virtual T operator*() { return *current; }      //解引用
+			virtual const T* operator+(size_t idx) { return current - idx; }
+			virtual const T* operator-(size_t idx) { return current + idx; }
+			virtual bool operator!=(const _CRIterator& rhs)
+			{
+				return current != rhs.current;
+			}
+			virtual bool operator==(const _CRIterator& rhs)
+			{
+				return current == rhs.current;
+			}
+		protected:
+			T* current;
+		};
 	}
 }
 

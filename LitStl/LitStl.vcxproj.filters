@@ -26,6 +26,15 @@
     <ClInclude Include="GContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUtility.cpp">
@@ -34,12 +43,24 @@
     <ClCompile Include="GMemory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GVector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="GUtility.inl">
       <Filter>Inl Files</Filter>
     </None>
     <None Include="GMemory.inl">
+      <Filter>Inl Files</Filter>
+    </None>
+    <None Include="GVector.inl">
+      <Filter>Inl Files</Filter>
+    </None>
+    <None Include="GArray.inl">
       <Filter>Inl Files</Filter>
     </None>
   </ItemGroup>

@@ -2,6 +2,7 @@
 #include "CommonTool.h"
 
 #include <string>
+#include <vector>
 
 #include "GUtility.h"
 #include "GMemory.h"
@@ -10,10 +11,36 @@
 #include "GTimer.h"
 #include <GFile.h>
 
+//GStl
+#include <GAlgorithm.h>
+#include <GArray.h>
+
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
 
 DWORD64 frames[32];
+void GetStackCallRecord()
+{
+	GStackWalker sw;
+	if (sw.IsInitialized())
+	{
+		sw.GetStackFrameEntryAddressArray(frames);
+		//sw.ShowCallStack(GetCurrentProcess(), GetCurrentThreadId());
+		sw.PrintCallStackFramesLog(frames);
+	}
+}
+void Function3()
+{
+	GetStackCallRecord();
+}
+void Function2()
+{
+	Function3();
+}
+void Function1()
+{
+	Function2();
+}
 
 void USE_CUSTOM_PAIR()
 {
@@ -84,32 +111,73 @@ void USE_CUSTOM_SMART_POINT()
 	GSharedPtr<GPair<int, int>> shared_p1 = g_make_shared<GPair<int, int>>(1, 1);
 	std::cout << "shared_p1's Use Count:" << shared_p1.use_count() << std::endl;
 }
-
-void GetStackCallRecord()
+void USE_CUSTOM_TIMER()
 {
-	GStackWalker sw;
-	if (sw.IsInitialized())
+	while (true)
 	{
-		sw.GetStackFrameEntryAddressArray(frames);
-		//sw.ShowCallStack(GetCurrentProcess(), GetCurrentThreadId());
-		sw.PrintCallStackFramesLog(frames);
+		GTimer::GetTimer().UpdateFps();
+		printf("[DelatTime:%f]  [FPS:%f]  [RuningTime:%f]  [TotalTime:%f]",
+			GTimer::GetTimer().GetDeltaTime(),
+			GTimer::GetTimer().GetFPS(),
+			GTimer::GetTimer().GetRuningTime(),
+			GTimer::GetTimer().GetTotalTime());
+		system("cls");
 	}
 }
-
-void Function3()
+void USE_CUSTOM_GFILE()
 {
-	GetStackCallRecord();
+	GFile file;
+	file.Open(TEXT("hello.txt"), GFile::FileAccess::ReadWrite, GFile::FileMode::BINARY);
+	/*file.WriteLine(TEXT("hello world! :)"));
+	file.WriteLine(TEXT("你好"));*/
+	file.WriteLine("你好\n");
+	file.WriteLine(TEXT("这里是GEngine引擎..."));
 }
 
-void Function2()
+class Parent
 {
-	Function3();
+	int a;
+};
+
+class Child : public Parent
+{
+	int b;
+};
+
+void Set(Parent p) {}
+
+/*Test GStl*/
+void USE_GSTL_GARRAY()
+{
+
+	GArray<int, 10> array1 = { 11,22,33,44 };
+	for (int index = 0; index < 10; index++)
+		std::cout << array1[index] << "\t";
+	std::cout << std::endl;
+
+	for(GArray<int,10>::r_iterator_type p=array1.rbegin();p!=array1.rend();p++)
+		std::cout << *p << "\t";
+	std::cout << std::endl;
+
+
+	array1.back() = 9999999;
+	array1[array1.size() - 2] = 42;
+	for (int index = 0; index < 10; index++)
+		std::cout << array1[index] << "\t";
+	std::cout << std::endl;
+
+	std::cout << "end:" << *(array1.end()-1) << std::endl;
+	std::cout << "sum:" << accumulate(array1.begin(), array1.end(), 0) << std::endl;
+	transform(array1.begin(), array1.end(), negate<int>());
+	for (int index = 0; index < 10; index++)
+		std::cout << array1[index] << "\t";
+	std::cout << std::endl;
+}
+void USE_GSTL_GVECTOR()
+{
+	
 }
 
-void Function1()
-{
-	Function2();
-}
 
 int main()
 {
@@ -119,56 +187,11 @@ int main()
 	//USE_CUSTOM_PAIR();
 	//USE_CUSTOM_TUPLE();
 	//USE_CUSTOM_SMART_POINT();
+	//USE_CUSTOM_TIMER();
+	//USE_CUSTOM_GFILE();
 
-	
-	//Function1();
-
-	/*GDebugMem Alloc;
-	Alloc.PrintMemCallAndReleaseLog();*/
-	/*printf("\n");
-	for (size_t i = 0; i < 32; i++)
-		printf("%p\n", frames[i]);*/
-
-	/*int* p = GNEW int;
-	int* p2 = GNEW int;*/
-
-	//GDELETE p;
-	//GDELETE p2;
-	/*
-	*p = 10;
-	
-	*p2 = 100;
-
-	printf("%d ; %d", *p, *p2);*/
-
-	/*while (true)
-	{
-		GTimer::GetTimer().UpdateFps();
-		printf("[DelatTime:%f]  [FPS:%f]  [RuningTime:%f]  [TotalTime:%f]",
-			GTimer::GetTimer().GetDeltaTime(),
-			GTimer::GetTimer().GetFPS(),
-			GTimer::GetTimer().GetRuningTime(),
-			GTimer::GetTimer().GetTotalTime());
-		system("cls");
-	}*/
-
-	GFile file;
-	file.Open(TEXT("hello.txt"), GFile::FileAccess::ReadWrite, GFile::FileMode::BINARY);
-	/*file.WriteLine(TEXT("hello world! :)"));
-	file.WriteLine(TEXT("你好"));*/
-	file.WriteLine("你好\n");
-	file.WriteLine(TEXT("这里是GEngine引擎..."));
-	/*TCHAR wStr[100] = TEXT("你好呀，这里是GEngine引擎...");
-	CHAR* Str=GNEW CHAR[100];
-	GPTCHAR_To_PConstChar(wStr, Str, 100);
-	printf("%s\n", Str);
-
-	TCHAR* wStr1 = GNEW TCHAR[100];
-	GPConstChar_To_PTCHAR(Str, wStr1, 100);
-	wprintf(TEXT("%ws"), wStr1);
-
-	GSAFE_DELETE_ARRAY(wStr1)
-	GSAFE_DELETE_ARRAY(Str)*/
+	USE_GSTL_GARRAY();
+	//USE_GSTL_GVECTOR();
 
 	//getchar();
 	return 0;

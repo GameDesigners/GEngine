@@ -142,18 +142,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GAlgorithm.h" />
+    <ClInclude Include="GArray.h" />
     <ClInclude Include="GContainer.h" />
     <ClInclude Include="GMemory.h" />
     <ClInclude Include="GStlMicro.h" />
     <ClInclude Include="GUtility.h" />
+    <ClInclude Include="GVector.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="GArray.inl" />
     <None Include="GMemory.inl" />
     <None Include="GUtility.inl" />
+    <None Include="GVector.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GArray.cpp" />
     <ClCompile Include="GMemory.cpp" />
     <ClCompile Include="GUtility.cpp" />
+    <ClCompile Include="GVector.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
