@@ -261,6 +261,66 @@ T& GVector<T, MMFun>::back()
 	return m_data[m_count - 1];
 }
 
+//安插和移除
+//*************************************************************************
+
+template<class T, GMemManagerFun MMFun>
+void GVector<T, MMFun>::push_back(const T& val)
+{
+	if (m_count == m_capcity)
+		reserve(m_capcity + IncreaseCapcityStep);
+	m_data[m_count] = val;
+	m_count++;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GVector<T, MMFun>::pop_back()
+{
+	if (m_count == 0)
+		return;
+	if (ValueBase<T>::NeedsDestructor)
+		m_data[m_count - 1]->~T();
+	m_count--;
+}
+
+template<class T, GMemManagerFun MMFun>
+_Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, const T& val)
+{
+	if (m_count == m_capcity)
+		reserve(m_capcity + IncreaseCapcityStep);
+
+	iterator_type p = end();
+	for (p; p != pos; p--)
+		*p = *(p - 1);
+	*p = val;
+	m_count++;
+	return p;
+}
+
+template<class T, GMemManagerFun MMFun>
+_Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, size_t num, const T& val)
+{
+	if (num == 0)
+		return pos;
+
+	size_t temp = m_capcity;
+	while (temp <= m_count + num)
+		temp += IncreaseCapcityStep;
+	if (temp != m_capcity)
+		reserve(temp);
+
+	iterator_type p = end();
+	for (p; p != pos; p--)
+		*(p + num - 1) = *(p - 1);
+
+	for (int index = 0; index < num; index++)
+	{
+		*p = val;
+		p--;
+	}
+	return p;
+}
+
 
 //虚函数重写 
 //*************************************************************************

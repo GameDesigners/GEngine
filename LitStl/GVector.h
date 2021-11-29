@@ -16,7 +16,7 @@ namespace GEngine{
 			typedef const T*         iterator;
 			typedef T* const         const_iterator;
 
-			typedef _Iterator<T>     iteractor_type;
+			typedef _Iterator<T>     iterator_type;
 			typedef _CIterator<T>    c_iterator_type;
 			typedef _RIterator<T>    r_iterator_type;
 			typedef _CRIterator<T>   cr_iterator_type;
@@ -58,13 +58,21 @@ namespace GEngine{
 
 	    //安插和移除
 		public:
-			void push_back();
+			void push_back(const T& val);
 			void pop_back();
-			void insert(iteractor_type pos, T val);
-			void insert(interator_type pos, interator_type begin, interator_type end);
-			void insert
-
-
+			iterator_type insert(iterator_type pos, const T& val);
+			iterator_type insert(iterator_type pos, size_t num, const T& val);
+			void insert(iterator_type pos, iterator_type begin, iterator_type end);
+			void insert(iterator_type pos, std::initializer_list<T> values);
+			template<class ...Args> void emplace(iterator_type pos, Args&&... args);
+			template<class Arg> void emplace(iterator_type pos, Arg&& val);
+			template<class ...Args> void emplace_bac(Args&&...values);
+			template<class Args> void emplace_back(Arg&& val);
+			void erase(iterator_type pos);
+			void erase(iterator_type _begin, iterator_type _end);
+			void resize(size_t num);
+			void resize(size_t num, const T& val);
+			void clear();
 	    //虚函数重写
 		public:
 			virtual bool empty();
@@ -88,8 +96,8 @@ namespace GEngine{
 
 		//迭代器
 		public:
-			iteractor_type   begin();
-			iteractor_type   end();
+			iterator_type   begin();
+			iterator_type   end();
 			c_iterator_type  cbegin();
 			c_iterator_type  cend();
 			r_iterator_type  rbegin();

@@ -165,6 +165,15 @@ namespace GEngine{
 		protected:
 			T* current;
 		};
+
+		template<class T> class GSTL_API _Vector_Iterator : public _Iterator<T>
+		{
+		public:
+			size_t operator-(const _Vector_Iterator& rhs)
+			{
+				return this->current - rhs.current;
+			}
+		};
 	}
 }
 
