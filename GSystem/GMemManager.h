@@ -1,12 +1,33 @@
 #ifndef GMEMMANAGER_H
 #define GMEMMANAGER_H
+#include <type_traits>  //引用了stl
 #include "GSystem.h"
 #include "GStackWalker.h"
 
-namespace GEngine
-{
-	namespace GSystem
+namespace GEngine{
+	namespace GSystem{
+
+#pragma region 静态类型判断
+        #define HAS_TRIVIAL_CONSTRUCTOR(T) std::is_trivially_constructible<T>::value
+        #define HAS_TRIVIAL_DESTRUCTOR(T) std::is_trivially_destructible<T>::value
+        #define IS_POD(T) std::is_pod<T>::value
+
+	/**
+	* TIsPODType
+	*/
+	template<typename T> struct TIsPODType
 	{
+		enum { Value = IS_POD(T) };
+	};
+
+	template<typename T> struct ValueBase
+	{
+	public:
+		enum { NeedsConstructor = !HAS_TRIVIAL_CONSTRUCTOR(T) && !TIsPODType<T>::Value };
+		enum { NeedsDestructor = !HAS_TRIVIAL_DESTRUCTOR(T) && !TIsPODType<T>::Value };
+	};
+#pragma endregion
+
 		class GSYSTEM_API GMemManager
 		{
 		public:
@@ -86,6 +107,10 @@ namespace GEngine
 
 			static GMemManager& GetMemManager();
 		};
+
+		//定义内存分配器函数类型
+		typedef GMemManager& (*GMemManagerFun)();
+
 	}
 }
 
