@@ -18,8 +18,11 @@ GVector<T, MMFun>::GVector(const GVector& cv)
 	m_capcity = cv.m_capcity;
 	m_count = cv.m_count;
 
-	for (int index = 0; index < m_count; index++)
+	for (int index = 0; index < m_count; index++) 
+	{
+		construct(m_data + index);
 		*(m_data + index) = *(cv.m_data + index);
+	}
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -39,7 +42,6 @@ GVector<T, MMFun>::GVector(size_t _m_capcity)
 {
 	m_data = this->New(_m_capcity);
 	GASSERT(m_data != nullptr);
-	m_data = {};
 	m_capcity = _m_capcity;
 	m_count = 0;
 }
@@ -56,11 +58,11 @@ GVector<T, MMFun>::GVector(size_t _m_count, const T& val)
 	GASSERT(m_data != nullptr);
 
 	for (int index = 0; index < m_count; index++)
-		*(m_data + index) = val;
+		construct(m_data + index, val);
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(iterator begin, iterator end)
+GVector<T, MMFun>::GVector(iterator_type begin, iterator_type end)
 { 
 	m_count = end - begin;
 	m_capcity = DefaultCapcity;
@@ -69,8 +71,11 @@ GVector<T, MMFun>::GVector(iterator begin, iterator end)
 
 	m_data = this->New(m_capcity);
 	GASSERT(m_data != nullptr);
-	for (int index = 0; index < m_count; index++)
+	for (int index = 0; index < m_count; index++) 
+	{
+		construct(m_data + index);
 		*(m_data + index) = *(begin + index);
+	}
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -178,7 +183,7 @@ void GVector<T, MMFun>::assign(int _count, const T& val)
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::assign(iterator begin, iterator end)
+void GVector<T, MMFun>::assign(iterator_type begin, iterator_type end)
 {
 	size_t _count = end - begin;
 	size_t temp = m_capcity;
@@ -278,6 +283,7 @@ void GVector<T, MMFun>::push_back(T&& rv)
 {
 	if (m_count == m_capcity)
 		reserve(m_capcity + IncreaseCapcityStep);
+	construct(m_data + m_count);
 	m_data[m_count] = g_move(rv);
 	m_count++;
 }

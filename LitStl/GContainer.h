@@ -95,6 +95,10 @@ namespace GEngine{
 				return current == rhs.current;
 			}
 			virtual T* operator->() { return current; }
+			virtual size_t operator-(const _Iterator& rhs)
+			{
+				return this->current - rhs.current;
+			}
 		protected:
 			T* current;
 		};
@@ -104,13 +108,13 @@ namespace GEngine{
 			_CIterator() {}
 			_CIterator(T* val) : current(val) {}
 			~_CIterator() {}
-			virtual const T* operator++() { return ++current; }     //前置++
-			virtual const T* operator++(int) { return current++; }  //后置++、
-			virtual const T* operator--() { return --current; }     //前置--
-			virtual const T* operator--(int) { return current--; }  //后置--
+			virtual const _CIterator<T> operator++() { ++current; return _CIterator(current); }     //前置++
+			virtual const _CIterator<T> operator++(int) { T* temp = current; current++; return _CIterator(temp); }  //后置++、
+			virtual const _CIterator<T> operator--() { --current; return _CIterator(current); }     //前置--
+			virtual const _CIterator<T> operator--(int) { T* temp = current; current--; return _CIterator(temp); }  //后置--
 			virtual T operator*() { return *current; } //解引用
-			virtual const _CIterator<T> operator+(size_t idx) { return _CIterator(current + idx); }
-			virtual const _CIterator<T> operator-(size_t idx) { return _CIterator(current - idx); }
+			virtual const _CIterator<T> operator+(int idx) { return _CIterator(current + idx); }
+			virtual const _CIterator<T> operator-(int idx) { return _CIterator(current - idx); }
 			virtual bool operator!=(const _CIterator& rhs)
 			{
 				return current != rhs.current;
@@ -130,13 +134,13 @@ namespace GEngine{
 			_RIterator() {}
 			_RIterator(T* val) : current(val) {}
 			~_RIterator() {}
-			virtual const T* operator++() { return --current; }     //前置++
-			virtual const T* operator++(int) { return current--; }  //后置++、
-			virtual const T* operator--() { return ++current; }     //前置--
-			virtual const T* operator--(int) { return current++; }  //后置--
+			virtual const _RIterator<T> operator++() { --current; return _RIterator(current); }     //前置++
+			virtual const _RIterator<T> operator++(int) { T* temp = current; current--; return _RIterator(temp); }  //后置++、
+			virtual const _RIterator<T> operator--() { ++current; return _RIterator(current); }     //前置--
+			virtual const _RIterator<T> operator--(int) { T* temp = current; current++; return _RIterator(temp); }  //后置--
 			virtual T& operator*() { return *current;}      //解引用
-			virtual const T* operator+(size_t idx) { return current - idx; }
-			virtual const T* operator-(size_t idx) { return current + idx; }
+			virtual const T* operator+(int idx) { return current - idx; }
+			virtual const T* operator-(int idx) { return current + idx; }
 			virtual bool operator!=(const _RIterator& rhs)
 			{
 				return current != rhs.current;
@@ -155,13 +159,13 @@ namespace GEngine{
 			_CRIterator() {}
 			_CRIterator(T* val) : current(val) {}
 			~_CRIterator() {}
-			virtual const T* operator++() { return --current; }     //前置++
-			virtual const T* operator++(int) { return current--; }  //后置++、
-			virtual const T* operator--() { return ++current; }     //前置--
-			virtual const T* operator--(int) { return current++; }  //后置--
+			virtual const _CRIterator<T> operator++() { --current; return _CRIterator(current); }     //前置++
+			virtual const _CRIterator<T> operator++(int) { T* temp = current; current--; return _CRIterator(temp); }  //后置++、
+			virtual const _CRIterator<T> operator--() { ++current; return _CRIterator(current); }     //前置--
+			virtual const _CRIterator<T> operator--(int) { T* temp = current; current++; return _CRIterator(temp); }  //后置--
 			virtual T operator*() { return *current; }      //解引用
-			virtual const T* operator+(size_t idx) { return current - idx; }
-			virtual const T* operator-(size_t idx) { return current + idx; }
+			virtual const T* operator+(int idx) { return current - idx; }
+			virtual const T* operator-(int idx) { return current + idx; }
 			virtual bool operator!=(const _CRIterator& rhs)
 			{
 				return current != rhs.current;
@@ -213,11 +217,17 @@ namespace GEngine{
 		};
 
 
-		//placement 构造函数
+		//placement 构造函数[placement new, 调用T1::T1(value);不能被重载的new方法！！]
 		template<class T1, class T2>
 		inline void construct(T1* p, const T2& value)
 		{
-			GNEW(p)T1(value);    //placement new, 调用T1::T1(value);不能被重载的new方法！！
+			GNEW(p)T1(value);
+		}
+
+		template<class T>
+		inline void construct(T* p)
+		{
+			GNEW(p)T();
 		}
 	}
 }

@@ -156,7 +156,7 @@ bool GArray<T, N>::operator==(const GArray& rhs)
 {
 	for (int index = 0; index < N; ++index)
 	{
-		if (m_data[index] != rhs[index])
+		if (m_data[index] != rhs.m_data[index])
 			return false;
 	}
 	return  true;
@@ -167,7 +167,7 @@ bool GArray<T, N>::operator!=(const GArray& rhs)
 {
 	for (int index = 0; index < N; ++index)
 	{
-		if (m_data[index] != rhs[index])
+		if (m_data[index] != rhs.m_data[index])
 			return true;
 	}
 	return false;
@@ -178,9 +178,9 @@ bool GArray<T, N>::operator<(const GArray& rhs)
 {
 	for (int index = 0; index < N; ++index)
 	{
-		if (m_data[index] < rhs[index])
+		if (m_data[index] < rhs.m_data[index])
 			return true;
-		else if (m_data[index] > rhs[index])
+		else if (m_data[index] > rhs.m_data[index])
 			return false;
 	}
 	return false;
@@ -191,9 +191,9 @@ bool GArray<T, N>::operator>(const GArray& rhs)
 {
 	for (int index = 0; index < N; ++index)
 	{
-		if (m_data[index] > rhs[index])
+		if (m_data[index] > rhs.m_data[index])
 			return true;
-		else if (m_data[index] < rhs[index])
+		else if (m_data[index] < rhs.m_data[index])
 			return false;
 	}
 	return false;

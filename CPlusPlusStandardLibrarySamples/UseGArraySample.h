@@ -50,7 +50,35 @@ void GArraySample()
 		p->to_string();
 	std::cout << std::endl;
 
+	std::cout << array8.empty() << std::endl;
+	std::cout << array8.size() << std::endl;
+	std::cout << array8.capcity() << std::endl;
 
+	GArray<int, 8> array9 = { 1,2,53,4,5 };
+	GArray<int, 8> array10 = { 5,4,3,8,7,7 };
+
+	std::cout << "array9 == array10=" << (array9 == array10) << std::endl;
+	std::cout << "array9 !=array10=" << (array9 != array10) << std::endl;
+	std::cout << "array9 < array10=" << (array9 < array10) << std::endl;
+	std::cout << "array9 > array10=" << (array9 > array10) << std::endl;
+	std::cout << "array9 >=array10=" << (array9 >= array10) << std::endl;
+	std::cout << "array9 <=array10=" << (array9 <= array10) << std::endl;
+
+	for (auto p = array9.begin(); p != array9.end(); ++p)
+		std::cout << *p << " ";
+	std::cout << std::endl;
+
+	for (auto p = array9.cbegin(); p != array9.cend(); ++p)
+		std::cout << *p << " ";
+	std::cout << std::endl;
+
+	for (auto p = array9.rbegin(); p != array9.rend(); ++p)
+		std::cout << *p << " ";
+	std::cout << std::endl;
+
+	for (auto p = array9.crbegin(); p != array9.crend(); ++p)
+		std::cout << *p << " ";
+	std::cout << std::endl;
 }
 
 

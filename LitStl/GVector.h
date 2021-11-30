@@ -12,9 +12,6 @@ namespace GEngine{
 			typedef T&                      reference;
 			typedef const T&                const_reference;
 			typedef T*                      pointer;
-			typedef const T*                const_pointer;
-			typedef const T*                iterator;
-			typedef T* const                const_iterator;
 
 			typedef _Vector_Iterator<T>     iterator_type;
 			typedef _Vector_CIterator<T>    c_iterator_type;
@@ -34,7 +31,7 @@ namespace GEngine{
 			GVector(GVector&& rv);
 			GVector(size_t _capcity);
 			GVector(size_t _count, const T& val);
-			GVector(iterator begin, iterator end);
+			GVector(iterator_type begin, iterator_type end);
 			GVector(std::initializer_list<T> values);
 			~GVector();
 		
@@ -45,7 +42,7 @@ namespace GEngine{
 			void operator=(std::initializer_list<T> values);
 
 			void assign(int _count, const T& val);
-			void assign(iterator begin, iterator end);
+			void assign(iterator_type begin, iterator_type end);
 			void assign(std::initializer_list<T> values);
 			void swap(GVector& v);
 
