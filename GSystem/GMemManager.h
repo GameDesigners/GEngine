@@ -106,7 +106,7 @@ namespace GEngine{
 			~GMemObject() {}
 
 			static GMemManager& GetMemManager();
-		};
+		};  
 
 		//定义内存分配器函数类型
 		typedef GMemManager& (*GMemManagerFun)();

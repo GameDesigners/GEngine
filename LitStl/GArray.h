@@ -24,7 +24,7 @@ namespace GEngine {
 			GArray();
 			GArray(const GArray& cv);
 			GArray(GArray&& rv);
-			GArray(iteractor_type begin, iteractor_type end);
+			GArray(iteractor_type _begin, iteractor_type _end);
 			GArray(std::initializer_list<T> values);
 			~GArray();
 
@@ -80,5 +80,3 @@ namespace GEngine {
 	}
 }
 #endif // !GARRAY_H
-
-

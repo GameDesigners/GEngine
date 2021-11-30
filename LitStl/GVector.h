@@ -7,19 +7,19 @@ namespace GEngine{
 		class GVector : public GContainer<T, MMFun>
 		{
 		public:
-			typedef size_t           size_type;
-			typedef T                value_type;
-			typedef T&               reference;
-			typedef const T&         const_reference;
-			typedef T*               pointer;
-			typedef const T*         const_pointer;
-			typedef const T*         iterator;
-			typedef T* const         const_iterator;
+			typedef size_t                  size_type;
+			typedef T                       value_type;
+			typedef T&                      reference;
+			typedef const T&                const_reference;
+			typedef T*                      pointer;
+			typedef const T*                const_pointer;
+			typedef const T*                iterator;
+			typedef T* const                const_iterator;
 
-			typedef _Iterator<T>     iterator_type;
-			typedef _CIterator<T>    c_iterator_type;
-			typedef _RIterator<T>    r_iterator_type;
-			typedef _CRIterator<T>   cr_iterator_type;
+			typedef _Vector_Iterator<T>     iterator_type;
+			typedef _Vector_CIterator<T>    c_iterator_type;
+			typedef _Vector_RIterator<T>    r_iterator_type;
+			typedef _Vector_CRIterator<T>   cr_iterator_type;
 
 			enum
 			{
@@ -58,21 +58,19 @@ namespace GEngine{
 
 	    //安插和移除
 		public:
-			void push_back(const T& val);
+			void push_back(const T& cv);
+			void push_back(T&& rv);
 			void pop_back();
 			iterator_type insert(iterator_type pos, const T& val);
 			iterator_type insert(iterator_type pos, size_t num, const T& val);
-			void insert(iterator_type pos, iterator_type begin, iterator_type end);
-			void insert(iterator_type pos, std::initializer_list<T> values);
-			template<class ...Args> void emplace(iterator_type pos, Args&&... args);
-			template<class Arg> void emplace(iterator_type pos, Arg&& val);
-			template<class ...Args> void emplace_bac(Args&&...values);
-			template<class Args> void emplace_back(Arg&& val);
-			void erase(iterator_type pos);
-			void erase(iterator_type _begin, iterator_type _end);
+			iterator_type insert(iterator_type pos, iterator_type _begin, iterator_type _end);
+			iterator_type insert(iterator_type pos, std::initializer_list<T> values);
+			template<class ...Args> iterator_type emplace(iterator_type pos, Args&&... args);
+			template<class ...Args> iterator_type emplace_back(Args&&...args);
+			iterator_type erase(iterator_type pos);
+			iterator_type erase(iterator_type _begin, iterator_type _end);
 			void resize(size_t num);
 			void resize(size_t num, const T& val);
-			void clear();
 	    //虚函数重写
 		public:
 			virtual bool empty();

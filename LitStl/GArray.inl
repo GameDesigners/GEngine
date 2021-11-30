@@ -2,14 +2,17 @@
 //*************************************************************************
 
 template<class T, size_t N>
-GArray<T, N>::GArray() {}
+GArray<T, N>::GArray() 
+{
+
+}
 
 
 template<class T, size_t N>
 GArray<T, N>::GArray(const GArray& cv)
 {
 	for (int index = 0; index < N; ++index)
-		m_data[index] = cv[index];
+		m_data[index] = cv.m_data[index];
 }
 
 template<class T, size_t N>
@@ -20,12 +23,12 @@ GArray<T, N>::GArray(GArray&& rv)
 }
 
 template<class T, size_t N>
-GArray<T, N>::GArray(iteractor_type begin, iteractor_type end)
+GArray<T, N>::GArray(iteractor_type _begin, iteractor_type _end)
 {
-	T* p = begin;
+	iteractor_type p = _begin;
 	int idx = 0;
-	for (p; p != end; p++, idx++)
-		*(m_data+idx) = *p;
+	for (p; p != _end; p++, idx++)
+		m_data[idx] = *p;
 }
 
 template<class T, size_t N>
@@ -38,7 +41,14 @@ GArray<T, N>::GArray(std::initializer_list<T> values)
 }
 
 template<class T, size_t N>
-GArray<T, N>::~GArray() {}
+GArray<T, N>::~GArray() 
+{
+	if (ValueBase<T>::NeedsDestructor)
+	{
+		for (int index = 0; index < N; index++)
+			m_data[index].~T();
+	}
+}
 
 
 //¸³Öµº¯Êý 
@@ -47,14 +57,14 @@ GArray<T, N>::~GArray() {}
 template<class T, size_t N>
 void GArray<T, N>::operator=(const GArray& cv)
 {
-	for (int index = 0; index < N; ++index)
-		m_data[index] = cv[index];
+	for (int index = 0; index < N; index++)
+		m_data[index] = cv.m_data[index];
 }
 
 template<class T, size_t N>
 void GArray<T, N>::operator=(GArray&& rv)
 {
-	for (int index = 0; index < N; ++index)
+	for (int index = 0; index < N; index++)
 		m_data[index] = g_move(rv[index]);
 }
 template<class T, size_t N>
@@ -119,7 +129,7 @@ T& GArray<T, N>::back()
 template<class T, size_t N>
 bool GArray<T, N>::empty()
 {
-	return true;
+	return false;
 }
 
 template<class T, size_t N>

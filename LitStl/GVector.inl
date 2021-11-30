@@ -96,7 +96,7 @@ template<class T, GMemManagerFun MMFun>
 GVector<T, MMFun>::~GVector()
 {
 	if (m_data != nullptr)
-		this->Delete(m_data, m_capcity);
+		this->Delete(m_data,m_count);
 }
 
 
@@ -265,11 +265,20 @@ T& GVector<T, MMFun>::back()
 //*************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::push_back(const T& val)
+void GVector<T, MMFun>::push_back(const T& cv)
 {
 	if (m_count == m_capcity)
 		reserve(m_capcity + IncreaseCapcityStep);
-	m_data[m_count] = val;
+	construct(m_data + m_count, cv);
+	m_count++;
+} 
+
+template<class T, GMemManagerFun MMFun>
+void GVector<T, MMFun>::push_back(T&& rv)
+{
+	if (m_count == m_capcity)
+		reserve(m_capcity + IncreaseCapcityStep);
+	m_data[m_count] = g_move(rv);
 	m_count++;
 }
 
@@ -284,7 +293,7 @@ void GVector<T, MMFun>::pop_back()
 }
 
 template<class T, GMemManagerFun MMFun>
-_Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, const T& val)
+_Vector_Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, const T& val)
 {
 	if (m_count == m_capcity)
 		reserve(m_capcity + IncreaseCapcityStep);
@@ -298,7 +307,7 @@ _Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, const T& val)
 }
 
 template<class T, GMemManagerFun MMFun>
-_Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, size_t num, const T& val)
+_Vector_Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, size_t num, const T& val)
 {
 	if (num == 0)
 		return pos;
@@ -319,6 +328,123 @@ _Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, size_t num, const T& 
 		p--;
 	}
 	return p;
+}
+
+template<class T, GMemManagerFun MMFun>
+_Vector_Iterator<T> GVector<T, MMFun>::insert(iterator_type pos, iterator_type _begin, iterator_type _end)
+{
+	size_t len = _end - _begin;
+	if (len < 0)
+		return pos;//迭代器开始和结束顺序不对
+
+	size_t temp = m_capcity;
+	while (temp <= m_count + len)
+		temp += IncreaseCapcityStep;
+	if (temp != m_capcity)
+		reserve(temp);
+
+	//向后挪动
+	iterator_type p = end();
+	for (p; p != pos; p--)
+		*(p + len - 1) = *(p - 1);
+
+	for (auto q = _begin; q != _end; q++,p--)
+		*p = *q;
+	return p;
+}
+
+template<class T, GMemManagerFun MMFun>
+_Vector_Iterator<T> GVector<T, MMFun>::insert(iterator_type pos, std::initializer_list<T> values)
+{
+	size_t len = values.size();
+	if (len < 0)
+		return pos;//迭代器开始和结束顺序不对
+
+	size_t temp = m_capcity;
+	while (temp <= m_count + len)
+		temp += IncreaseCapcityStep;
+	if (temp != m_capcity)
+		reserve(temp);
+
+	//向后挪动
+	iterator_type p = end();
+	for (p; p != pos; p--)
+		*(p + len - 1) = *(p - 1);
+
+	for (auto q : values) 
+	{
+		*p = *q;
+		p--;
+	}
+	return p;
+}
+
+
+template<class T, GMemManagerFun MMFun>
+template<class ...Args>
+_Vector_Iterator<T> GVector<T, MMFun>::emplace(iterator_type pos, Args&&... args)
+{
+	T temp(args...);
+	return insert(pos, temp);
+}
+
+template<class T, GMemManagerFun MMFun>
+template<class ...Args>
+_Vector_Iterator<T> GVector<T, MMFun>::emplace_back(Args&&... args)
+{
+	T temp(args...);
+	push_back(temp);
+	return _Vector_Iterator<T>(m_data + m_count - 1);
+}
+
+template<class T, GMemManagerFun MMFun>
+_Vector_Iterator<T> GVector<T, MMFun>::erase(iterator_type pos)
+{
+	if (ValueBase<T>::NeedsDestructor)
+		pos->~T();
+
+	for(auto p = pos; p + 1 != end(); p++)
+		*p = *(p + 1);
+	m_count--;		
+}
+
+template<class T, GMemManagerFun MMFun>
+_Vector_Iterator<T> GVector<T, MMFun>::erase(iterator_type _begin, iterator_type _end)
+{
+	if (ValueBase<T>::NeedsDestructor)
+		for (auto p = _begin; p != _end; p++)
+			p->~T();
+
+	for (auto p = _begin, q = _end; q != end(); p++, q++)
+		*p = *q;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GVector<T, MMFun>::resize(size_t num)
+{
+	T val;
+	resize(num, val);
+}
+
+template<class T, GMemManagerFun MMFun>
+void GVector<T, MMFun>::resize(size_t num, const T& val)
+{
+	if (m_count == num)
+		return;
+
+	size_t temp = m_capcity;
+	while (temp <= num)
+		temp += IncreaseCapcityStep;
+	if (temp != m_capcity)
+		reserve(temp);
+
+	if (num > m_count)
+		insert(end(), num - m_count, val);
+	else
+	{
+		for (int index = 0; index < m_count - num; index++)
+			pop_back();
+	}
 }
 
 
@@ -346,7 +472,10 @@ size_t GVector<T, MMFun>::capcity()
 template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::clear()
 {
-	m_count=0;
+	if (ValueBase<T>::NeedsDestructor)
+		for (int index = 0; index < m_count; index++)
+			(m_data + index)->~T();
+	m_count = 0;
 }
 
 
@@ -445,53 +574,49 @@ bool GVector<T, MMFun>::operator<=(const GVector& rhs)
 //*************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-_Iterator<T> GVector<T, MMFun>::begin()
+_Vector_Iterator<T> GVector<T, MMFun>::begin()
 {
-	return _Iterator<T>(m_data);
+	return _Vector_Iterator<T>(m_data);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Iterator<T> GVector<T, MMFun>::end()
+_Vector_Iterator<T> GVector<T, MMFun>::end()
 {
-	return _Iterator<T>(m_data + m_count);
+	return _Vector_Iterator<T>(m_data + m_count);
 }
 
 template<class T, GMemManagerFun MMFun>
-_CIterator<T> GVector<T, MMFun>::cbegin()
+_Vector_CIterator<T> GVector<T, MMFun>::cbegin()
 {
-	return _CIterator<T>(m_data);
+	return _Vector_CIterator<T>(m_data);
 }
 
 template<class T, GMemManagerFun MMFun>
-_CIterator<T> GVector<T, MMFun>::cend()
+_Vector_CIterator<T> GVector<T, MMFun>::cend()
 {
-	return _CIterator<T>(m_data + m_count);
+	return _Vector_CIterator<T>(m_data + m_count);
 }
 
 template<class T, GMemManagerFun MMFun>
-_RIterator<T> GVector<T, MMFun>::rbegin()
+_Vector_RIterator<T> GVector<T, MMFun>::rbegin()
 {
-	return _RIterator<T>(m_data + m_count - 1);
+	return _Vector_RIterator<T>(m_data + m_count - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
-_RIterator<T> GVector<T, MMFun>::rend()
+_Vector_RIterator<T> GVector<T, MMFun>::rend()
 {
-	return _RIterator<T>(m_data - 1);
+	return _Vector_RIterator<T>(m_data - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
-_CRIterator<T> GVector<T, MMFun>::crbegin()
+_Vector_CRIterator<T> GVector<T, MMFun>::crbegin()
 {
-	return _CRIterator<T>(m_data + m_count - 1);
+	return _Vector_CRIterator<T>(m_data + m_count - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
-_CRIterator<T> GVector<T, MMFun>::crend()
+_Vector_CRIterator<T> GVector<T, MMFun>::crend()
 {
-	return _CRIterator<T>(m_data - 1);
+	return _Vector_CRIterator<T>(m_data - 1);
 }
-
-
-
-

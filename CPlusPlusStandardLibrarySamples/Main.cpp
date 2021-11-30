@@ -15,6 +15,70 @@
 #include <GAlgorithm.h>
 #include <GArray.h>
 
+
+class SamplesElem
+{
+private:
+	int* i;
+	float f;
+
+public:
+	SamplesElem()
+	{
+		i = GNEW int;
+		f = 0.0f;
+		std::cout << "调用了一次无参构造函数->SamplesElem" << std::endl;
+	}
+
+	SamplesElem(int _i, float _f)
+	{
+		i = GNEW int;
+		*i = _i;
+		f = _f;
+		std::cout << "调用了一次赋初值构造函数->SamplesElem(_i,_f)" << std::endl;
+	}
+
+	SamplesElem(const SamplesElem& elem)
+	{
+		i = GNEW int;
+		*i = *(elem.i);
+		f = elem.f;
+		std::cout << "调用了一次复制构造函数->SamplesElem(const SamplesElem&)" << std::endl;
+	}
+
+	void operator=(const SamplesElem& cv)
+	{
+		if (i != nullptr && cv.i != nullptr) {
+			*i = *(cv.i);
+			f = cv.f;
+		}
+	}
+
+	void operator=(SamplesElem&& rv) noexcept
+	{
+		GSAFE_DELETE(i)
+			i = rv.i;
+		f = rv.f;
+		rv.i = nullptr;
+	}
+
+	~SamplesElem() {
+		GSAFE_DELETE(i)
+	}
+
+	void to_string()
+	{
+		if (i != nullptr)
+			std::cout << "int:" << *i << " float:" << f << std::endl;
+		else
+			std::cout <<"float:" << f << std::endl;
+	}
+};
+
+
+#include "UseGArraySample.h"
+#include "UseGVectorSample.h"
+
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
 
@@ -155,7 +219,7 @@ void USE_GSTL_GARRAY()
 		std::cout << array1[index] << "\t";
 	std::cout << std::endl;
 
-	for(GArray<int,10>::r_iterator_type p=array1.rbegin();p!=array1.rend();p++)
+	for(auto p=array1.rbegin();p!=array1.rend();p++)
 		std::cout << *p << "\t";
 	std::cout << std::endl;
 
@@ -166,17 +230,22 @@ void USE_GSTL_GARRAY()
 		std::cout << array1[index] << "\t";
 	std::cout << std::endl;
 
-	std::cout << "end:" << *(array1.end()-1) << std::endl;
+	auto _end = array1.end()-5;
+	std::cout << "end:" << *_end << std::endl;
 	std::cout << "sum:" << accumulate(array1.begin(), array1.end(), 0) << std::endl;
 	transform(array1.begin(), array1.end(), negate<int>());
 	for (int index = 0; index < 10; index++)
 		std::cout << array1[index] << "\t";
 	std::cout << std::endl;
 }
-void USE_GSTL_GVECTOR()
-{
-	
-}
+
+
+
+
+
+
+
+
 
 
 int main()
@@ -190,8 +259,10 @@ int main()
 	//USE_CUSTOM_TIMER();
 	//USE_CUSTOM_GFILE();
 
-	USE_GSTL_GARRAY();
-	//USE_GSTL_GVECTOR();
+	//USE_GSTL_GARRAY();
+
+	GArraySample();
+	//GVectorSample();
 
 	//getchar();
 	return 0;
