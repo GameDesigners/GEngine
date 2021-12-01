@@ -8,6 +8,7 @@ GVector<T, MMFun>::GVector()
 	GASSERT(m_data != nullptr);
 	m_count = 0;
 	m_capcity = DefaultCapcity;
+	m_constructed = 0;
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -15,14 +16,11 @@ GVector<T, MMFun>::GVector(const GVector& cv)
 {
 	m_data = this->New(cv.m_capcity);
 	GASSERT(m_data != nullptr);
-	m_capcity = cv.m_capcity;
 	m_count = cv.m_count;
+	m_capcity = cv.m_capcity;
 
 	for (int index = 0; index < m_count; index++) 
-	{
-		construct(m_data + index);
-		*(m_data + index) = *(cv.m_data + index);
-	}
+		_construct_elem(index, *(cv.m_data + index));
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -32,76 +30,79 @@ GVector<T, MMFun>::GVector(GVector&& rv)
 	m_data = rv.m_data;
 	m_count = rv.m_count;
 	m_capcity = rv.m_capcity;
+	m_constructed = rv.m_constructed;
+
+	//将传入的右值数值重置(因为数据已经被移动)
 	rv.m_data = nullptr;
 	rv.m_capcity = 0;
 	rv.m_count = 0;
+	rv.m_constructed = 0;
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(size_t _m_capcity)
+GVector<T, MMFun>::GVector(size_t _capcity)
 {
-	m_data = this->New(_m_capcity);
+	m_data = this->New(_capcity);
 	GASSERT(m_data != nullptr);
-	m_capcity = _m_capcity;
 	m_count = 0;
+	m_capcity = _capcity;
+	m_constructed = 0;
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(size_t _m_count, const T& val)
+GVector<T, MMFun>::GVector(size_t _count, const T& val)
 {
-	m_count = _m_count;
-	m_capcity = DefaultCapcity;
-	while (m_capcity < _m_count)
-		m_capcity += IncreaseCapcityStep;
+	m_count = _count;
+	m_capcity = _caculate_increased_capcity(_count);
+	m_constructed = 0;
+
+	m_data = this->New(m_capcity);
+	GASSERT(m_data != nullptr);
+
+	for (int index = 0; index < m_count; index++) 
+		_construct_elem(index, val);
+}
+
+template<class T, GMemManagerFun MMFun>
+GVector<T, MMFun>::GVector(_base_iterator _begin, _base_iterator _end)
+{ 
+	m_count = _end - _begin;
+	GASSERT(m_count >= 0);  //迭代器异常断言
+	m_capcity = _caculate_increased_capcity(m_count);
+	m_constructed = 0;
 
 	m_data = this->New(m_capcity);
 	GASSERT(m_data != nullptr);
 
 	for (int index = 0; index < m_count; index++)
-		construct(m_data + index, val);
-}
-
-template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(iterator_type begin, iterator_type end)
-{ 
-	m_count = end - begin;
-	m_capcity = DefaultCapcity;
-	while (m_capcity < m_count)
-		m_capcity += IncreaseCapcityStep;
-
-	m_data = this->New(m_capcity);
-	GASSERT(m_data != nullptr);
-	for (int index = 0; index < m_count; index++) 
-	{
-		construct(m_data + index);
-		*(m_data + index) = *(begin + index);
-	}
+		_construct_elem(index, *(_begin + index));
 }
 
 template<class T, GMemManagerFun MMFun>
 GVector<T, MMFun>::GVector(std::initializer_list<T> values)
 {
 	m_count = values.size();
-	m_capcity = DefaultCapcity;
-	while (m_capcity < m_count)
-		m_capcity += IncreaseCapcityStep;
+	m_capcity = _caculate_increased_capcity(m_count);
+	m_constructed = 0;
 
 	m_data = this->New(m_capcity);
 	GASSERT(m_data != nullptr);
 
 	int idx = 0;
-	for (auto pval : values)
-	{
-		*(m_data + idx) = (T)(*pval);
-		idx++;
-	}
+	 for (T* p = (T*)values.begin(); p != values.end(); p++, idx++)
+		 _construct_elem(idx, *p);
 }
 
 template<class T, GMemManagerFun MMFun>
 GVector<T, MMFun>::~GVector()
 {
 	if (m_data != nullptr)
-		this->Delete(m_data,m_count);
+		this->Delete(m_data, m_capcity, m_constructed);
+
+	m_data = nullptr;
+	m_count = 0;
+	m_capcity = 0;
+	m_constructed = 0;
 }
 
 
@@ -111,111 +112,85 @@ GVector<T, MMFun>::~GVector()
 template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::operator=(const GVector& cv)
 {
-	size_t temp = m_capcity;
-	while (temp <= cv.m_count)
-		temp += IncreaseCapcityStep;
+	size_t temp = _caculate_increased_capcity(cv.m_count, m_capcity);
 
 	if (temp != m_capcity)
-	{
-		T* new_memory = this->New(temp);
-		GASSERT(new_memory != nullptr);
-		m_capcity = temp;
-		this->Delete(m_data, m_capcity);
-		m_data = new_memory;
-	}
-
+		_new_data_memory_addr(temp, false);
 	m_count = cv.m_count;
 	for (int idx = 0; idx < m_count; idx++)
-		*(m_data + idx) = *(cv.m_data + idx);
+		_construct_elem(idx, *(cv.m_data + idx));
 }
 
 template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::operator=(GVector&& rv)
 {
 	GASSERT(rv.m_data != nullptr);
-	this->Delete(m_data, m_capcity);
+	this->Delete(m_data, m_capcity, m_constructed);  //删除本容器的数据
+
+	m_data = rv.m_data;
 	m_count = rv.m_count;
 	m_capcity = rv.m_capcity;
-	m_data = rv.m_data;
+	m_constructed = rv.m_constructed;
 
 	rv.m_data = nullptr;
 	rv.m_count = 0;
 	rv.m_capcity = 0;
+	m_constructed = 0;
 }
 
 template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::operator=(std::initializer_list<T> values)
 {
 	size_t elem_num = values.size();
-	size_t temp = m_capcity;
-	while (temp < elem_num)
-		temp += IncreaseCapcityStep;
-
+	size_t temp = _caculate_increased_capcity(elem_num, m_capcity);
 	if (temp != m_capcity)
-	{
-		T* new_memory = this->New(temp);
-		GASSERT(new_memory != nullptr);
-		m_capcity = temp;
-		this->Delete(m_data, m_capcity);
-		m_data = new_memory;
-	}
-	m_count = elem_num;
+		_new_data_memory_addr(temp, false);
+
 	int idx = 0;
-	for (auto pval : values)
-	{
-		*(m_data + idx) = (T)(*pval);
-		idx++;
-	}
+	for (T* p = (T*)values.begin(); p != values.end(); p++, idx++)
+		_construct_elem(idx, *p);
+	m_count = elem_num;
 }
 
 template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::assign(int _count, const T& val)
 {
-	size_t temp = m_capcity;
-	while (temp < _count)
-		temp += IncreaseCapcityStep;
+	size_t temp = _caculate_increased_capcity(_count, m_capcity);
 	if (temp != m_capcity)
-		reserve(temp);
+		_new_data_memory_addr(temp, false);
+
+	for (int index = 0; index < _count; index++)
+		_construct_elem(index, val);
 	m_count = _count;
-	m_capcity = temp;
-	for (int index = 0; index < m_count; index++)
-		*(m_data + index) = val;
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::assign(iterator_type begin, iterator_type end)
+void GVector<T, MMFun>::assign(_base_iterator begin, _base_iterator end)
 {
 	size_t _count = end - begin;
-	size_t temp = m_capcity;
-	while (temp < _count)
-		temp += IncreaseCapcityStep;
+	GASSERT(_count >= 0);  //迭代器异常断言
+	size_t temp = _caculate_increased_capcity(_count,m_capcity);
+	
 	if (temp != m_capcity)
-		reserve(temp);
+		_new_data_memory_addr(temp, false);
 
+	for (int index = 0; index < _count; index++)
+		_construct_elem(index, *(begin + index));
 	m_count = _count;
-	m_capcity = temp;
-	for (int index = 0; index < m_count; index++)
-		*(m_data + index) = *(begin + index);
 }
 
 template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::assign(std::initializer_list<T> values)
 {
 	size_t elem_num = values.size();
-	size_t temp = m_capcity;
-	while (temp < elem_num)
-		temp += IncreaseCapcityStep;
+	size_t temp = _caculate_increased_capcity(m_capcity);
 	if (temp != m_capcity)
-		reserve(temp);
+		_new_data_memory_addr(temp, false);
 
-	m_count = elem_num;
-	m_capcity = temp;
 	int idx = 0;
-	for (auto pval : values)
-	{
-		*(m_data + idx) = (T)(*pval);
-		idx++;
-	}
+	for (T* p = (T*)values.begin(); p != values.end(); p++, idx++)
+		_construct_elem(idx, *p);
+	m_count = elem_num;
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -224,14 +199,17 @@ void GVector<T, MMFun>::swap(GVector& v)
 	T* temp = m_data;
 	size_t _count = m_count;
 	size_t _capcity = m_capcity;
+	size_t _constructed = m_constructed;
 
 	m_data = v.m_data;
 	m_count = v.m_count;
 	m_capcity = v.m_capcity;
+	m_constructed = v.m_constructed;
 
 	v.m_data = temp;
 	v.m_count = _count;
 	v.m_capcity = _capcity;
+	v.m_constructed = _constructed;
 
 }
 
@@ -273,8 +251,9 @@ template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::push_back(const T& cv)
 {
 	if (m_count == m_capcity)
-		reserve(m_capcity + IncreaseCapcityStep);
-	construct(m_data + m_count, cv);
+		_new_data_memory_addr(m_capcity + IncreaseCapcityStep, true);
+
+	_construct_addr(m_data + m_count, cv);
 	m_count++;
 } 
 
@@ -282,8 +261,8 @@ template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::push_back(T&& rv)
 {
 	if (m_count == m_capcity)
-		reserve(m_capcity + IncreaseCapcityStep);
-	construct(m_data + m_count);
+		_new_data_memory_addr(m_capcity + IncreaseCapcityStep, true);
+	_construct_elem_no_cv(m_count);
 	m_data[m_count] = g_move(rv);
 	m_count++;
 }
@@ -293,102 +272,107 @@ void GVector<T, MMFun>::pop_back()
 {
 	if (m_count == 0)
 		return;
-	if (ValueBase<T>::NeedsDestructor)
-		m_data[m_count - 1]->~T();
+
+	_destruct_elem(m_count - 1);
 	m_count--;
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, const T& val)
+_Base_Iterator<T>  GVector<T, MMFun>::insert(_base_iterator pos, const T& val)
 {
-	if (m_count == m_capcity)
-		reserve(m_capcity + IncreaseCapcityStep);
-
 	iterator_type p = end();
+	if (p - pos < 0)
+		return pos;
+
+	if (m_count == m_capcity)
+		_new_data_memory_addr(m_capcity + IncreaseCapcityStep, true);
+
 	for (p; p != pos; p--)
-		*p = *(p - 1);
-	*p = val;
+		_construct_iterator(p, *(p - 1));
+	_construct_iterator(p, val);
 	m_count++;
 	return p;
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_Iterator<T>  GVector<T, MMFun>::insert(iterator_type pos, size_t num, const T& val)
+_Base_Iterator<T>  GVector<T, MMFun>::insert(_base_iterator pos, size_t num, const T& val)
 {
 	if (num == 0)
 		return pos;
 
-	size_t temp = m_capcity;
-	while (temp <= m_count + num)
-		temp += IncreaseCapcityStep;
-	if (temp != m_capcity)
-		reserve(temp);
-
 	iterator_type p = end();
-	for (p; p != pos; p--)
-		*(p + num - 1) = *(p - 1);
+	GASSERT(p - pos >= 0);  //传入迭代器是否合法断言
 
+	size_t temp = _caculate_increased_capcity(num + m_count, m_capcity);
+	if (temp != m_capcity)
+		_new_data_memory_addr(temp, true);
 	for (int index = 0; index < num; index++)
-	{
-		*p = val;
-		p--;
-	}
+		_construct_elem_no_cv(m_count + index);
+
+	//元素挪动
+	for (p; p != pos; p--)
+		_construct_iterator(p + num - 1, *(p - 1));
+
+	//插入新值
+	for (int index = 0; index < num; index++, pos++)
+		_construct_iterator(pos, val);
+	m_count += num;
 	return p;
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_Iterator<T> GVector<T, MMFun>::insert(iterator_type pos, iterator_type _begin, iterator_type _end)
+_Base_Iterator<T> GVector<T, MMFun>::insert(_base_iterator pos, _base_iterator _begin, _base_iterator _end)
 {
-	size_t len = _end - _begin;
-	if (len < 0)
+	size_t _count = _end - _begin;
+	iterator_type p = end();
+	if (_count < 0 || p - pos <= 0)
 		return pos;//迭代器开始和结束顺序不对
 
-	size_t temp = m_capcity;
-	while (temp <= m_count + len)
-		temp += IncreaseCapcityStep;
+	size_t temp = _caculate_increased_capcity(_count, m_capcity);
 	if (temp != m_capcity)
-		reserve(temp);
+		_new_data_memory_addr(temp, true);
+	for (int index = 0; index < _count; index++)
+		_construct_elem_no_cv(m_count + index);
 
 	//向后挪动
-	iterator_type p = end();
 	for (p; p != pos; p--)
-		*(p + len - 1) = *(p - 1);
+		_construct_iterator(p + _count - 1, *(p - 1));
 
-	for (auto q = _begin; q != _end; q++,p--)
-		*p = *q;
+	for (auto q = _begin; q != _end; q++, pos++)
+		_construct_iterator(pos, *q);
+	m_count += _count;
 	return p;
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_Iterator<T> GVector<T, MMFun>::insert(iterator_type pos, std::initializer_list<T> values)
+_Base_Iterator<T> GVector<T, MMFun>::insert(_base_iterator pos, std::initializer_list<T> values)
 {
-	size_t len = values.size();
-	if (len < 0)
+	size_t _count = values.size();
+	iterator_type p = end();
+	if (_count < 0 || p - pos < 0)
 		return pos;//迭代器开始和结束顺序不对
 
-	size_t temp = m_capcity;
-	while (temp <= m_count + len)
-		temp += IncreaseCapcityStep;
+	size_t temp = _caculate_increased_capcity(m_count + _count, m_capcity);
 	if (temp != m_capcity)
-		reserve(temp);
+		_new_data_memory_addr(temp, true);
+	for (int index = 0; index < _count; index++)
+		_construct_elem_no_cv(m_count + index);
 
 	//向后挪动
-	iterator_type p = end();
 	for (p; p != pos; p--)
-		*(p + len - 1) = *(p - 1);
+		_construct_iterator(p + _count - 1, *(p - 1));
 
-	for (auto q : values) 
-	{
-		*p = *q;
-		p--;
-	}
+
+	for (T* q = (T*)values.begin(); q != values.end(); q++, pos++)
+		_construct_iterator(pos, *q);
+	m_count += _count;
 	return p;
 }
 
 
 template<class T, GMemManagerFun MMFun>
 template<class ...Args>
-_Vector_Iterator<T> GVector<T, MMFun>::emplace(iterator_type pos, Args&&... args)
+_Base_Iterator<T> GVector<T, MMFun>::emplace(_base_iterator pos, Args&&... args)
 {
 	T temp(args...);
 	return insert(pos, temp);
@@ -396,7 +380,7 @@ _Vector_Iterator<T> GVector<T, MMFun>::emplace(iterator_type pos, Args&&... args
 
 template<class T, GMemManagerFun MMFun>
 template<class ...Args>
-_Vector_Iterator<T> GVector<T, MMFun>::emplace_back(Args&&... args)
+_Base_Iterator<T> GVector<T, MMFun>::emplace_back(Args&&... args)
 {
 	T temp(args...);
 	push_back(temp);
@@ -404,25 +388,31 @@ _Vector_Iterator<T> GVector<T, MMFun>::emplace_back(Args&&... args)
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_Iterator<T> GVector<T, MMFun>::erase(iterator_type pos)
+_Base_Iterator<T> GVector<T, MMFun>::erase(_base_iterator pos)
 {
-	if (ValueBase<T>::NeedsDestructor)
-		pos->~T();
-
-	for(auto p = pos; p + 1 != end(); p++)
-		*p = *(p + 1);
+	int idx = pos - begin();
+	for (auto p = pos; p + 1 != end(); p++)
+		_construct_iterator(p, *(p + 1));
+	_destruct_elem(m_count-1);
 	m_count--;		
+	return _Vector_Iterator<T>(m_data + idx);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_Iterator<T> GVector<T, MMFun>::erase(iterator_type _begin, iterator_type _end)
+_Base_Iterator<T> GVector<T, MMFun>::erase(_base_iterator _begin, _base_iterator _end)
 {
-	if (ValueBase<T>::NeedsDestructor)
-		for (auto p = _begin; p != _end; p++)
-			p->~T();
+	int _delete_count = _end - _begin;
+	if (_delete_count <= 0)
+		return _begin;
 
+	int next_idx = end() - _end;
 	for (auto p = _begin, q = _end; q != end(); p++, q++)
-		*p = *q;
+		_construct_iterator(p, *q);
+
+	for (int i = 0; i < _delete_count; i++)
+		_destruct_elem(m_count - i-1);
+	m_count -= _delete_count;
+	return _Base_Iterator<T>(m_data + m_count - next_idx);
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -438,19 +428,15 @@ void GVector<T, MMFun>::resize(size_t num, const T& val)
 	if (m_count == num)
 		return;
 
-	size_t temp = m_capcity;
-	while (temp <= num)
-		temp += IncreaseCapcityStep;
+	size_t temp = _caculate_increased_capcity(num, m_capcity);
 	if (temp != m_capcity)
-		reserve(temp);
+		_new_data_memory_addr(temp, true);
 
-	if (num > m_count)
-		insert(end(), num - m_count, val);
+	int delta = num - m_count;
+	if (delta > 0)
+		insert(end(), delta, val);
 	else
-	{
-		for (int index = 0; index < m_count - num; index++)
-			pop_back();
-	}
+		erase(end() + delta, end());
 }
 
 
@@ -479,8 +465,9 @@ template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::clear()
 {
 	if (ValueBase<T>::NeedsDestructor)
-		for (int index = 0; index < m_count; index++)
-			(m_data + index)->~T();
+		while (m_constructed > 0)
+			_destruct_elem(m_constructed - 1);
+
 	m_count = 0;
 }
 
@@ -494,18 +481,15 @@ void GVector<T, MMFun>::reserve(size_t _capcity)
 	if (m_capcity >= _capcity)
 		return;
 
-	T* new_memory = this->New(_capcity);
-	GASSERT(new_memory != nullptr);
-	GMemoryCpy(new_memory, _capcity, m_data, m_count);
-	this->Delete(m_data, m_capcity);
-	m_data = new_memory;
-	m_capcity = _capcity;
+	_new_data_memory_addr(_capcity, true);
 }
 
 template<class T, GMemManagerFun MMFun>
 void GVector<T, MMFun>::shrink_to_fit()
 {
-	reserve(m_count);
+	if (m_capcity == m_count)
+		return;
+	_new_data_memory_addr(m_count, true);
 }
 
 

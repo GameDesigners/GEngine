@@ -12,6 +12,12 @@
     <Filter Include="Inl Files">
       <UniqueIdentifier>{5445af22-f4b8-4068-a38e-c132ab76baf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GContainers">
+      <UniqueIdentifier>{f4be12c9-276a-407b-8d72-ea66d2b914c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inl Files\GContainers">
+      <UniqueIdentifier>{f61a8790-8037-4bbb-870b-57402b4322e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUtility.h">
@@ -23,16 +29,19 @@
     <ClInclude Include="GStlMicro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GContainer.h">
+    <ClInclude Include="GAlgorithm.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GContainer.h">
+      <Filter>Header Files\GContainers</Filter>
     </ClInclude>
     <ClInclude Include="GVector.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GContainers</Filter>
     </ClInclude>
     <ClInclude Include="GArray.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GContainers</Filter>
     </ClInclude>
-    <ClInclude Include="GAlgorithm.h">
+    <ClInclude Include="GDeque.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -49,18 +58,21 @@
     <ClCompile Include="GArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GDeque.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GUtility.inl">
-      <Filter>Inl Files</Filter>
-    </None>
     <None Include="GMemory.inl">
       <Filter>Inl Files</Filter>
     </None>
     <None Include="GVector.inl">
-      <Filter>Inl Files</Filter>
+      <Filter>Inl Files\GContainers</Filter>
     </None>
     <None Include="GArray.inl">
+      <Filter>Inl Files\GContainers</Filter>
+    </None>
+    <None Include="GUtility.inl">
       <Filter>Inl Files</Filter>
     </None>
   </ItemGroup>

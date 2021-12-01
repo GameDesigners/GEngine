@@ -215,49 +215,49 @@ bool GArray<T, N>::operator<=(const GArray& rhs)
 //µü´úÆ÷
 //*************************************************************************
 template<class T, size_t N>
-_Iterator<T> GArray<T, N>::begin()
+_Base_Iterator<T> GArray<T, N>::begin()
 {
-	return _Iterator<T>(m_data);
+	return _Base_Iterator<T>(m_data);
 }
 
 template<class T, size_t N>
-_Iterator<T> GArray<T, N>::end()
+_Base_Iterator<T> GArray<T, N>::end()
 {
-	return _Iterator<T>(m_data + N);
+	return _Base_Iterator<T>(m_data + N);
 }
 
 template<class T,size_t N>
-_CIterator<T> GArray<T, N>::cbegin()
+_Base_CIterator<T> GArray<T, N>::cbegin()
 {
-	return _CIterator<T>(m_data);
+	return _Base_CIterator<T>(m_data);
 }
 
 template<class T, size_t N>
-_CIterator<T> GArray<T, N>::cend()
+_Base_CIterator<T> GArray<T, N>::cend()
 {
-	return _CIterator<T>(m_data + N);
+	return _Base_CIterator<T>(m_data + N);
 }
 
 template<class T, size_t N>
-_RIterator<T> GArray<T, N>::rbegin()
+_Base_RIterator<T> GArray<T, N>::rbegin()
 {
-	return _RIterator<T>(m_data + N - 1);
+	return _Base_RIterator<T>(m_data + N - 1);
 }
 
 template<class T, size_t N>
-_RIterator<T> GArray<T, N>::rend()
+_Base_RIterator<T> GArray<T, N>::rend()
 {
-	return _RIterator<T>(m_data - 1);
+	return _Base_RIterator<T>(m_data - 1);
 }
 
 template<class T, size_t N>
-_CRIterator<T> GArray<T, N>::crbegin()
+_Base_CRIterator<T> GArray<T, N>::crbegin()
 {
-	return _CRIterator<T>(m_data + N - 1);
+	return _Base_CRIterator<T>(m_data + N - 1);
 }
 
 template<class T, size_t N>
-_CRIterator<T> GArray<T, N>::crend()
+_Base_CRIterator<T> GArray<T, N>::crend()
 {
-	return _CRIterator<T>(m_data - 1);
+	return _Base_CRIterator<T>(m_data - 1);
 }

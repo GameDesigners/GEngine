@@ -14,10 +14,10 @@ namespace GEngine {
 			typedef const T&         const_reference;
 			typedef T*               pointer;
 			typedef const T*         const_pointer;
-			typedef _Iterator<T>     iteractor_type;
-			typedef _CIterator<T>    c_iterator_type;
-			typedef _RIterator<T>    r_iterator_type;
-			typedef _CRIterator<T>   cr_iterator_type;
+			typedef _Base_Iterator<T>     iteractor_type;
+			typedef _Base_CIterator<T>    c_iterator_type;
+			typedef _Base_RIterator<T>    r_iterator_type;
+			typedef _Base_CRIterator<T>   cr_iterator_type;
 
 		//¹¹Ôìº¯Êý
 		public:

@@ -18,6 +18,9 @@ namespace GEngine{
 			typedef _Vector_RIterator<T>    r_iterator_type;
 			typedef _Vector_CRIterator<T>   cr_iterator_type;
 
+		public:
+			typedef _Base_Iterator<T>       _base_iterator;
+
 			enum
 			{
 				DefaultCapcity = 24,
@@ -31,7 +34,7 @@ namespace GEngine{
 			GVector(GVector&& rv);
 			GVector(size_t _capcity);
 			GVector(size_t _count, const T& val);
-			GVector(iterator_type begin, iterator_type end);
+			GVector(_base_iterator _begin, _base_iterator _end);
 			GVector(std::initializer_list<T> values);
 			~GVector();
 		
@@ -42,7 +45,7 @@ namespace GEngine{
 			void operator=(std::initializer_list<T> values);
 
 			void assign(int _count, const T& val);
-			void assign(iterator_type begin, iterator_type end);
+			void assign(_base_iterator begin, _base_iterator end);
 			void assign(std::initializer_list<T> values);
 			void swap(GVector& v);
 
@@ -58,14 +61,14 @@ namespace GEngine{
 			void push_back(const T& cv);
 			void push_back(T&& rv);
 			void pop_back();
-			iterator_type insert(iterator_type pos, const T& val);
-			iterator_type insert(iterator_type pos, size_t num, const T& val);
-			iterator_type insert(iterator_type pos, iterator_type _begin, iterator_type _end);
-			iterator_type insert(iterator_type pos, std::initializer_list<T> values);
-			template<class ...Args> iterator_type emplace(iterator_type pos, Args&&... args);
-			template<class ...Args> iterator_type emplace_back(Args&&...args);
-			iterator_type erase(iterator_type pos);
-			iterator_type erase(iterator_type _begin, iterator_type _end);
+			_base_iterator insert(_base_iterator pos, const T& val);
+			_base_iterator insert(_base_iterator pos, size_t num, const T& val);
+			_base_iterator insert(_base_iterator pos, _base_iterator _begin, _base_iterator _end);
+			_base_iterator insert(_base_iterator pos, std::initializer_list<T> values);
+			template<class ...Args> _base_iterator emplace(_base_iterator pos, Args&&... args);
+			template<class ...Args> _base_iterator emplace_back(Args&&...args);
+			_base_iterator erase(_base_iterator pos);
+			_base_iterator erase(_base_iterator _begin, _base_iterator _end);
 			void resize(size_t num);
 			void resize(size_t num, const T& val);
 	    //虚函数重写
@@ -104,6 +107,99 @@ namespace GEngine{
 			T*         m_data;
 			size_t     m_count;
 			size_t     m_capcity;
+			size_t     m_constructed;
+
+			inline size_t _caculate_increased_capcity(size_t target_count,size_t _old_capcity=DefaultCapcity)
+			{
+				while (_old_capcity <= target_count)
+					_old_capcity += IncreaseCapcityStep;
+				return _old_capcity;
+			}
+			inline void _construct_elem_no_cv(size_t index)
+			{
+				if (ValueBase<T>::NeedsConstructor)
+				{
+					if (index < m_constructed)  //已经调用过构造函数
+						return;
+					construct(m_data + index);
+					m_constructed++;
+				}
+			}
+			inline void _construct_elem(size_t index, const T& cv)
+			{
+				if (ValueBase<T>::NeedsConstructor) 
+				{
+					if (index < m_constructed) {  //已经调用过构造函数
+						*(m_data + index) = cv;
+						return;
+					}
+					construct(m_data + index, cv);
+					m_constructed++;
+				}
+			}
+			inline void _construct_addr(T* addr, const T& cv)
+			{
+				if (ValueBase<T>::NeedsConstructor)
+				{
+					if ((addr-m_data) < m_constructed) {  //已经调用过构造函数
+						*addr = cv;
+						return;
+					}
+					construct(addr, cv);
+					m_constructed++;
+				}
+			}
+			inline void _construct_iterator(_base_iterator itera, const T& cv)
+			{
+				_construct_elem(itera - begin(), cv);
+			}
+			inline void _destruct_elem(size_t index)
+			{
+				if (ValueBase<T>::NeedsDestructor)
+				{
+					if (m_constructed > index) 
+					{
+						(m_data+index)->~T();
+						m_constructed--;
+					}
+				}
+			}
+			inline void _destruct_addr(T* addr)
+			{
+				if (addr == nullptr)
+					return;
+				if (ValueBase<T>::NeedsDestructor)
+				{
+					if ((addr - m_data) < m_constructed) 
+					{
+						addr->~T();
+						m_constructed--;
+					}
+				}
+			}
+			inline void _new_data_memory_addr(size_t new_capcity, bool _is_copy_old_data)
+			{
+				T* new_memory = this->New(new_capcity);
+				GASSERT(new_memory != nullptr);
+				m_capcity = new_capcity;
+				size_t old_need_destructed = m_constructed;
+				if (_is_copy_old_data)//复制容器旧数据	
+				{
+					for(int index=0;index<m_count;index++)
+					{
+						construct(new_memory + index);
+						*(new_memory + index) = g_move(*(m_data + index));
+					}
+					m_constructed = m_count;
+				}
+				else 
+				{
+					m_count = 0;
+					m_constructed = 0;//清除已构造对象数量（因为无复制旧的内存）
+				}
+				this->Delete(m_data, m_capcity, old_need_destructed);
+				m_data = new_memory;
+			}
 		};
 
 #include "GVector.inl"

@@ -145,6 +145,7 @@
     <ClInclude Include="GAlgorithm.h" />
     <ClInclude Include="GArray.h" />
     <ClInclude Include="GContainer.h" />
+    <ClInclude Include="GDeque.h" />
     <ClInclude Include="GMemory.h" />
     <ClInclude Include="GStlMicro.h" />
     <ClInclude Include="GUtility.h" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GArray.cpp" />
+    <ClCompile Include="GDeque.cpp" />
     <ClCompile Include="GMemory.cpp" />
     <ClCompile Include="GUtility.cpp" />
     <ClCompile Include="GVector.cpp" />

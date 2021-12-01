@@ -49,15 +49,15 @@ namespace GEngine{
 				}*/
 				return newAddr;
 			}
-			inline void Delete(T* pAddr,int Num)
+			inline void Delete(T* pAddr,int Num,int ConstructsNum)
 			{
 				if (pAddr != nullptr)
 				{
-					if (Num > 0)
+					if (ConstructsNum > 0)
 					{
 						if (ValueBase<T>::NeedsDestructor)
 						{
-							for (int i = 0; i < Num; i++)
+							for (int i = 0; i < ConstructsNum; i++)
 								(pAddr + i)->~T();
 						}
 					}
@@ -73,147 +73,120 @@ namespace GEngine{
 			virtual void clear() = 0;
 		};
 
-		template<class T> class GSTL_API _Iterator  //默认迭代器
+		template<class T> class GSTL_API _Base_Iterator  //默认迭代器
 		{
 		public:
-			_Iterator() {}
-			_Iterator(T* val) : current(val) {}
-			~_Iterator() {}
-			virtual const _Iterator<T> operator++() { ++current; return _Iterator(current); }     //前置++
-			virtual const _Iterator<T> operator++(int) { T* temp = current; current++; return _Iterator(temp); }  //后置++、
-			virtual const _Iterator<T> operator--() { --current; return _Iterator(current); }     //前置--
-			virtual const _Iterator<T> operator--(int) { T* temp = current; current--; return _Iterator(temp); }  //后置--
-			virtual T& operator*()  { return *current; }            //解引用
-			virtual const _Iterator<T> operator+(int idx) { return _Iterator(current + idx); }
-			virtual const _Iterator<T> operator-(int idx) { return _Iterator(current - idx); }
-			virtual bool operator!=(const _Iterator& rhs)
-			{
-				return current != rhs.current;
-			}
-			virtual bool operator==(const _Iterator& rhs)
-			{
-				return current == rhs.current;
-			}
-			virtual T* operator->() { return current; }
-			virtual size_t operator-(const _Iterator& rhs)
-			{
-				return this->current - rhs.current;
-			}
-		protected:
-			T* current;
-		};
-		template<class T> class GSTL_API _CIterator  //常量迭代器
-		{
-		public:
-			_CIterator() {}
-			_CIterator(T* val) : current(val) {}
-			~_CIterator() {}
-			virtual const _CIterator<T> operator++() { ++current; return _CIterator(current); }     //前置++
-			virtual const _CIterator<T> operator++(int) { T* temp = current; current++; return _CIterator(temp); }  //后置++、
-			virtual const _CIterator<T> operator--() { --current; return _CIterator(current); }     //前置--
-			virtual const _CIterator<T> operator--(int) { T* temp = current; current--; return _CIterator(temp); }  //后置--
-			virtual T operator*() { return *current; } //解引用
-			virtual const _CIterator<T> operator+(int idx) { return _CIterator(current + idx); }
-			virtual const _CIterator<T> operator-(int idx) { return _CIterator(current - idx); }
-			virtual bool operator!=(const _CIterator& rhs)
-			{
-				return current != rhs.current;
-			}
-			virtual bool operator==(const _CIterator& rhs)
-			{
-				return current == rhs.current;
-			}
+			_Base_Iterator(T* val) : current(val) {}
+			~_Base_Iterator() {}
+			virtual void operator=(const _Base_Iterator& _itera) { current = _itera.current; } //拷贝构造函数
 
-			virtual T* operator->() { return current; }
+			virtual _Base_Iterator& operator++() { ++current; return *this; }               //前置++
+			virtual _Base_Iterator& operator--() { --current; return *this; }               //前置--
+			virtual T& operator*() { return *current; }                                   //解引用
+			virtual T* operator->() { return current; }                                   //指针访问
+
+			virtual _Base_Iterator operator++(int) { T* temp = current; current++; return _Base_Iterator(temp); }  //后置++(非重载版本)
+			virtual _Base_Iterator operator--(int) { T* temp = current; current--; return _Base_Iterator(temp); }  //后置--(非重载版本)
+			virtual _Base_Iterator operator+(int idx) { return _Base_Iterator(current + idx); }
+			virtual _Base_Iterator operator-(int idx) { return _Base_Iterator(current - idx); }
+
+			virtual bool operator!=(const _Base_Iterator& rhs) { return current != rhs.current; }
+			virtual bool operator==(const _Base_Iterator& rhs) { return current == rhs.current; }
+			virtual int  operator-(const _Base_Iterator& rhs) { return this->current - rhs.current; }
+
 		protected:
 			T* current;
 		};
-		template<class T> class GSTL_API _RIterator  //反向迭代器
+		template<class T> class GSTL_API _Base_CIterator  //常量迭代器
 		{
 		public:
-			_RIterator() {}
-			_RIterator(T* val) : current(val) {}
-			~_RIterator() {}
-			virtual const _RIterator<T> operator++() { --current; return _RIterator(current); }     //前置++
-			virtual const _RIterator<T> operator++(int) { T* temp = current; current--; return _RIterator(temp); }  //后置++、
-			virtual const _RIterator<T> operator--() { ++current; return _RIterator(current); }     //前置--
-			virtual const _RIterator<T> operator--(int) { T* temp = current; current++; return _RIterator(temp); }  //后置--
-			virtual T& operator*() { return *current;}      //解引用
-			virtual const T* operator+(int idx) { return current - idx; }
-			virtual const T* operator-(int idx) { return current + idx; }
-			virtual bool operator!=(const _RIterator& rhs)
-			{
-				return current != rhs.current;
-			}
-			virtual bool operator==(const _RIterator& rhs)
-			{
-				return current == rhs.current;
-			}
-			virtual T* operator->() { return current; }
+			_Base_CIterator(T* val) : current(val) {}
+			~_Base_CIterator() {}
+			virtual void operator=(const _Base_CIterator& _citera) { current = _citera.current; } //拷贝构造函数
+
+			virtual _Base_CIterator& operator++() { ++current; return *this; }               //前置++
+			virtual _Base_CIterator& operator--() { --current; return *this; }               //前置--
+			virtual const T&  operator*() { return *current; }                                     //解引用
+			virtual T* operator->() { return current; }                                     //指针访问
+
+			virtual _Base_CIterator operator++(int) { T* temp = current; current++; return _Base_CIterator(temp); }  //后置++(非重载版本)
+			virtual _Base_CIterator operator--(int) { T* temp = current; current--; return _Base_CIterator(temp); }  //后置--(非重载版本)
+			virtual _Base_CIterator operator+(int idx) { return _Base_CIterator(current + idx); }
+			virtual _Base_CIterator operator-(int idx) { return _Base_CIterator(current - idx); }
+
+			virtual bool operator!=(const _Base_CIterator& rhs) { return current != rhs.current; }
+			virtual bool operator==(const _Base_CIterator& rhs) { return current == rhs.current; }
+			virtual int  operator-(const _Base_CIterator& rhs) { return this->current - rhs.current; }
 		protected:
 			T* current;
 		};
-		template<class T> class GSTL_API _CRIterator  //反向常量迭代器
+		template<class T> class GSTL_API _Base_RIterator  //反向迭代器
 		{
 		public:
-			_CRIterator() {}
-			_CRIterator(T* val) : current(val) {}
-			~_CRIterator() {}
-			virtual const _CRIterator<T> operator++() { --current; return _CRIterator(current); }     //前置++
-			virtual const _CRIterator<T> operator++(int) { T* temp = current; current--; return _CRIterator(temp); }  //后置++、
-			virtual const _CRIterator<T> operator--() { ++current; return _CRIterator(current); }     //前置--
-			virtual const _CRIterator<T> operator--(int) { T* temp = current; current++; return _CRIterator(temp); }  //后置--
-			virtual T operator*() { return *current; }      //解引用
-			virtual const T* operator+(int idx) { return current - idx; }
-			virtual const T* operator-(int idx) { return current + idx; }
-			virtual bool operator!=(const _CRIterator& rhs)
-			{
-				return current != rhs.current;
-			}
-			virtual bool operator==(const _CRIterator& rhs)
-			{
-				return current == rhs.current;
-			}
-			virtual T* operator->() { return current; }
+			_Base_RIterator(T* val) : current(val) {}
+			~_Base_RIterator() {}
+			virtual void operator=(const _Base_RIterator& _ritera) { current = _ritera.current; } //拷贝构造函数
+
+			virtual _Base_RIterator& operator++() { --current; return *this; }               //前置++
+			virtual _Base_RIterator& operator--() { ++current; return *this; }               //前置--
+			virtual T&  operator*() { return *current; }                                   //解引用
+			virtual T* operator->() { return current; }                                   //指针访问
+
+			virtual _Base_RIterator operator++(int) { T* temp = current; current--; return _Base_RIterator(temp); }  //后置++(非重载版本)
+			virtual _Base_RIterator operator--(int) { T* temp = current; current++; return _Base_RIterator(temp); }  //后置--(非重载版本)
+			virtual _Base_RIterator operator+(int idx) { return _Base_RIterator(current - idx); }
+			virtual _Base_RIterator operator-(int idx) { return _Base_RIterator(current + idx); }
+
+			virtual bool operator!=(const _Base_RIterator& rhs) { return current != rhs.current; }
+			virtual bool operator==(const _Base_RIterator& rhs) { return current == rhs.current; }
+			virtual int  operator-(const _Base_RIterator& rhs) { return this->current - rhs.current; }
+		protected:
+			T* current;
+		};
+		template<class T> class GSTL_API _Base_CRIterator  //反向常量迭代器
+		{
+		public:
+			_Base_CRIterator(T* val) : current(val) {}
+			~_Base_CRIterator() {}
+			virtual void operator=(const _Base_CRIterator& _critera) { current = _critera.current; } //拷贝构造函数
+
+			virtual _Base_CRIterator& operator++() { --current; return *this; }               //前置++
+			virtual _Base_CRIterator& operator--() { ++current; return *this; }               //前置--
+			virtual const T& operator*() { return *current; }                                     //解引用
+			virtual T* operator->() { return current; }                                     //指针访问
+
+			virtual _Base_CRIterator operator++(int) { T* temp = current; current--; return _Base_CRIterator(temp); }  //后置++(非重载版本)
+			virtual _Base_CRIterator operator--(int) { T* temp = current; current++; return _Base_CRIterator(temp); }  //后置--(非重载版本)
+			virtual _Base_CRIterator operator+(int idx) { return _Base_CRIterator(current - idx); }
+			virtual _Base_CRIterator operator-(int idx) { return _Base_CRIterator(current + idx); }
+
+			virtual bool operator!=(const _Base_CRIterator rhs) { return current != rhs.current; }
+			virtual bool operator==(const _Base_CRIterator rhs) { return current == rhs.current; }
+			virtual int  operator-(const _Base_CRIterator& rhs) { return this->current - rhs.current; }
 		protected:
 			T* current;
 		};
 
-		template<class T> class GSTL_API _Vector_Iterator : public _Iterator<T>
+		template<class T> class GSTL_API _Vector_Iterator : public _Base_Iterator<T>
 		{
 		public:
-			_Vector_Iterator(T* t)
-			{
-				this->current = t;
-			}
-			virtual size_t operator-(const _Vector_Iterator& rhs)
-			{
-				return this->current - rhs.current;
-			}
+			_Vector_Iterator(T* t) : _Base_Iterator<T>(t) {}
 		};
-		template<class T> class GSTL_API _Vector_CIterator : public _CIterator<T>
+		template<class T> class GSTL_API _Vector_CIterator : public _Base_CIterator<T>
 		{
 		public:
-			virtual size_t operator-(const _Vector_CIterator& rhs)
-			{
-				return this->current - rhs.current;
-			}
+		public:
+			_Vector_CIterator(T* t) : _Base_CIterator<T>(t) {}
 		};
-		template<class T> class GSTL_API _Vector_RIterator : public _RIterator<T>
+		template<class T> class GSTL_API _Vector_RIterator : public _Base_RIterator<T>
 		{
 		public:
-			virtual size_t operator-(const _Vector_RIterator& rhs)
-			{
-				return this->current - rhs.current;
-			}
+			_Vector_RIterator(T* t) : _Base_RIterator<T>(t) {}
 		};
-		template<class T> class GSTL_API _Vector_CRIterator : public _CRIterator<T>
+		template<class T> class GSTL_API _Vector_CRIterator : public _Base_CRIterator<T>
 		{
 		public:
-			virtual size_t operator-(const _Vector_CRIterator& rhs)
-			{
-				return this->current - rhs.current;
-			}
+			_Vector_CRIterator(T* t) : _Base_CRIterator<T>(t) {}
 		};
 
 
