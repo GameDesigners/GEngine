@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GArray.inl" />
+    <None Include="GDeque.inl" />
     <None Include="GMemory.inl" />
     <None Include="GUtility.inl" />
     <None Include="GVector.inl" />

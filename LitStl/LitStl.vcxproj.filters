@@ -75,5 +75,8 @@
     <None Include="GUtility.inl">
       <Filter>Inl Files</Filter>
     </None>
+    <None Include="GDeque.inl">
+      <Filter>Inl Files\GContainers</Filter>
+    </None>
   </ItemGroup>
 </Project>

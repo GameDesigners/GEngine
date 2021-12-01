@@ -261,8 +261,8 @@ int main()
 
 	//USE_GSTL_GARRAY();
 
-	GArraySample();
-	//GVectorSample();
+	//GArraySample();
+	GVectorSample();
 
 
 

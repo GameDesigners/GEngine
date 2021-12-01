@@ -4,13 +4,13 @@
 namespace GEngine{
 	namespace GStl {
 		template<class T, GMemManagerFun MMFun = GMemObject::GetMemManager>
-		class GVector : public GContainer<T, MMFun>
+		class GSTL_API GVector : public GContainer<T, MMFun>
 		{
 		public:
 			typedef size_t                  size_type;
 			typedef T                       value_type;
-			typedef T&                      reference;
-			typedef const T&                const_reference;
+			typedef T&                      reference_type;
+			typedef const T&                const_reference_type;
 			typedef T*                      pointer;
 
 			typedef _Vector_Iterator<T>     iterator_type;
