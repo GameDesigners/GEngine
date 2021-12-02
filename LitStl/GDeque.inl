@@ -46,18 +46,20 @@ __deque_memory_buffer_block<T, MMFun>::~__deque_memory_buffer_block()
 }
 
 template<class T, GMemManagerFun MMFun>
-void __deque_memory_buffer_block<T, MMFun>::assign(size_t _capcity, size_t _count)
+void __deque_memory_buffer_block<T, MMFun>::assign(size_t _count)
 {
 	for (int index = 0; index < _count && index < m_capcity; index++)
 		_construct_no_cv(index);
+	m_count = _count;
 }
 
 template<class T, GMemManagerFun MMFun>
-void __deque_memory_buffer_block<T, MMFun>::assign(size_t _capcity, size_t _count, const T& val)
+void __deque_memory_buffer_block<T, MMFun>::assign(size_t _count, const T& val)
 {
 	GASSERT(m_data != nullptr);
 	for (int index = 0; index < _count && index < m_capcity; index++)
 		_construct_idx(index, val);
+	m_count = _count;
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -178,10 +180,10 @@ GDeque<T, MMFun>::GDeque(const GDeque& cv)
 	m_map = this->New(m_map_capcity);
 	GASSERT(m_map != nullptr);
 
-	for (int index = 0; index < m_map_count; index++)
+	for (int index = 0; index < m_map_capcity; index++)
 	{
 		_create_new_buffer_block(index);
-		m_map[index] = cv.m_map[index];
+		*m_map[index] = *(cv.m_map[index]);
 	}
 }
 
@@ -208,9 +210,9 @@ GDeque<T, MMFun>::GDeque(size_t _count)
 	{
 		_create_new_buffer_block(index);
 		if (_count >= DefaultBufferSize)
-			m_map[index]->assign(DefaultBufferSize, DefaultBufferSize);
+			m_map[index]->assign(DefaultBufferSize);
 		else
-			m_map[index]->assign(DefaultBufferSize, _count);
+			m_map[index]->assign(_count);
 		_count -= DefaultBufferSize;
 	}
 }
@@ -225,10 +227,32 @@ GDeque<T, MMFun>::GDeque(size_t _count, const T& val)
 	{
 		_create_new_buffer_block(index);
 		if (_count >= DefaultBufferSize)
-			m_map[index]->assign(DefaultBufferSize, DefaultBufferSize, val);
+			m_map[index]->assign(DefaultBufferSize, val);
 		else
-			m_map[index]->assign(DefaultBufferSize, _count, val);
+			m_map[index]->assign(_count, val);
 		_count -= DefaultBufferSize;
+	}
+}
+
+template<class T, GMemManagerFun MMFun>
+GDeque<T, MMFun>::GDeque(std::initializer_list<T> values)
+{
+	size_t _count = values.size();
+	m_map_capcity = _count / DefaultBufferSize == 0 ? 1 : (_count % DefaultBufferSize == 0 ? _count / DefaultBufferSize : _count / DefaultBufferSize + 1);
+	m_map = this->New(m_map_capcity);
+	T* p = (T*)values.begin();
+	for (int i = 0; i < m_map_capcity; i++)
+	{
+		_create_new_buffer_block(i);
+		for (int j = 0; j < DefaultBufferSize; j++) 
+		{
+			//直接操作构造以提高效率
+			m_map[i]->_construct_idx(j, *p);
+			m_map[i]->m_count++;
+			p++;
+			if (p == values.end())
+				break;
+		}
 	}
 }
 
@@ -242,3 +266,54 @@ GDeque<T, MMFun>::~GDeque()
 	//释放map
 	this->Delete(m_map, m_map_capcity, 0);
 }
+
+
+// 赋值函数
+//*************************************************************************
+template<class T, GMemManagerFun MMFun>
+void GDeque<T, MMFun>::operator=(const GDeque& cv)
+{
+	if (m_map_count < cv.m_map_count)
+	{
+		for (int index = m_map_count; index < cv.m_map_count; index++)
+			_create_new_buffer_block(index);
+	}
+
+	for (int index = 0; index < m_map_count; index++)
+		*m_map[index] = *cv.m_map[index];
+}
+
+
+// 虚函数函数
+//*************************************************************************
+
+template<class T, GMemManagerFun MMFun>
+bool GDeque<T, MMFun>::empty()
+{
+	if (m_map == nullptr)
+		return true;
+	bool is_empty = true;
+	for (int index = 0; index < m_map_count; index++)
+		is_empty = is_empty && m_map[index]->empty();
+	return is_empty;
+}
+
+template<class T, GMemManagerFun MMFun>
+size_t GDeque<T, MMFun>::size()
+{
+	if (m_map == nullptr)
+		return 0;
+	size_t num = 0;
+	for (int index = 0; index < m_map_count; index++)
+		num += m_map[index]->size();
+	return num;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GDeque<T, MMFun>::clear()
+{
+	for (int index = 0; index < m_map_count; index++)
+		m_map[index]->clear();
+}
+
+

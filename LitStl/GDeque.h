@@ -21,8 +21,8 @@ namespace GEngine {
 			~__deque_memory_buffer_block();
 
 
-			void assign(size_t _capcity, size_t _count);
-			void assign(size_t _capcity, size_t _count, const T& val);
+			void assign(size_t _count);
+			void assign(size_t _count, const T& val);
 
 			void operator=(const __deque_memory_buffer_block& cv);
 			void operator=(__deque_memory_buffer_block&& rv);
@@ -132,6 +132,7 @@ namespace GEngine {
 			~GDeque();
 
 		//赋值函数
+		public:
 			void operator=(const GDeque& cv);
 			void operator=(GDeque&& rv);
 			void operator=(std::initializer_list<T> values);
@@ -171,9 +172,9 @@ namespace GEngine {
 
 		//虚函数重写
 		public:
-			virtual bool empty() { return true; }
-			virtual size_t size() { return 0; }
-			virtual void clear(){}
+			virtual bool empty();
+			virtual size_t size();
+			virtual void clear();
 		private:
 			virtual size_t capcity() {  return 0; }  //不提供容量操作
 			
@@ -237,7 +238,6 @@ namespace GEngine {
 			__deque_memory_buffer_block<T, MMFun>** m_map;
 			size_t m_map_count;
 			size_t m_map_capcity;
-
 		};
 
 

@@ -45,7 +45,7 @@
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
     <ClInclude Include="GDeque.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GContainers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
