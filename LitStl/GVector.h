@@ -32,7 +32,7 @@ namespace GEngine{
 			GVector();
 			GVector(const GVector& cv);
 			GVector(GVector&& rv);
-			GVector(size_t _capcity);
+			GVector(size_t _count);
 			GVector(size_t _count, const T& val);
 			GVector(_base_iterator _begin, _base_iterator _end);
 			GVector(std::initializer_list<T> values);
@@ -136,6 +136,10 @@ namespace GEngine{
 					construct(m_data + index, cv);
 					m_constructed++;
 				}
+				else
+				{
+					*(m_data + index) = cv;
+				}
 			}
 			inline void _construct_addr(T* addr, const T& cv)
 			{
@@ -147,6 +151,10 @@ namespace GEngine{
 					}
 					construct(addr, cv);
 					m_constructed++;
+				}
+				else
+				{
+					*addr = cv;
 				}
 			}
 			inline void _construct_iterator(_base_iterator itera, const T& cv)

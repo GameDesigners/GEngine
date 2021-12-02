@@ -40,13 +40,14 @@ GVector<T, MMFun>::GVector(GVector&& rv)
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(size_t _capcity)
+GVector<T, MMFun>::GVector(size_t _count)
 {
-	m_data = this->New(_capcity);
+	m_capcity = _caculate_increased_capcity(_count);
+	m_data = this->New(m_capcity);
 	GASSERT(m_data != nullptr);
-	m_count = 0;
-	m_capcity = _capcity;
-	m_constructed = 0;
+	m_count = _count;
+	for (int index = 0; index < m_count; index++)
+		_construct_elem_no_cv(index);
 }
 
 template<class T, GMemManagerFun MMFun>

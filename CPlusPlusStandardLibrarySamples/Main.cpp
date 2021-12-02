@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <deque>
 
 #include "GUtility.h"
 #include "GMemory.h"
@@ -78,6 +79,7 @@ public:
 
 #include "UseGArraySample.h"
 #include "UseGVectorSample.h"
+#include "UseGDequeSample.h"
 
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
@@ -262,10 +264,10 @@ int main()
 	//USE_GSTL_GARRAY();
 
 	//GArraySample();
-	GVectorSample();
-
-
-
+	//GVectorSample();
+    GDeuqeSample();
+	//std::deque<SamplesElem> d;
+	//d.push_back(SamplesElem(1, 1));*/
 
 	//getchar();
 	return 0;

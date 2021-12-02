@@ -146,6 +146,7 @@
     <ClInclude Include="CommonTool.h" />
     <ClInclude Include="CPlusPlus_11_NewFeature.h" />
     <ClInclude Include="UseGArraySample.h" />
+    <ClInclude Include="UseGDequeSample.h" />
     <ClInclude Include="UseGVectorSample.h" />
   </ItemGroup>
   <ItemGroup>

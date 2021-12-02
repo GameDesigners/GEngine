@@ -18,6 +18,9 @@
     <Filter Include="Inl Files\GContainers">
       <UniqueIdentifier>{f61a8790-8037-4bbb-870b-57402b4322e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GContainers">
+      <UniqueIdentifier>{fea682ff-2df4-4e62-8e43-49bbf7eb59b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUtility.h">
@@ -52,14 +55,14 @@
     <ClCompile Include="GMemory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GVector.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GDeque.cpp">
+      <Filter>Source Files\GContainers</Filter>
     </ClCompile>
     <ClCompile Include="GArray.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GContainers</Filter>
     </ClCompile>
-    <ClCompile Include="GDeque.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GVector.cpp">
+      <Filter>Source Files\GContainers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

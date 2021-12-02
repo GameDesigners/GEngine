@@ -31,5 +31,8 @@
     <ClInclude Include="UseGArraySample.h">
       <Filter>CustomStlUseSample</Filter>
     </ClInclude>
+    <ClInclude Include="UseGDequeSample.h">
+      <Filter>CustomStlUseSample</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
