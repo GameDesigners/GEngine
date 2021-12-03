@@ -283,6 +283,112 @@ void GDeque<T, MMFun>::operator=(const GDeque& cv)
 		*m_map[index] = *cv.m_map[index];
 }
 
+template<class T,GMemManagerFun MMFun>
+void GDeque<T, MMFun>::operator=(GDeque&& rv)
+{
+	for (int index = 0; index < m_map_count; index++)
+		GSAFE_DELETE(m_map[index]);
+	this->Delete(m_map, m_map_capcity, 0);
+
+	m_map = rv.m_map;
+	m_map_count = rv.m_map_count;
+	m_map_capcity = rv.m_map_capcity;
+
+	rv.m_map = nullptr;
+	rv.m_map_count = 0;
+	rv.m_map_capcity = 0;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GDeque<T, MMFun>::operator=(std::initializer_list<T> values)
+{
+	clear();
+	size_t _count = values.size();
+	size_t target_capcity = _count / DefaultBufferSize == 0 ? 1 : (_count % DefaultBufferSize == 0 ? _count / DefaultBufferSize : _count / DefaultBufferSize + 1);
+	T* p = (T*)values.begin();
+	for (int i = 0; i < target_capcity; i++)
+	{
+		_create_new_buffer_block(i);
+		for (int j = 0; j < DefaultBufferSize; j++)
+		{
+			//直接操作构造以提高效率
+			m_map[i]->_construct_idx(j, *p);
+			m_map[i]->m_count++;
+			p++;
+			if (p == values.end())
+				break;
+		}
+	}
+}
+
+template<class T, GMemManagerFun MMFun>
+void GDeque<T, MMFun>::assign(size_t _count, const T& val)
+{
+	clear();
+	size_t target_capcity = _count / DefaultBufferSize == 0 ? 1 : (_count % DefaultBufferSize == 0 ? _count / DefaultBufferSize : _count / DefaultBufferSize + 1);
+	for (int index = 0; index < target_capcity; index++)
+	{
+		_create_new_buffer_block(index);
+		if (_count >= DefaultBufferSize)
+			m_map[index]->assign(DefaultBufferSize, val);
+		else
+			m_map[index]->assign(_count, val);
+		_count -= DefaultBufferSize;
+	}
+}
+
+template<class T, GMemManagerFun MMFun>
+void GDeque<T, MMFun>::assign(std::initializer_list<T> values)
+{
+	*this = values;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GDeque<T, MMFun>::assign(const GDeque& cv)
+{
+	*this = cv;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GDeque<T, MMFun>::swap(GDeque& deque)
+{
+	size_t temp_count = m_map_count;
+	size_t temp_capcity = m_map_capcity;
+	__deque_memory_buffer_block<T, MMFun>** temp_map = m_map;
+
+	m_map = deque.m_map;
+	m_map_count = deque.m_map_count;
+	m_map_capcity = deque.m_map_capcity;
+
+	deque.m_map = temp_map;
+	m_map_count = temp_count;
+	m_map_capcity = temp_capcity;
+}
+
+// 访问函数
+//*************************************************************************
+
+template<class T, GMemManagerFun MMFun>
+T& GDeque<T, MMFun>::front()
+{
+	GASSERT(size() > 0);
+	for (int index = 0; index < m_map_count; index++)
+	{
+		if (!m_map[index]->empty())
+			return m_map[index]->m_data[0];
+	}
+}
+
+template<class T, GMemManagerFun MMFun>
+T& GDeque<T, MMFun>::back()
+{
+	GASSERT(size() > 0);
+	for (int index = m_map_count-1; index >=0; index--)
+	{
+		if (!m_map[index]->empty())
+			return m_map[index]->m_data[m_map[index]->size() - 1];
+	}
+}
 
 // 虚函数函数
 //*************************************************************************
@@ -316,4 +422,14 @@ void GDeque<T, MMFun>::clear()
 		m_map[index]->clear();
 }
 
+
+
+//迭代器函数
+//*************************************************************************
+
+template<class T, GMemManagerFun MMFun>
+_Deque_Iterator<T, MMFun>& _Deque_Iterator<T, MMFun>::operator++()
+{
+
+}
 

@@ -137,7 +137,7 @@ namespace GEngine {
 			void operator=(GDeque&& rv);
 			void operator=(std::initializer_list<T> values);
 
-			void assign(size_t num, const T& val);
+			void assign(size_t _count, const T& val);
 			void assign(_base_iterator _begin, _base_iterator _end);
 			void assign(std::initializer_list<T> values);
 			void assign(const GDeque& cv);
@@ -228,7 +228,7 @@ namespace GEngine {
 						sizeof(__deque_memory_buffer_block<T, MMFun>*) * new_capcity, 
 						m_map, 
 						sizeof(__deque_memory_buffer_block<T, MMFun>*) * m_map_count
-					);
+					); 
 					this->Delete(m_map, m_map_capcity, 0);
 					m_map_capcity = new_capcity;
 				}
@@ -258,23 +258,23 @@ namespace GEngine {
 				_first(first), _last(last),
 				_node(node){}
 
-			virtual _Deque_Iterator<T>& operator++();
-			virtual _Deque_Iterator<T>& operator--();
+			virtual _Deque_Iterator<T, MMFun>& operator++();
+			virtual _Deque_Iterator<T, MMFun>& operator--();
 			virtual T& operator*();
 			virtual T* operator->();
 
-			virtual _Deque_Iterator operator++(int);
-			virtual _Deque_Iterator operator--(int);
-			virtual _Deque_Iterator operator+(int idx);
-			virtual _Deque_Iterator operator-(int idx);
+			virtual _Deque_Iterator<T, MMFun> operator++(int);
+			virtual _Deque_Iterator<T, MMFun> operator--(int);
+			virtual _Deque_Iterator<T, MMFun> operator+(int idx);
+			virtual _Deque_Iterator<T, MMFun> operator-(int idx);
 
 			virtual bool operator!=(const _Deque_Iterator& rhs);
 			virtual bool operator==(const _Deque_Iterator& rhs);
 			virtual int  operator-(const _Deque_Iterator& rhs);
 
 		private:
-			value_pointer current;
-			value_pointer _first;
+			value_pointer current;   //迭代器当前指向的变量
+			value_pointer _first;    
 			value_pointer _last;
 			node_pointer  _node;
 		};
