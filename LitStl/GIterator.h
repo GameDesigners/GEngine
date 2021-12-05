@@ -50,6 +50,7 @@ namespace GEngine {
 			typedef T&                          value_reference;
 		};
 
+		//针对const 原生指针的迭代器数据类型萃取机
 		template<class T>
 		struct iterator_traits<const T*>
 		{

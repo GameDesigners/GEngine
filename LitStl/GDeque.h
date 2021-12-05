@@ -5,7 +5,7 @@
 namespace GEngine {
 	namespace GStl {
 		//向前声明
-		template<class T, GMemManagerFun MMFun> class GSTL_API _Deque_Iterator;
+		template<class T> class GSTL_API _Deque_Iterator;
 		template<class T, GMemManagerFun MMFun> class __deque_memory_buffer_block;
 		template<class T, GMemManagerFun MMFun> class GSTL_API GDeque;
 
@@ -14,7 +14,7 @@ namespace GEngine {
 		class __deque_memory_buffer_block : public GContainer<T, MMFun>
 		{
 			friend class GDeque<T,MMFun>;
-			typedef _Deque_Iterator<T, MMFun> _iterator_type;
+			typedef _Deque_Iterator<T> _iterator_type;
 		public:
 			__deque_memory_buffer_block(size_t block_size);
 			__deque_memory_buffer_block(const __deque_memory_buffer_block& cv);
@@ -38,7 +38,6 @@ namespace GEngine {
 			virtual size_t size();
 			virtual size_t capcity();
 			virtual void clear();
-
 		private:
 			inline bool _vertify_iterator(_iterator_type& _iter)
 			{
@@ -242,44 +241,86 @@ namespace GEngine {
 		};
 
 
-		template<class T, GMemManagerFun MMFun = GMemObject::GetMemManager>
-		class GSTL_API _Deque_Iterator
+		template<class T>
+		class GSTL_API _Deque_Iterator : public iterator<random_access_iterator_tag,T>
 		{
-			friend __deque_memory_buffer_block<T,MMFun>;
 		public:
+			typedef random_access_iterator_tag      iterator_category;
+			typedef ptrdiff_t                       distance;
 			typedef T                               value_type;
-			typedef T&                              reference_type;
 			typedef T*                              value_pointer;
-			typedef const T&                        const_reference_type;
+			typedef T&                              value_reference;
+
  			typedef __deque_memory_buffer_block<T>* node_pointer;
+			typedef _Deque_Iterator<T>              self_type;
 
 		public:
-			_Deque_Iterator(T* cur, T* first, T* last, node_pointer node)
-				: current(cur),
-				_first(first), _last(last),
-				_node(node){}
+			_Deque_Iterator(value_pointer cur, value_pointer first, value_pointer last, node_pointer node)
+				: _current(cur), _first(first), _last(last), _node(node) {}
 
-			virtual _Deque_Iterator<T, MMFun>& operator++();
-			virtual _Deque_Iterator<T, MMFun>& operator--();
-			virtual T& operator*();
-			virtual T* operator->();
+			self_type& operator++();
+			self_type& operator--();
+			T& operator*();
+			T* operator->();
 
-			virtual _Deque_Iterator<T, MMFun> operator++(int);
-			virtual _Deque_Iterator<T, MMFun> operator--(int);
-			virtual _Deque_Iterator<T, MMFun> operator+(int idx);
-			virtual _Deque_Iterator<T, MMFun> operator-(int idx);
+			self_type operator++(int);
+			self_type operator--(int);
+			self_type operator+(distance idx);
+			self_type operator-(distance idx);
+			self_type& operator+=(distance idx);
+			self_type& operator-=(distance idx);
 
-			virtual bool operator!=(const _Deque_Iterator& rhs);
-			virtual bool operator==(const _Deque_Iterator& rhs);
-			virtual int  operator-(const _Deque_Iterator& rhs);
+			bool operator!=(const _Deque_Iterator& rhs);
+			bool operator==(const _Deque_Iterator& rhs);
+			distance operator-(const _Deque_Iterator& rhs);
 
 		private:
-			value_pointer current;   //迭代器当前指向的变量
-			value_pointer _first;    
+			inline void jump_node(int jump_count)
+			{
+				if (jump_count == 0)
+					return;
+				else if (jump_count < 0) 
+				{
+					_node -= jump_count;
+					_first = _node->m_data;
+					_current = _last = _node->m_data + _node->m_count;
+				}
+				else
+				{
+					_node += jump_count;
+					_current = _first = _node->m_data;
+					_last = _node + _node->m_count;
+				}
+			}
+
+			inline void _move_distance(distance dis)
+			{
+				if (dis == 0)
+					return;
+
+				bool is_forward = dis > 0;
+				size_t buffer_size = _node->m_capcity;
+				distance remind_in_cur_node = is_forward ? _last - _current : _current - _first;
+				if (remind_in_cur_node >= dis)//不需要挪窝
+				{
+					_current += dis;
+					return *this;
+				}
+				else
+				{
+					unsigned int jump_count = (dis - remind_in_cur_node) / buffer_size;
+					jump_node(is_forward ? jump_count : -jump_count);
+					size_t remind = dis - remind_in_cur_node - jump_count * buffer_size;
+					_current += is_forward ? remind : -remind;
+				}
+			}
+
+		private:
+			value_pointer _current;   //迭代器当前指向的变量
+			value_pointer _first;
 			value_pointer _last;
 			node_pointer  _node;
 		};
-
 #include "GDeque.inl"
 	}
 }

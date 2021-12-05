@@ -14,11 +14,6 @@ namespace GEngine{
 			typedef const T&                const_reference_type;
 			typedef T*                      pointer;
 
-			/*typedef _Vector_Iterator<T>     iterator_type;
-			typedef _Vector_CIterator<T>    c_iterator_type;
-			typedef _Vector_RIterator<T>    r_iterator_type;
-			typedef _Vector_CRIterator<T>   cr_iterator_type;*/
-
 			typedef _SingleMemUnit_Iterator<T>     iterator_type;
 			typedef _SingleMemUnit_CIterator<T>    c_iterator_type;
 			typedef _SingleMemUnit_RIterator<T>    r_iterator_type;
