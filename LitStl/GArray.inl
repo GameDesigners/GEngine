@@ -23,9 +23,9 @@ GArray<T, N>::GArray(GArray&& rv)
 }
 
 template<class T, size_t N>
-GArray<T, N>::GArray(iteractor_type _begin, iteractor_type _end)
+GArray<T, N>::GArray(iterator_type _begin, iterator_type _end)
 {
-	iteractor_type p = _begin;
+	iterator_type p = _begin;
 	int idx = 0;
 	for (p; p != _end; p++, idx++)
 		m_data[idx] = *p;
@@ -215,49 +215,49 @@ bool GArray<T, N>::operator<=(const GArray& rhs)
 //µü´úÆ÷
 //*************************************************************************
 template<class T, size_t N>
-_Base_Iterator<T> GArray<T, N>::begin()
+typename GArray<T, N>::iterator_type GArray<T, N>::begin()
 {
-	return _Base_Iterator<T>(m_data);
+	return _SingleMemUnit_Iterator<T>(m_data);
 }
 
 template<class T, size_t N>
-_Base_Iterator<T> GArray<T, N>::end()
+typename GArray<T, N>::iterator_type GArray<T, N>::end()
 {
-	return _Base_Iterator<T>(m_data + N);
+	return _SingleMemUnit_Iterator<T>(m_data + N);
 }
 
 template<class T,size_t N>
-_Base_CIterator<T> GArray<T, N>::cbegin()
+typename GArray<T, N>::c_iterator_type GArray<T, N>::cbegin()
 {
-	return _Base_CIterator<T>(m_data);
+	return _SingleMemUnit_CIterator<T>(m_data);
 }
 
 template<class T, size_t N>
-_Base_CIterator<T> GArray<T, N>::cend()
+typename GArray<T, N>::c_iterator_type GArray<T, N>::cend()
 {
-	return _Base_CIterator<T>(m_data + N);
+	return _SingleMemUnit_CIterator<T>(m_data + N);
 }
 
 template<class T, size_t N>
-_Base_RIterator<T> GArray<T, N>::rbegin()
+typename GArray<T, N>::r_iterator_type GArray<T, N>::rbegin()
 {
-	return _Base_RIterator<T>(m_data + N - 1);
+	return _SingleMemUnit_RIterator<T>(m_data + N - 1);
 }
 
 template<class T, size_t N>
-_Base_RIterator<T> GArray<T, N>::rend()
+typename GArray<T, N>::r_iterator_type GArray<T, N>::rend()
 {
-	return _Base_RIterator<T>(m_data - 1);
+	return _SingleMemUnit_RIterator<T>(m_data - 1);
 }
 
 template<class T, size_t N>
-_Base_CRIterator<T> GArray<T, N>::crbegin()
+typename GArray<T, N>::cr_iterator_type GArray<T, N>::crbegin()
 {
-	return _Base_CRIterator<T>(m_data + N - 1);
+	return _SingleMemUnit_CRIterator<T>(m_data + N - 1);
 }
 
 template<class T, size_t N>
-_Base_CRIterator<T> GArray<T, N>::crend()
+typename GArray<T, N>::cr_iterator_type GArray<T, N>::crend()
 {
-	return _Base_CRIterator<T>(m_data - 1);
+	return _SingleMemUnit_CRIterator<T>(m_data - 1);
 }

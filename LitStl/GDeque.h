@@ -1,6 +1,7 @@
 #ifndef GDEQUE_H
 #define GDEQUE_H
 #include "GContainer.h"
+#include "GIterator.h"
 namespace GEngine {
 	namespace GStl {
 		//ÏòÇ°ÉùÃ÷
@@ -102,15 +103,15 @@ namespace GEngine {
 			typedef const T&                const_reference_type;
 			typedef T*                      pointer;
 
-			typedef _Vector_Iterator<T>     iterator_type;
-			typedef _Vector_CIterator<T>    c_iterator_type;
-			typedef _Vector_RIterator<T>    r_iterator_type;
-			typedef _Vector_CRIterator<T>   cr_iterator_type;
+			typedef _SingleMemUnit_Iterator<T>     iterator_type;
+			typedef _SingleMemUnit_CIterator<T>    c_iterator_type;
+			typedef _SingleMemUnit_RIterator<T>    r_iterator_type;
+			typedef _SingleMemUnit_CRIterator<T>   cr_iterator_type;
 
 			typedef __deque_memory_buffer_block<T,MMFun>* node_pointer;
 
 		public:
-			typedef _Base_Iterator<T>       _base_iterator;
+			typedef iterator_type       _base_iterator;
 
 			enum
 			{

@@ -15,6 +15,7 @@
 //GStl
 #include <GAlgorithm.h>
 #include <GArray.h>
+#include <GIterator.h>
 
 
 class SamplesElem
@@ -263,12 +264,11 @@ int main()
 
 	//USE_GSTL_GARRAY();
 
-	//GArraySample();
+	GArraySample();
 	//GVectorSample();
-    GDeuqeSample();
+    //GDeuqeSample();
 	//std::deque<SamplesElem> d;
 	//d.push_back(SamplesElem(1, 1));*/
-
 	//getchar();
 	return 0;
 }

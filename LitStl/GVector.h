@@ -1,6 +1,7 @@
 #ifndef GVECTOR_H
 #define GVECTOR_H
 #include "GContainer.h"
+#include "GIterator.h"
 namespace GEngine{
 	namespace GStl {
 		template<class T, GMemManagerFun MMFun = GMemObject::GetMemManager>
@@ -13,13 +14,15 @@ namespace GEngine{
 			typedef const T&                const_reference_type;
 			typedef T*                      pointer;
 
-			typedef _Vector_Iterator<T>     iterator_type;
+			/*typedef _Vector_Iterator<T>     iterator_type;
 			typedef _Vector_CIterator<T>    c_iterator_type;
 			typedef _Vector_RIterator<T>    r_iterator_type;
-			typedef _Vector_CRIterator<T>   cr_iterator_type;
+			typedef _Vector_CRIterator<T>   cr_iterator_type;*/
 
-		public:
-			typedef _Base_Iterator<T>       _base_iterator;
+			typedef _SingleMemUnit_Iterator<T>     iterator_type;
+			typedef _SingleMemUnit_CIterator<T>    c_iterator_type;
+			typedef _SingleMemUnit_RIterator<T>    r_iterator_type;
+			typedef _SingleMemUnit_CRIterator<T>   cr_iterator_type;
 
 			enum
 			{
@@ -34,7 +37,7 @@ namespace GEngine{
 			GVector(GVector&& rv);
 			GVector(size_t _count);
 			GVector(size_t _count, const T& val);
-			GVector(_base_iterator _begin, _base_iterator _end);
+			GVector(iterator_type _begin, iterator_type _end);
 			GVector(std::initializer_list<T> values);
 			~GVector();
 		
@@ -45,7 +48,7 @@ namespace GEngine{
 			void operator=(std::initializer_list<T> values);
 
 			void assign(int _count, const T& val);
-			void assign(_base_iterator begin, _base_iterator end);
+			void assign(iterator_type begin, iterator_type end);
 			void assign(std::initializer_list<T> values);
 			void swap(GVector& v);
 
@@ -61,14 +64,14 @@ namespace GEngine{
 			void push_back(const T& cv);
 			void push_back(T&& rv);
 			void pop_back();
-			_base_iterator insert(_base_iterator pos, const T& val);
-			_base_iterator insert(_base_iterator pos, size_t num, const T& val);
-			_base_iterator insert(_base_iterator pos, _base_iterator _begin, _base_iterator _end);
-			_base_iterator insert(_base_iterator pos, std::initializer_list<T> values);
-			template<class ...Args> _base_iterator emplace(_base_iterator pos, Args&&... args);
-			template<class ...Args> _base_iterator emplace_back(Args&&...args);
-			_base_iterator erase(_base_iterator pos);
-			_base_iterator erase(_base_iterator _begin, _base_iterator _end);
+			iterator_type insert(iterator_type pos, const T& val);
+			iterator_type insert(iterator_type pos, size_t num, const T& val);
+			iterator_type insert(iterator_type pos, iterator_type _begin, iterator_type _end);
+			iterator_type insert(iterator_type pos, std::initializer_list<T> values);
+			template<class ...Args> iterator_type emplace(iterator_type pos, Args&&... args);
+			template<class ...Args> iterator_type emplace_back(Args&&...args);
+			iterator_type erase(iterator_type pos);
+			iterator_type erase(iterator_type _begin, iterator_type _end);
 			void resize(size_t num);
 			void resize(size_t num, const T& val);
 	    //Ðéº¯ÊýÖØÐ´
@@ -157,7 +160,7 @@ namespace GEngine{
 					*addr = cv;
 				}
 			}
-			inline void _construct_iterator(_base_iterator itera, const T& cv)
+			inline void _construct_iterator(iterator_type itera, const T& cv)
 			{
 				_construct_elem(itera - begin(), cv);
 			}

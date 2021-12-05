@@ -73,6 +73,7 @@ namespace GEngine{
 			virtual void clear() = 0;
 		};
 
+		/*
 		template<class T> class GSTL_API _Base_Iterator  //默认迭代器
 		{
 		public:
@@ -188,6 +189,7 @@ namespace GEngine{
 		public:
 			_Vector_CRIterator(T* t) : _Base_CRIterator<T>(t) {}
 		};
+		*/
 
 
 		//placement 构造函数[placement new, 调用T1::T1(value);不能被重载的new方法！！]

@@ -65,7 +65,7 @@ GVector<T, MMFun>::GVector(size_t _count, const T& val)
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(_base_iterator _begin, _base_iterator _end)
+GVector<T, MMFun>::GVector(iterator_type _begin, iterator_type _end)
 { 
 	m_count = _end - _begin;
 	GASSERT(m_count >= 0);  //µü´úÆ÷Òì³£¶ÏÑÔ
@@ -166,7 +166,7 @@ void GVector<T, MMFun>::assign(int _count, const T& val)
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::assign(_base_iterator begin, _base_iterator end)
+void GVector<T, MMFun>::assign(iterator_type begin, iterator_type end)
 {
 	size_t _count = end - begin;
 	GASSERT(_count >= 0);  //µü´úÆ÷Òì³£¶ÏÑÔ
@@ -279,7 +279,7 @@ void GVector<T, MMFun>::pop_back()
 }
 
 template<class T, GMemManagerFun MMFun>
-_Base_Iterator<T>  GVector<T, MMFun>::insert(_base_iterator pos, const T& val)
+typename GVector<T, MMFun>::iterator_type  GVector<T, MMFun>::insert(iterator_type pos, const T& val)
 {
 	iterator_type p = end();
 	if (p - pos < 0)
@@ -296,7 +296,7 @@ _Base_Iterator<T>  GVector<T, MMFun>::insert(_base_iterator pos, const T& val)
 }
 
 template<class T, GMemManagerFun MMFun>
-_Base_Iterator<T>  GVector<T, MMFun>::insert(_base_iterator pos, size_t num, const T& val)
+typename GVector<T, MMFun>::iterator_type  GVector<T, MMFun>::insert(iterator_type pos, size_t num, const T& val)
 {
 	if (num == 0)
 		return pos;
@@ -322,7 +322,7 @@ _Base_Iterator<T>  GVector<T, MMFun>::insert(_base_iterator pos, size_t num, con
 }
 
 template<class T, GMemManagerFun MMFun>
-_Base_Iterator<T> GVector<T, MMFun>::insert(_base_iterator pos, _base_iterator _begin, _base_iterator _end)
+typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::insert(iterator_type pos, iterator_type _begin, iterator_type _end)
 {
 	size_t _count = _end - _begin;
 	iterator_type p = end();
@@ -346,7 +346,7 @@ _Base_Iterator<T> GVector<T, MMFun>::insert(_base_iterator pos, _base_iterator _
 }
 
 template<class T, GMemManagerFun MMFun>
-_Base_Iterator<T> GVector<T, MMFun>::insert(_base_iterator pos, std::initializer_list<T> values)
+typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::insert(iterator_type pos, std::initializer_list<T> values)
 {
 	size_t _count = values.size();
 	iterator_type p = end();
@@ -373,7 +373,7 @@ _Base_Iterator<T> GVector<T, MMFun>::insert(_base_iterator pos, std::initializer
 
 template<class T, GMemManagerFun MMFun>
 template<class ...Args>
-_Base_Iterator<T> GVector<T, MMFun>::emplace(_base_iterator pos, Args&&... args)
+typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::emplace(iterator_type pos, Args&&... args)
 {
 	T temp(args...);
 	return insert(pos, temp);
@@ -381,26 +381,26 @@ _Base_Iterator<T> GVector<T, MMFun>::emplace(_base_iterator pos, Args&&... args)
 
 template<class T, GMemManagerFun MMFun>
 template<class ...Args>
-_Base_Iterator<T> GVector<T, MMFun>::emplace_back(Args&&... args)
+typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::emplace_back(Args&&... args)
 {
 	T temp(args...);
 	push_back(temp);
-	return _Vector_Iterator<T>(m_data + m_count - 1);
+	return _SingleMemUnit_Iterator<T>(m_data + m_count - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Base_Iterator<T> GVector<T, MMFun>::erase(_base_iterator pos)
+typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::erase(iterator_type pos)
 {
 	int idx = pos - begin();
 	for (auto p = pos; p + 1 != end(); p++)
 		_construct_iterator(p, *(p + 1));
 	_destruct_elem(m_count-1);
 	m_count--;		
-	return _Vector_Iterator<T>(m_data + idx);
+	return _SingleMemUnit_Iterator<T>(m_data + idx);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Base_Iterator<T> GVector<T, MMFun>::erase(_base_iterator _begin, _base_iterator _end)
+typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::erase(iterator_type _begin, iterator_type _end)
 {
 	int _delete_count = _end - _begin;
 	if (_delete_count <= 0)
@@ -413,7 +413,7 @@ _Base_Iterator<T> GVector<T, MMFun>::erase(_base_iterator _begin, _base_iterator
 	for (int i = 0; i < _delete_count; i++)
 		_destruct_elem(m_count - i-1);
 	m_count -= _delete_count;
-	return _Base_Iterator<T>(m_data + m_count - next_idx);
+	return _SingleMemUnit_Iterator<T>(m_data + m_count - next_idx);
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -565,49 +565,57 @@ bool GVector<T, MMFun>::operator<=(const GVector& rhs)
 //*************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-_Vector_Iterator<T> GVector<T, MMFun>::begin()
+typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::begin()
 {
-	return _Vector_Iterator<T>(m_data);
+	typedef GVector<T, MMFun>::iterator_type category;
+	return category(m_data);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_Iterator<T> GVector<T, MMFun>::end()
+typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::end()
 {
-	return _Vector_Iterator<T>(m_data + m_count);
+	typedef GVector<T, MMFun>::iterator_type category;
+	return category(m_data + m_count);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_CIterator<T> GVector<T, MMFun>::cbegin()
+typename GVector<T, MMFun>::c_iterator_type GVector<T, MMFun>::cbegin()
 {
-	return _Vector_CIterator<T>(m_data);
+	typedef GVector<T, MMFun>::c_iterator_type category;
+	return category(m_data);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_CIterator<T> GVector<T, MMFun>::cend()
+typename GVector<T, MMFun>::c_iterator_type GVector<T, MMFun>::cend()
 {
-	return _Vector_CIterator<T>(m_data + m_count);
+	typedef GVector<T, MMFun>::c_iterator_type category;
+	return category(m_data + m_count);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_RIterator<T> GVector<T, MMFun>::rbegin()
+typename GVector<T, MMFun>::r_iterator_type GVector<T, MMFun>::rbegin()
 {
-	return _Vector_RIterator<T>(m_data + m_count - 1);
+	typedef GVector<T, MMFun>::r_iterator_type category;
+	return category(m_data + m_count - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_RIterator<T> GVector<T, MMFun>::rend()
+typename GVector<T, MMFun>::r_iterator_type GVector<T, MMFun>::rend()
 {
-	return _Vector_RIterator<T>(m_data - 1);
+	typedef GVector<T, MMFun>::r_iterator_type category;
+	return category(m_data - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_CRIterator<T> GVector<T, MMFun>::crbegin()
+typename GVector<T, MMFun>::cr_iterator_type GVector<T, MMFun>::crbegin()
 {
-	return _Vector_CRIterator<T>(m_data + m_count - 1);
+	typedef GVector<T, MMFun>::cr_iterator_type category;
+	return category(m_data + m_count - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
-_Vector_CRIterator<T> GVector<T, MMFun>::crend()
+typename GVector<T, MMFun>::cr_iterator_type GVector<T, MMFun>::crend()
 {
-	return _Vector_CRIterator<T>(m_data - 1);
+	typedef GVector<T, MMFun>::cr_iterator_type category;
+	return category(m_data - 1);
 }

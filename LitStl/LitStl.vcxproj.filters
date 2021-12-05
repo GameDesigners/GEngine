@@ -47,6 +47,9 @@
     <ClInclude Include="GDeque.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
+    <ClInclude Include="GIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUtility.cpp">
@@ -63,6 +66,9 @@
     </ClCompile>
     <ClCompile Include="GVector.cpp">
       <Filter>Source Files\GContainers</Filter>
+    </ClCompile>
+    <ClCompile Include="GIterator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

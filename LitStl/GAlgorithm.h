@@ -2,23 +2,29 @@
 #define GALGORITHM_H
 #include "GStlMicro.h"
 #include "GContainer.h"
+#include "GIterator.h"
 namespace GEngine {
 	namespace GStl {
 
-		template<typename T>
-		GSTL_API inline T accumulate(_Base_Iterator<T> begin, _Base_Iterator<T> end, T init)
+		template<typename Iterator>
+		inline typename Iterator::value_type accumulate(Iterator begin, Iterator end, typename Iterator::value_type init)
 		{
-			for (auto p = begin; p != end; p++)
-				init += *p;
+			while (begin != end)
+			{
+				init += *begin;
+				advance(begin, 1);
+			}
 			return init;
 		}
 
-
-		template<typename T,class Operation>
-		GSTL_API inline void transform(_Base_Iterator<T> begin, _Base_Iterator<T> end, Operation op)
+		template<typename Iterator, class Operation>
+		inline void transform(Iterator begin, Iterator end, Operation op)
 		{
-			for (auto p = begin; p != end; p++)
-				op(*p);
+			while (begin != end)
+			{
+				op(*begin);
+				advance(begin, 1);
+			}
 		}
 
 		//取反函数对象

@@ -1,30 +1,36 @@
 #ifndef GARRAY_H
 #define GARRAY_H
 #include "GContainer.h"
+#include "GIterator.h"
 namespace GEngine {
 	namespace GStl {
 		
 		template<class T,size_t N>
 		class GSTL_API GArray : public GContainer<T,GMemObject::GetMemManager>
 		{
-			public:
+		public:
 			typedef size_t           size_type;
 			typedef T                value_type;
 			typedef T&               reference;
 			typedef const T&         const_reference;
 			typedef T*               pointer;
 			typedef const T*         const_pointer;
-			typedef _Base_Iterator<T>     iteractor_type;
+			/*typedef _Base_Iterator<T>     iteractor_type;
 			typedef _Base_CIterator<T>    c_iterator_type;
 			typedef _Base_RIterator<T>    r_iterator_type;
-			typedef _Base_CRIterator<T>   cr_iterator_type;
+			typedef _Base_CRIterator<T>   cr_iterator_type;*/
+
+			typedef _SingleMemUnit_Iterator<T>     iterator_type;
+			typedef _SingleMemUnit_CIterator<T>    c_iterator_type;
+			typedef _SingleMemUnit_RIterator<T>    r_iterator_type;
+			typedef _SingleMemUnit_CRIterator<T>   cr_iterator_type;
 
 		//构造函数
 		public:
 			GArray();
 			GArray(const GArray& cv);
 			GArray(GArray&& rv);
-			GArray(iteractor_type _begin, iteractor_type _end);
+			GArray(iterator_type _begin, iterator_type _end);
 			GArray(std::initializer_list<T> values);
 			~GArray();
 
@@ -61,8 +67,8 @@ namespace GEngine {
 
 		//迭代器
 		public:
-			iteractor_type   begin();
-			iteractor_type   end();
+			iterator_type   begin();
+			iterator_type   end();
 			c_iterator_type  cbegin();
 			c_iterator_type  cend();
 			r_iterator_type  rbegin();
