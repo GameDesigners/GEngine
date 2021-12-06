@@ -6,7 +6,7 @@ namespace GEngine {
 	namespace GStl {
 		//向前声明
 		template<class T> class GSTL_API _Deque_Iterator;
-		template<class T, GMemManagerFun MMFun> class __deque_memory_buffer_block;
+		template<class T, GMemManagerFun MMFun> class __deque_memory_buffer_block; 
 		template<class T, GMemManagerFun MMFun> class GSTL_API GDeque;
 
 		//队列内存缓冲块

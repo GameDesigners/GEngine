@@ -16,6 +16,7 @@
 #include <GAlgorithm.h>
 #include <GArray.h>
 #include <GIterator.h>
+#include "GDirect3DVectorSample.h"
 
 
 class SamplesElem
@@ -264,11 +265,12 @@ int main()
 
 	//USE_GSTL_GARRAY();
 
-	GArraySample();
+	//GArraySample();
 	//GVectorSample();
     //GDeuqeSample();
 	//std::deque<SamplesElem> d;
 	//d.push_back(SamplesElem(1, 1));*/
 	//getchar();
+	UseDirect3DSample();
 	return 0;
 }

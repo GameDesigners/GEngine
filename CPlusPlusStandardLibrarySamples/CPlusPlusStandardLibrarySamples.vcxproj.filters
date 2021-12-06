@@ -12,6 +12,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="RenderLayerUseSample">
+      <UniqueIdentifier>{025505eb-5f46-4908-8aab-170aaa5ab989}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -33,6 +36,9 @@
     </ClInclude>
     <ClInclude Include="UseGDequeSample.h">
       <Filter>CustomStlUseSample</Filter>
+    </ClInclude>
+    <ClInclude Include="GDirect3DVectorSample.h">
+      <Filter>RenderLayerUseSample</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

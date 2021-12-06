@@ -427,7 +427,7 @@ void GDeque<T, MMFun>::clear()
 //µü´úÆ÷º¯Êý
 //*************************************************************************
 template<class T>
-_Deque_Iterator<T>::self_type& _Deque_Iterator<T>::operator++()
+_Deque_Iterator<T>& _Deque_Iterator<T>::operator++()
 {
 	_current++;
 	if (_current == _last)
@@ -436,7 +436,7 @@ _Deque_Iterator<T>::self_type& _Deque_Iterator<T>::operator++()
 }
 
 template<class T>
-_Deque_Iterator<T>::self_type& _Deque_Iterator<T>::operator--()
+_Deque_Iterator<T>& _Deque_Iterator<T>::operator--()
 {
 	if (_current == _first)
 		jump_node(-1);
@@ -457,7 +457,7 @@ T* _Deque_Iterator<T>::operator->()
 }
 
 template<class T>
-_Deque_Iterator<T>::self_type _Deque_Iterator<T>::operator++(int)
+_Deque_Iterator<T> _Deque_Iterator<T>::operator++(int)
 {
 	_Deque_Iterator temp(_current, _first, _last, _node);
 	--(*this);
@@ -465,7 +465,7 @@ _Deque_Iterator<T>::self_type _Deque_Iterator<T>::operator++(int)
 }
 
 template<class T>
-_Deque_Iterator<T>::self_type _Deque_Iterator<T>::operator--(int)
+_Deque_Iterator<T> _Deque_Iterator<T>::operator--(int)
 {
 	_Deque_Iterator temp(_current, _first, _last, _node);
 	--(*this);
@@ -473,7 +473,7 @@ _Deque_Iterator<T>::self_type _Deque_Iterator<T>::operator--(int)
 }
 
 template<class T>
-_Deque_Iterator<T>::self_type _Deque_Iterator<T>::operator+(distance idx)
+_Deque_Iterator<T> _Deque_Iterator<T>::operator+(distance idx)
 {
 	_Deque_Iterator temp(_current, _first, _last, _node);
 	temp += idx;
@@ -481,7 +481,7 @@ _Deque_Iterator<T>::self_type _Deque_Iterator<T>::operator+(distance idx)
 }
 
 template<class T>
-_Deque_Iterator<T>::self_type _Deque_Iterator<T>::operator-(distance idx)
+_Deque_Iterator<T> _Deque_Iterator<T>::operator-(distance idx)
 {
 	_Deque_Iterator temp(_current, _first, _last, _node);
 	temp -= idx;
@@ -490,14 +490,14 @@ _Deque_Iterator<T>::self_type _Deque_Iterator<T>::operator-(distance idx)
 
 
 template<class T>
-_Deque_Iterator<T>::self_type& _Deque_Iterator<T>::operator+=(distance idx)
+_Deque_Iterator<T>& _Deque_Iterator<T>::operator+=(distance idx)
 {
 	_move_distance(idx);
 	return *this;
 }
 
 template<class T>
-_Deque_Iterator<T>::self_type& _Deque_Iterator<T>::operator-=(distance idx)
+_Deque_Iterator<T>& _Deque_Iterator<T>::operator-=(distance idx)
 {
 	_move_distance(-idx);
 	return *this;
@@ -522,7 +522,7 @@ bool _Deque_Iterator<T>::operator!=(const _Deque_Iterator& rhs)
 }
 
 template<class T>
-_Deque_Iterator<T>::distance _Deque_Iterator<T>::operator-(const _Deque_Iterator& rhs)
+ptrdiff_t _Deque_Iterator<T>::operator-(const _Deque_Iterator& rhs)
 {
 	size_t buffer_size = _node->m_capcity;
 	distance node_dis = _node - rhs._node;

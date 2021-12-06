@@ -48,7 +48,7 @@
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
     <ClInclude Include="GIterator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GContainers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
