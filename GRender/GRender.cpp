@@ -3,7 +3,7 @@ using namespace GEngine::GRender;
 
 const int GRender::ms_SwapChainBufferCount;
 
-void GRender::Initialize()
+bool GRender::Initialize()
 {
 #if defined(DEBUG) || defined(_DEBUG)
 	ComPtr<ID3D12Debug> debugController;
@@ -162,5 +162,6 @@ void GRender::Initialize()
 
 	//ÉèÖÃ²Ã¼ôÇøÓò
 	m_commandList->RSSetScissorRects(1, &m_scissorRect);
+	return true;
 
 }

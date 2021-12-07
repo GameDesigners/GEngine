@@ -113,6 +113,13 @@ _Deque_Iterator<T> __deque_memory_buffer_block<T, MMFun>::insert(_iterator_type 
 }
 
 template<class T, GMemManagerFun MMFun>
+void __deque_memory_buffer_block<T, MMFun>::push_back()
+{
+
+}
+
+
+template<class T, GMemManagerFun MMFun>
 void __deque_memory_buffer_block<T, MMFun>::remove(_iterator_type pos)
 {
 	if (empty())
@@ -389,6 +396,18 @@ T& GDeque<T, MMFun>::back()
 			return m_map[index]->m_data[m_map[index]->size() - 1];
 	}
 }
+
+//安插和移除
+//*************************************************************************
+template<class T, GMemManagerFun MMFun>
+void GDeque<T, MMFun>::push_back(const T& cv)
+{
+	if (m_map[m_map_count - 1]->full())
+		_create_new_buffer_block(m_map_count, DefaultBufferSize);
+	m_map[m_map_count - 1]->push_back();
+}
+
+
 
 // 虚函数函数
 //*************************************************************************

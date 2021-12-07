@@ -29,6 +29,7 @@ namespace GEngine {
 			void operator=(__deque_memory_buffer_block&& rv);
 
 			_iterator_type insert(_iterator_type pos, const T& cv);
+			void push_back();
 			void remove(_iterator_type pos);
 			bool full();
 
@@ -109,9 +110,6 @@ namespace GEngine {
 
 			typedef __deque_memory_buffer_block<T,MMFun>* node_pointer;
 
-		public:
-			typedef iterator_type       _base_iterator;
-
 			enum
 			{
 				DefaultBufferSize = 24,
@@ -127,7 +125,7 @@ namespace GEngine {
 			GDeque(GDeque&& rv);
 			GDeque(size_t _count);
 			GDeque(size_t _count, const T& val);
-			GDeque(_base_iterator _begin, _base_iterator _end);
+			GDeque(iterator_type _begin, iterator_type _end);
 			GDeque(std::initializer_list<T> values);
 			~GDeque();
 
@@ -138,7 +136,7 @@ namespace GEngine {
 			void operator=(std::initializer_list<T> values);
 
 			void assign(size_t _count, const T& val);
-			void assign(_base_iterator _begin, _base_iterator _end);
+			void assign(iterator_type _begin, iterator_type _end);
 			void assign(std::initializer_list<T> values);
 			void assign(const GDeque& cv);
 			void swap(GDeque& deque);

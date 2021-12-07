@@ -6,6 +6,7 @@
 #include <dxgi1_4.h>
 
 #include <GSystem.h>
+#include <GTimer.h>
 
 #include "libs/d3dx12.h"
 
@@ -42,8 +43,19 @@ namespace GEngine {
 			float AspectRatio() const;
 			bool Get4xMsaaState() const;
 			void Set4xMsaaState(bool value);
-			void Initialize();
 
+			virtual bool Initialize();
+			virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+			virtual void CreateRtvAndDsvDescriptorHeaps();
+			virtual void OnResize();
+			virtual void Draw();
+
+		protected:
+			bool InitMainWindow();
+			bool InitDirect3D();
+			void CreateCommandObjects();
+			void CreateSwapChain();
+			void FlushCommandQueue();
 
 		private:
 			D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const {
@@ -88,6 +100,8 @@ namespace GEngine {
 
 			bool        m_4xMsaaState = true;
 			int         m_curBackBuffer = 0;
+
+			GTimer&     m_timer;
 		};
 	}
 }
