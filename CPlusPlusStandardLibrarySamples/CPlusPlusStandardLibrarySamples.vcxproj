@@ -149,6 +149,7 @@
     <ClInclude Include="GDirect3DVectorSample.h" />
     <ClInclude Include="UseGArraySample.h" />
     <ClInclude Include="UseGDequeSample.h" />
+    <ClInclude Include="UseGListSample.h" />
     <ClInclude Include="UseGVectorSample.h" />
   </ItemGroup>
   <ItemGroup>

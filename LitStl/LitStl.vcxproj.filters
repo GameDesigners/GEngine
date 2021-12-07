@@ -50,6 +50,9 @@
     <ClInclude Include="GIterator.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
+    <ClInclude Include="GList.h">
+      <Filter>Header Files\GContainers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUtility.cpp">
@@ -70,6 +73,9 @@
     <ClCompile Include="GIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="GMemory.inl">
@@ -85,6 +91,9 @@
       <Filter>Inl Files</Filter>
     </None>
     <None Include="GDeque.inl">
+      <Filter>Inl Files\GContainers</Filter>
+    </None>
+    <None Include="GList.inl">
       <Filter>Inl Files\GContainers</Filter>
     </None>
   </ItemGroup>

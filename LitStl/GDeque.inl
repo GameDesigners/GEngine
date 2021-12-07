@@ -115,7 +115,8 @@ _Deque_Iterator<T> __deque_memory_buffer_block<T, MMFun>::insert(_iterator_type 
 template<class T, GMemManagerFun MMFun>
 void __deque_memory_buffer_block<T, MMFun>::push_back()
 {
-
+	_construct_idx(m_count);
+	m_count++;
 }
 
 

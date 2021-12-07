@@ -82,6 +82,7 @@ public:
 #include "UseGArraySample.h"
 #include "UseGVectorSample.h"
 #include "UseGDequeSample.h"
+#include "UseGListSample.h"
 
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
@@ -268,9 +269,11 @@ int main()
 	//GArraySample();
 	//GVectorSample();
     //GDeuqeSample();
+	GListSample();
+	
 	//std::deque<SamplesElem> d;
 	//d.push_back(SamplesElem(1, 1));*/
 	//getchar();
-	UseDirect3DSample();
+	//UseDirect3DSample();
 	return 0;
 }

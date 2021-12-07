@@ -156,15 +156,15 @@ namespace GEngine {
 			void push_front(const T& cv);
 			void push_front(T&& rv);
 			void pop_front();
-			_base_iterator insert(_base_iterator pos, const T& val);
-			_base_iterator insert(_base_iterator pos, size_t num, const T& val);
-			_base_iterator insert(_base_iterator pos, _base_iterator _begin, _base_iterator _end);
-			_base_iterator insert(_base_iterator pos, std::initializer_list<T> values);
-			template<class ...Args> _base_iterator emplace(_base_iterator pos, Args&&... args);
+			iterator_type insert(iterator_type pos, const T& val);
+			iterator_type insert(iterator_type pos, size_t num, const T& val);
+			iterator_type insert(iterator_type pos, iterator_type _begin, iterator_type _end);
+			iterator_type insert(iterator_type pos, std::initializer_list<T> values);
+			template<class ...Args> iterator_type emplace(iterator_type pos, Args&&... args);
 			template<class ...Args> void emplace_front(Args&... args);
 			template<class ...Args> void emplace_back(Args&... args);
-			_base_iterator erase(_base_iterator pos);
-			_base_iterator erase(_base_iterator _begin, _base_iterator _end);
+			iterator_type erase(iterator_type pos);
+			iterator_type erase(iterator_type _begin, iterator_type _end);
 			void resize(size_t num);
 			void resize(size_t num, const T& val);
 
@@ -191,7 +191,6 @@ namespace GEngine {
 
 
 		//µü´úÆ÷
-			//µü´úÆ÷
 		public:
 			iterator_type   begin();
 			iterator_type   end();

@@ -40,5 +40,8 @@
     <ClInclude Include="GDirect3DVectorSample.h">
       <Filter>RenderLayerUseSample</Filter>
     </ClInclude>
+    <ClInclude Include="UseGListSample.h">
+      <Filter>CustomStlUseSample</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
