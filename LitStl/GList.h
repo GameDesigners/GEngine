@@ -39,7 +39,6 @@ namespace GEngine {
 			self_type& operator--() { current = current->prev; return *this; }                  //前置--
 			self_type  operator++(int) { node_pointer temp = current; current=current->next; return _List_Iterator<T, MMFun>(temp); }  //后置++(非重载版本)
 			self_type  operator--(int) { node_pointer temp = current; current=current->prev; return _List_Iterator<T, MMFun>(temp); }  //后置--(非重载版本)
-
 			T& operator*() { return current->value; }                                               //解引用
 			T* operator->() { return &(operator*()); }                                              //指针访问
 

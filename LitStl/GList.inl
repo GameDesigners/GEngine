@@ -27,7 +27,6 @@ GList<T, MMFun>::GList(const GList& cv)
 			break;
 		p = temp;
 	}
-
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -63,7 +62,7 @@ template<class T, GMemManagerFun MMFun>
 GList<T, MMFun>::GList(iterator_type _begin, iterator_type _end)
 {
 	for (iterator_type p = _begin; p != _end; p++)
-		push_back(p);
+		push_back(*p);
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -76,20 +75,7 @@ GList<T, MMFun>::GList(std::initializer_list<T> values)
 template<class T, GMemManagerFun MMFun>
 GList<T, MMFun>::~GList()
 {
-	if (m_count == 0)
-		return;
-
-	node_pointer p = m_head;
-	while(true)
-	{
-		node_pointer temp = p->next;
-		this->Delete(p, 1, 1);
-		if (p == m_tail)
-			break;
-		p = temp;
-	}
-	m_head = m_tail = nullptr;
-	m_count = 0;
+	clear();	
 }
 
 
@@ -101,9 +87,18 @@ void GList<T, MMFun>::operator=(const GList& cv)
 {
 	if (cv.m_count == 0)
 		return;
+	clear();
+	node_pointer p = cv.m_head;
+	node_pointer q = m_head;
+	while (true)
+	{
+		node_pointer temp = p->next;
+		push_back(p->value);
 
-	for (iterator_type q = cv.begin_iter; q != cv.end_iter; q++)
-		push_back(*q); 
+		if (p == cv.m_tail)
+			break;
+		p = temp;
+	}
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -121,65 +116,39 @@ void GList<T, MMFun>::operator=(GList&& rv)
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::operator=(std::initializer_list<T> values)
 {
-	node_pointer elem = m_head;
+	clear();
+	if (values.size() == 0)
+		return;
+
 	for (auto p = values.begin(); p != values.end(); p++)
-	{
-		if (elem != nullptr)
-		{
-			elem->value = *p;
-			elem++;
-		}
-		else
-			push_back(*p);
-	}
+		push_back(*p);
 }
 
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::assign(size_t _count, const T& val)
 {
-	node_pointer elem = m_head;
+	clear();
 	for (int index = 0; index < _count; index++)
-	{
-		if (elem != nullptr)
-		{
-			elem->value = val;
-			elem++;
-		}
-		else
-			push_back(val);
-	}
+		push_back(val);
 }
 
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::assign(iterator_type _begin, iterator_type _end)
 {
-	node_pointer elem = m_head;
-	for (auto p = _begin; p != _end; p++)
-	{
-		if (elem != nullptr)
-		{
-			elem->value = *p;
-			elem++;
-		}
-		else
-			push_back(*p);
-	}
+	clear();
+	for (iterator_type p = _begin; p != _end; p++)
+		push_back(*p);
 }
 
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::assign(std::initializer_list<T> values)
 {
-	node_pointer elem = m_head;
+	clear();
+	if (values.size() == 0)
+		return;
+
 	for (auto p = values.begin(); p != values.end(); p++)
-	{
-		if (elem != nullptr)
-		{
-			elem->value = *p;
-			elem++;
-		}
-		else
-			push_back(*p);
-	}
+		push_back(*p);
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -584,11 +553,16 @@ size_t GList<T, MMFun>::size()
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::clear()
 {
+	if (m_count == 0)
+		return;
+
 	node_pointer p = m_head;
-	while (p != nullptr)
+	while (true)
 	{
 		node_pointer temp = p->next;
 		this->Delete(p, 1, 1);
+		if (p == m_tail)
+			break;
 		p = temp;
 	}
 	m_head = m_tail = nullptr;

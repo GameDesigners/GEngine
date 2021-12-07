@@ -53,6 +53,9 @@
     <ClInclude Include="GList.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
+    <ClInclude Include="GForwardList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUtility.cpp">
@@ -76,6 +79,9 @@
     <ClCompile Include="GList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GForwardList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="GMemory.inl">
@@ -94,6 +100,9 @@
       <Filter>Inl Files\GContainers</Filter>
     </None>
     <None Include="GList.inl">
+      <Filter>Inl Files\GContainers</Filter>
+    </None>
+    <None Include="GForwardList.inl">
       <Filter>Inl Files\GContainers</Filter>
     </None>
   </ItemGroup>
