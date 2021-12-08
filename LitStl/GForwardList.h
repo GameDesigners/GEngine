@@ -47,6 +47,40 @@ namespace GEngine {
 		};
 
 		template<class T, GMemManagerFun MMFun = GMemObject::GetMemManager>
+		class GSTL_API _Forward_List_CIterator : public iterator<bidirectional_iterator_tag, __forward_list_node<T>>
+		{
+			friend class GForwardList<T, MMFun>;
+
+		public:
+			typedef bidirectional_iterator_tag        iterator_category;
+			typedef T                                 value_type;
+			typedef T* value_pointer;
+			typedef T& value_reference;
+
+			typedef __forward_list_node<T>* node_pointer;
+			typedef _Forward_List_CIterator<T, MMFun>  self_type;
+
+
+		public:
+			_Forward_List_CIterator(__forward_list_node<T>* val) : current(val) {}
+			_Forward_List_CIterator(const _Forward_List_CIterator& itera) { current = itera.current; }
+			~_Forward_List_CIterator() {}
+			void operator=(const _Forward_List_CIterator& _itera) { current = _itera.current; }
+
+			self_type& operator++() { current = current->next; return *this; }
+			self_type  operator++(int) { node_pointer temp = current; current = current->next; return _Forward_List_CIterator<T, MMFun>(temp); }  //后置++(非重载版本)
+
+			const T& operator*() { return current->value; }                                               //解引用
+			T* operator->() { return &(operator*()); }
+
+			bool operator!=(const _Forward_List_CIterator& rhs) { return current != rhs.current; }
+			bool operator==(const _Forward_List_CIterator& rhs) { return current == rhs.current; }
+
+		private:
+			__forward_list_node<T>* current;
+		};
+
+		template<class T, GMemManagerFun MMFun = GMemObject::GetMemManager>
 		class GSTL_API GForwardList : public GContainer<__forward_list_node<T>,MMFun>
 		{
 		public:
@@ -59,7 +93,7 @@ namespace GEngine {
 			typedef __forward_list_node<T>*            node_pointer;
 
 			typedef _Forward_List_Iterator<T, MMFun>   iterator_type;
-			typedef _SingleMemUnit_CIterator<T>        c_iterator_type;
+			typedef _Forward_List_CIterator<T,MMFun>   c_iterator_type;
 
 
 		//构造函数
@@ -104,7 +138,6 @@ namespace GEngine {
 			template<class Operator> void remove_if(Operator op);
 			void resize(size_t _count);
 			void resize(size_t _count,const T& cv);
-			void clear();
 
 		//特殊更易型操作
 			void unique();
@@ -123,8 +156,6 @@ namespace GEngine {
 			virtual bool empty();
 			virtual void clear();
 
-
-
 		//运算符重载
 		public:
 			bool operator==(const GForwardList& rhs);
@@ -140,10 +171,6 @@ namespace GEngine {
 			iterator_type    end();
 			c_iterator_type  cbegin();
 			c_iterator_type  cend();
-
-			iterator_type    before_begin();
-			c_iterator_type  cbefore_begin();
-
 
 		private:
 			virtual size_t size() { return 0; };

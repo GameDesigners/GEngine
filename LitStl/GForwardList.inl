@@ -420,18 +420,6 @@ void GForwardList<T, MMFun>::resize(size_t _count, const T& cv)
 	erase_after(_Forward_List_Iterator<T, MMFun>(p));
 }
 
-template<class T, GMemManagerFun MMFun>
-void GForwardList<T, MMFun>::clear()
-{
-	iterator_type p = m_head;
-	while (p != nullptr)
-	{
-		node_pointer temp = p->next;
-		this->Delete(p, 1, 1);
-		p = temp;
-	}
-}
-
 //特殊更易型操作
 //*************************************************************************
 template<class T, GMemManagerFun MMFun>
@@ -470,6 +458,134 @@ void GForwardList<T, MMFun>::splice_after(iterator_type pos, GForwardList& v)
 	
 }
 
+// 虚函数重写
+//*************************************************************************
+
+template<class T, GMemManagerFun MMFun>
+bool GForwardList<T, MMFun>::empty()
+{
+	return m_head == nullptr;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GForwardList<T, MMFun>::clear()
+{
+	iterator_type p = m_head;
+	while (p != nullptr)
+	{
+		node_pointer temp = p->next;
+		this->Delete(p, 1, 1);
+		p = temp;
+	}
+}
+
+//运算符重载
+//*************************************************************************
+
+template<class T, GMemManagerFun MMFun>
+bool GForwardList<T, MMFun>::operator==(const GForwardList& rhs)
+{
+	node_pointer p = m_head;
+	node_pointer q = rhs.m_head;
+
+	while (p != nullptr && q != nullptr)
+	{
+		if (p->value != q->value)
+			return false;
+		p = p->next;
+		q = q->next;
+	}
+	return p == nullptr && q == nullptr;
+}
+
+template<class T, GMemManagerFun MMFun>
+bool GForwardList<T, MMFun>::operator!=(const GForwardList& rhs)
+{
+	node_pointer p = m_head;
+	node_pointer q = rhs.m_head;
+
+	while (p != nullptr && q != nullptr)
+	{
+		if (p->value != q->value)
+			return true;
+		p = p->next;
+		q = q->next;
+	}
+	return p != nullptr || q != nullptr;
+}
+
+template<class T, GMemManagerFun MMFun>
+bool GForwardList<T, MMFun>::operator<(const GForwardList& rhs)
+{
+	node_pointer p = m_head;
+	node_pointer q = rhs.m_head;
+
+	while (p != nullptr && q != nullptr)
+	{
+		if (p->value < q->value)
+			return true;
+		else if (p->value > q->value)
+			return false;
+		p = p->next;
+		q = q->next;
+	}
+	return q != nullptr;
+}
+
+template<class T, GMemManagerFun MMFun>
+bool GForwardList<T, MMFun>::operator>(const GForwardList& rhs)
+{
+	node_pointer p = m_head;
+	node_pointer q = rhs.m_head;
+
+	while (p != nullptr && q != nullptr)
+	{
+		if (p->value > q->value)
+			return true;
+		else if (p->value < q->value)
+			return false;
+		p = p->next;
+		q = q->next;
+	}
+	return p != nullptr;
+}
+
+template<class T, GMemManagerFun MMFun>
+bool GForwardList<T, MMFun>::operator>=(const GForwardList& rhs)
+{
+	node_pointer p = m_head;
+	node_pointer q = rhs.m_head;
+
+	while (p != nullptr && q != nullptr)
+	{
+		if (p->value > q->value)
+			return true;
+		else if (p->value < q->value)
+			return false;
+		p = p->next;
+		q = q->next;
+	}
+	return q == nullptr;
+}
+
+template<class T, GMemManagerFun MMFun>
+bool GForwardList<T, MMFun>::operator<=(const GForwardList& rhs)
+{
+	node_pointer p = m_head;
+	node_pointer q = rhs.m_head;
+
+	while (p != nullptr && q != nullptr)
+	{
+		if (p->value < q->value)
+			return true;
+		else if (p->value > q->value)
+			return false;
+		p = p->next;
+		q = q->next;
+	}
+	return p == nullptr;
+}
+
 
 // 迭代器相关函数
 //*************************************************************************
@@ -483,6 +599,24 @@ GForwardList<T, MMFun>::iterator_type GForwardList<T, MMFun>::begin()
 template<class T, GMemManagerFun MMFun>
 GForwardList<T, MMFun>::iterator_type GForwardList<T, MMFun>::end()
 {
-	return _Forward_List_Iterator<T, MMFun>(m_head);
+	node_pointer p = m_head;
+	while (p->next == nullptr)
+		p = p->next;
+	return _Forward_List_Iterator<T, MMFun>(p->next);
+}
+
+template<class T, GMemManagerFun MMFun>
+GForwardList<T, MMFun>::c_iterator_type GForwardList<T, MMFun>::cbegin()
+{
+	return _Forward_List_CIterator<T, MMFun>(m_head);
+}
+
+template<class T, GMemManagerFun MMFun>
+GForwardList<T, MMFun>::c_iterator_type GForwardList<T, MMFun>::cend()
+{
+	node_pointer p = m_head;
+	while (p->next == nullptr)
+		p = p->next;
+	return _Forward_List_CIterator<T, MMFun>(p->next);
 }
 
