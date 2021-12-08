@@ -54,7 +54,7 @@
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
     <ClInclude Include="GForwardList.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GContainers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,7 +80,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GForwardList.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GContainers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

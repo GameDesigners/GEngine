@@ -43,5 +43,8 @@
     <ClInclude Include="UseGListSample.h">
       <Filter>CustomStlUseSample</Filter>
     </ClInclude>
+    <ClInclude Include="UseGForwardListSample.h">
+      <Filter>CustomStlUseSample</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

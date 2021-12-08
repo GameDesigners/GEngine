@@ -8,9 +8,14 @@ namespace GEngine{
 	namespace GStl{
         
 		/*
-		 *   序列式容器：
-		 *   array,vector,deque,list,forward_list
-		 *   实现方式为：数组、链表
+		 *   序列式容器,实现方式为：数组、链表：
+		 *   GArray        -->   |   GArray.h        |   GArray.inl        |   GArray.cpp
+		 *   GVector       -->   |   GVector.h       |   GVector.inl       |   GVector.cpp
+		 *   GDeque        -->   |   GDeque.h        |   GDeque.inl        |   GDeque.cpp
+		 *   GList         -->   |   GList.h         |   GList.inl         |   GList.cpp
+		 *   GForwardList  -->   |   GForwardList.h  |   GForwardList.inl  |   GForwardList.cpp
+		 * 
+		 *  
 		 *   
 		 *   关联式容器：
 		 *   set,multiset,map,multimap
@@ -42,11 +47,6 @@ namespace GEngine{
 					return nullptr;
 				T* newAddr = (T*)MMFun().Allocate(sizeof(T) * Num, 0, true);
 				GASSERT(newAddr != nullptr);
-				/*if (ValueBase<T>::NeedsConstructor)
-				{
-					for (size_t idx = 0; idx < Num; idx++)
-						GNEW(newAddr + idx)T;
-				}*/
 				return newAddr;
 			}
 			inline void Delete(T* pAddr,int Num,int ConstructsNum)
