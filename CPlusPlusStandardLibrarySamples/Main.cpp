@@ -57,6 +57,11 @@ public:
 		}
 	}
 
+	bool operator==(const SamplesElem& cv)
+	{
+		return (*i) == *(cv.i) && f == cv.f;
+	}
+
 	void operator=(SamplesElem&& rv) noexcept
 	{
 		GSAFE_DELETE(i)
@@ -83,6 +88,7 @@ public:
 #include "UseGVectorSample.h"
 #include "UseGDequeSample.h"
 #include "UseGListSample.h"
+#include "UseGForwardListSample.h"
 
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
@@ -269,7 +275,8 @@ int main()
 	//GArraySample();
 	//GVectorSample();
     //GDeuqeSample();
-	GListSample();
+	//GListSample();
+	GForwardListSample();
 	
 	//std::deque<SamplesElem> d;
 	//d.push_back(SamplesElem(1, 1));*/

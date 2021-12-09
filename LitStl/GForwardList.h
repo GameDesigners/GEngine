@@ -143,8 +143,8 @@ namespace GEngine {
 			void unique();
 			template<class Operator> void unique(Operator op);
 			void splice_after(iterator_type pos, GForwardList& v);
-			void splice_after(iterator_type pos, const GForwardList& cv, iterator_type splice_target);
-			void splice_after(iterator_type pos, const GForwardList& cv, iterator_type _begin, iterator_type _end);
+			void splice_after(iterator_type pos, GForwardList& v, iterator_type splice_target);
+			void splice_after(iterator_type pos, GForwardList& v, iterator_type _begin, iterator_type _end);
 			void sort();
 			template<class Operator> void sort(Operator op);
 			void merge(const GForwardList& cv);
@@ -172,17 +172,15 @@ namespace GEngine {
 			c_iterator_type  cbegin();
 			c_iterator_type  cend();
 
-		private:
-			virtual size_t size() { return 0; };
-			virtual size_t capcity() { return 0; };
-
+		protected:
 			class Equals
 			{
+			public:
 				Equals() {}
 				Equals(const T& _comp) : comp(_comp) {}
 				bool operator()(const T& elem)
 				{
-					return elem == comp;
+					return comp == elem;
 				}
 
 				bool operator()(const T& val1, const T& val2)
@@ -192,6 +190,26 @@ namespace GEngine {
 			private:
 				T comp;
 			};
+		private:
+			virtual size_t size() { return 0; };
+			virtual size_t capcity() { return 0; };
+
+			inline node_pointer __new_forwardlist_node(const T& val)
+			{
+				node_pointer p = this->New(1);
+				GASSERT(p != nullptr);
+				construct(&p->value, val);
+				return p;
+			}
+			inline void delete_after(node_pointer node)
+			{
+				while (node != nullptr)
+				{
+					node_pointer temp = node->next;
+					this->Delete(node, 1, 1);
+					node = temp;
+				}
+			}
 
 		private:
 			node_pointer m_head;
