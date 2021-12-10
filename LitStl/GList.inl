@@ -103,6 +103,8 @@ void GList<T, MMFun>::operator=(const GList& cv)
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::operator=(GList&& rv)
 {
+	clear();
+
 	m_head = rv.m_head;
 	m_tail = rv.m_tail;
 	m_count = rv.m_count;
@@ -115,12 +117,7 @@ void GList<T, MMFun>::operator=(GList&& rv)
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::operator=(std::initializer_list<T> values)
 {
-	clear();
-	if (values.size() == 0)
-		return;
-
-	for (auto p = values.begin(); p != values.end(); p++)
-		push_back(*p);
+	assign(values);
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -204,31 +201,40 @@ void GList<T, MMFun>::assign(iterator_type _begin, iterator_type _end)
 	}
 	else
 	{
-		size_t temp_count = 0;
-		node_pointer last = m_head;
-		node_pointer prev = m_head;
+		int remain_count = m_count;
+		node_pointer current = m_head;
 		for (iterator_type p = _begin; p != _end; p++)
 		{
-			if (m_count != 0)
+			if (remain_count > 0)
 			{
-				last->value = *p;
-				prev = last;
-				last = last->next;
-				m_count--;
-				temp_count++;
+				current->value = *p;
+				remain_count--;
+				if (remain_count != 0)
+					current = current->next;
 			}
 			else
 			{
 				node_pointer node = __new_list_node(*p);
-				prev->next = node;
-				node->prev = prev;
-				prev = node;
-				temp_count++;
+				current->next = node;
+				node->prev = current;
+				current = node;
+				remain_count--;
 			}
 		}
 
-		m_tail = prev;
-		m_count = temp_count;
+		if (remain_count > 0)
+		{
+			node_pointer temp_head = current->prev;
+			__delete_after(current);
+			m_tail = temp_head;
+			m_tail->next = nullptr;
+		}
+		else 
+		{
+			m_tail = current;
+			m_tail->next = nullptr;
+		}
+		m_count -= remain_count;
 	}
 }
 
@@ -255,10 +261,43 @@ void GList<T, MMFun>::assign(std::initializer_list<T> values)
 		m_tail = p;
 		return;
 	}
+	else
+	{
+		int remain_count = m_count;
+		node_pointer current = m_head;
+		for (auto p = values.begin(); p != values.end(); p++)
+		{
+			if (remain_count > 0)
+			{
+				current->value = *p;
+				remain_count--;
+				if (remain_count != 0)
+					current = current->next;
+			}
+			else
+			{
+				node_pointer node = __new_list_node(*p);
+				current->next = node;
+				node->prev = current;
+				current = node;
+				remain_count--;
+			}
+		}
 
-	clear();
-	for (auto p = values.begin(); p != values.end(); p++)
-		push_back(*p);
+		if (remain_count > 0)
+		{
+			node_pointer temp_head = current->prev;
+			__delete_after(current);
+			m_tail = temp_head;
+			m_tail->next = nullptr;
+		}
+		else
+		{
+			m_tail = current;
+			m_tail->next = nullptr;
+		}
+		m_count -= remain_count;
+	}
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -296,15 +335,13 @@ T& GList<T, MMFun>::back()
 }
 
 
-//访问函数
+//安插和移除
 //*************************************************************************
 
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::push_back(const T& val)
 {
-	node_pointer node = this->New(1);
-	GASSERT(node != nullptr);
-	construct(&node->value, val);
+	node_pointer node = __new_list_node(val);
 	if (m_count == 0 && m_head == nullptr && m_tail == nullptr)
 	{
 		m_head = m_tail = node;
@@ -335,9 +372,7 @@ void GList<T, MMFun>::pop_back()
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::push_front(const T& val)
 {
-	node_pointer node = this->New(1);
-	GASSERT(node != nullptr);
-	construct(&node->value, val);
+	node_pointer node = __new_list_node(val);
 	if (m_count == 0 && m_head == nullptr && m_tail == nullptr)
 	{
 		m_head = m_tail = node;
@@ -380,8 +415,7 @@ typename GList<T, MMFun>::iterator_type GList<T, MMFun>::insert(iterator_type po
 	}
 	else
 	{
-		node_pointer node = this->New(1);
-		GASSERT(node != nullptr);
+		node_pointer node = __new_list_node(val);
 		node->prev = pos.current->prev;
 		node->next = pos.current;
 		pos.current->prev->next = node;
@@ -415,16 +449,13 @@ typename GList<T, MMFun>::iterator_type GList<T, MMFun>::insert(iterator_type po
 	}
 	else
 	{
-		node_pointer first = this->New(1);
-		GASSERT(first != nullptr);
-		construct(&first->value, val);
-
+		m_count += _count;
+		node_pointer first = __new_list_node(val);
+		_count--;
 		node_pointer last = first;
 		while (_count > 0)
 		{
-			node_pointer node = this->New(1);
-			GASSERT(node != nullptr);
-			construct(&node->value, val);
+			node_pointer node = __new_list_node(val);
 			last->next = node;
 			node->prev = last;
 			last = node;
@@ -435,13 +466,15 @@ typename GList<T, MMFun>::iterator_type GList<T, MMFun>::insert(iterator_type po
 		pos.current->prev->next = first;
 		last->next = pos.current;
 		pos.current->prev = last;
-		m_count += _count;
 	}
 }
 
 template<class T, GMemManagerFun MMFun>
 typename GList<T, MMFun>::iterator_type GList<T, MMFun>::insert(iterator_type pos, iterator_type _begin, iterator_type _end)
 {
+	if (_begin == _end)
+		return pos;
+
 	if (pos == begin())
 	{
 		for (iterator_type p = _begin; p != _end; p++)
@@ -456,17 +489,13 @@ typename GList<T, MMFun>::iterator_type GList<T, MMFun>::insert(iterator_type po
 	}
 	else
 	{
-		node_pointer first = this->New(1);
-		GASSERT(first != nullptr);
-		construct(&first->value, *_begin);
+		node_pointer first = __new_list_node(*_begin);
 		m_count++;
 
 		node_pointer last = first;
 		for(iterator_type p=++_begin;p!=_end;p++)
 		{
-			node_pointer node = this->New(1);
-			GASSERT(node != nullptr);
-			construct(&node->value, *p);
+			node_pointer node = __new_list_node(*p);
 			last->next = node;
 			node->prev = last;
 			last = node;
@@ -486,7 +515,6 @@ typename GList<T, MMFun>::iterator_type GList<T, MMFun>::insert(iterator_type po
 {
 	if (values.size() == 0)
 		return pos;
-
 	if (pos == begin())
 	{
 		for (auto p = values.begin(); p != values.end(); p++)
@@ -501,20 +529,16 @@ typename GList<T, MMFun>::iterator_type GList<T, MMFun>::insert(iterator_type po
 	}
 	else
 	{
-		node_pointer first = this->New(1);
-		GASSERT(first != nullptr);
-		construct(&first->value, *(values.begin()));
-
+		auto p = values.begin();
+		node_pointer first = __new_list_node(*p);
+		p++;
 		node_pointer last = first;
-		for (auto p = values.begin(); p != values.end(); p++)
+		for (p; p != values.end(); p++)
 		{
-			node_pointer node = this->New(1);
-			GASSERT(node != nullptr);
-			construct(&node->value, *p);
+			node_pointer node = __new_list_node(*p);
 			last->next = node;
 			node->prev = last;
 			last = node;
-			m_count++;
 		}
 
 		first->prev = pos.current->prev;
@@ -550,20 +574,15 @@ void GList<T, MMFun>::emplace_front(Args... args)
 template<class T, GMemManagerFun MMFun>
 typename GList<T, MMFun>::iterator_type GList<T, MMFun>::erase(iterator_type pos)
 {
-	if (m_count == 1 && m_head == m_tail)
-	{
-		this->Delete(pos.current, 1, 1);
-		m_head = m_tail == nullptr;
-		m_count = 0;
-		return _List_Iterator<T, MMFun>(nullptr);
-	}
+	if (pos == end())
+		return pos;
 
 	if (pos == begin())
 	{
 		pop_front();
 		return begin();
 	}
-	else if (pos == end())
+	else if (pos.current->prev == m_tail)
 	{
 		pop_back();
 		return end();
@@ -585,6 +604,8 @@ typename GList<T, MMFun>::iterator_type GList<T, MMFun>::erase(iterator_type _be
 	bool is_begin = _begin == begin();
 	bool is_end = _end == end();
 	node_pointer return_node = nullptr;
+	node_pointer first = nullptr;
+	node_pointer last = nullptr;
 
 	if (is_begin && is_end) 
 	{
@@ -593,27 +614,35 @@ typename GList<T, MMFun>::iterator_type GList<T, MMFun>::erase(iterator_type _be
 	}
 	else if (is_begin)
 	{
+		first = m_head;
+		last = _end.current->prev;
 		m_head = _end.current;
 		return_node = m_head;
 	}
 	else if (is_end)
 	{
+		first = _begin.current;
+		last = m_tail;
 		m_tail = _begin.current->prev;
 		return_node = m_tail;
 	}
 	else
 	{
+		first = _begin.current;
+		last = _end.current->prev;
 		_begin.current->prev->next = _end.current;
 		_end.current->prev = _begin.current->prev;
 		return_node = _begin.current->prev;
 	}
 
-	while (_begin != _end)
+	while (true)
 	{
-		iterator_type temp = _begin++;
-		this->Delete(_begin, 1, 1);
+		node_pointer temp = first->next;
+		this->Delete(first, 1, 1);
 		m_count--;
-		_begin = temp;
+		if (first == last)
+			break;
+		first = temp;
 	}
 	return _List_Iterator<T, MMFun>(return_node);
 }
@@ -631,17 +660,82 @@ void GList<T, MMFun>::remove_if(OP op)
 	if (m_count == 0)
 		return;
 
-	for (iterator_type p = begin(); p != end(); p++)
+	node_pointer p = m_head;
+	while (p!=nullptr)
 	{
-		if (op(*p))
-			erase(p);
+		if (op(p->value))
+		{
+			if (p == m_head)
+			{
+				node_pointer delete_node = m_head;
+				p = m_head = m_head->next;
+				this->Delete(delete_node, 1, 1);
+				m_count--;
+			}
+			else if (p == m_tail)
+			{
+				node_pointer delete_node = m_tail;
+				m_tail = m_tail->prev;
+				this->Delete(delete_node, 1, 1);
+				m_count--;
+				break;
+			}
+			else
+			{
+				node_pointer delete_node = p;
+				p->prev->next = p->next;
+				p->next->prev = p->prev;
+				p = p->next;
+				this->Delete(delete_node, 1, 1);
+				m_count--;
+			}
+		}
+		else
+		{
+			p = p->next;
+		}
 	}
 }
 
 template<class T, GMemManagerFun MMFun>
 void GList<T, MMFun>::resize(size_t _count)
 {
+	resize(_count, T());
+}
 
+template<class T, GMemManagerFun MMFun>
+void GList<T, MMFun>::resize(size_t _count, const T& val)
+{
+	if (_count == 0)
+	{
+		clear();
+		return;
+	}
+
+	if (m_count == _count)
+		return;
+		
+	else if (m_count > _count)
+	{
+		//need delete
+		node_pointer p = m_head;
+		for (int index = 0; index < _count; index++) 
+			p = p->next;
+		m_tail = p->prev;
+		__delete_after(p);
+	}
+	else
+	{
+		int need = _count - m_count;
+		for (int index = 0; index < need; index++)
+		{
+			node_pointer node = __new_list_node(val);
+			node->prev = m_tail;
+			m_tail->next = node;
+			m_tail = node;
+		}
+	}
+	m_count = _count;
 }
 
 
@@ -798,3 +892,53 @@ typename GList<T, MMFun>::iterator_type GList<T, MMFun>::end()
 		return _List_Iterator<T, MMFun>(nullptr);
 	return _List_Iterator<T,MMFun>(m_tail->next);
 }
+
+template<class T, GMemManagerFun MMFun>
+typename GList<T, MMFun>::c_iterator_type GList<T, MMFun>::cbegin()
+{
+	if (m_count == 0)
+		return _List_CIterator<T, MMFun>(nullptr);
+	return _List_CIterator<T, MMFun>(m_head);
+}
+
+template<class T, GMemManagerFun MMFun>
+typename GList<T, MMFun>::c_iterator_type GList<T, MMFun>::cend()
+{
+	if (m_count == 0)
+		return _List_CIterator<T, MMFun>(nullptr);
+	return _List_CIterator<T, MMFun>(m_tail->next);
+}
+
+template<class T, GMemManagerFun MMFun>
+typename GList<T, MMFun>::r_iterator_type GList<T, MMFun>::rbegin()
+{
+	if (m_count == 0)
+		return _List_RIterator<T, MMFun>(nullptr);
+	return _List_RIterator<T, MMFun>(m_tail);
+}
+
+template<class T, GMemManagerFun MMFun>
+typename GList<T, MMFun>::r_iterator_type GList<T, MMFun>::rend()
+{
+	if (m_count == 0)
+		return _List_RIterator<T, MMFun>(nullptr);
+	return _List_RIterator<T, MMFun>(m_head->prev);
+}
+
+template<class T, GMemManagerFun MMFun>
+typename GList<T, MMFun>::cr_iterator_type GList<T, MMFun>::crbegin()
+{
+	if (m_count == 0)
+		return _List_CRIterator<T, MMFun>(nullptr);
+	return _List_CRIterator<T, MMFun>(m_tail);
+}
+
+template<class T, GMemManagerFun MMFun>
+typename GList<T, MMFun>::cr_iterator_type GList<T, MMFun>::crend()
+{
+	if (m_count == 0)
+		return _List_CRIterator<T, MMFun>(nullptr);
+	return _List_CRIterator<T, MMFun>(m_head->prev);
+}
+
+

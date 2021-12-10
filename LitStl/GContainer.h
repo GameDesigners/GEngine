@@ -12,7 +12,7 @@ namespace GEngine{
 		 *   GArray        -->   |   GArray.h        |   GArray.inl        |   GArray.cpp         |   code review :
 		 *   GVector       -->   |   GVector.h       |   GVector.inl       |   GVector.cpp		  |	  code review :
 		 *   GDeque        -->   |   GDeque.h        |   GDeque.inl        |   GDeque.cpp		  |	  code review :
-		 *   GList         -->   |   GList.h         |   GList.inl         |   GList.cpp		  |	  code review :
+		 *   GList         -->   |   GList.h         |   GList.inl         |   GList.cpp		  |	  code review :2021.10.12
 		 *   GForwardList  -->   |   GForwardList.h  |   GForwardList.inl  |   GForwardList.cpp	  |   code review :2021.10.12
 		 * 
 		 *  
