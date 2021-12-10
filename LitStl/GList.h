@@ -102,6 +102,7 @@ namespace GEngine {
 			iterator_type insert(iterator_type pos, const T& val);
 			iterator_type insert(iterator_type pos, size_t _count, const T& val);
 			iterator_type insert(iterator_type pos, iterator_type _begin, iterator_type _end);
+
 			iterator_type insert(iterator_type pos, std::initializer_list<T> values);
 			template<class ...Args> iterator_type emplace(iterator_type pos, Args... args);
 			template<class ...Args> void emplace_back(Args... args);
@@ -111,6 +112,7 @@ namespace GEngine {
 			void remove(const T& val);
 			template<class OP> void remove_if(OP op);
 			void resize(size_t _count);
+			void resize(size_t _count, const T& val);
 
 
 		//Ðéº¯ÊýÖØÐ´
@@ -139,11 +141,27 @@ namespace GEngine {
 			cr_iterator_type crbegin();
 			cr_iterator_type crend();
 
-		protected:
-
 		private:
 			virtual size_t capcity() { return 0; }
 
+			inline node_pointer __new_list_node(const T& val)
+			{
+				node_pointer p = this->New(1);
+				GASSERT(p != nullptr);
+				construct(&p->value, val);
+				p->prev = nullptr;
+				p->next = nullptr;
+				return p;
+			}
+			inline void __delete_after(node_pointer p)
+			{
+				while (p != m_tail->next)
+				{
+					node_pointer temp = p->next;
+					this->Delete(p, 1, 1);
+					p = temp;
+				}
+			}
 			class Equals
 			{
 				Equals(const T& _comp) : comp(_comp) {}
@@ -154,6 +172,7 @@ namespace GEngine {
 			private:
 				T comp;
 			};
+
 		private:
 			node_pointer  m_head;
 			node_pointer  m_tail;

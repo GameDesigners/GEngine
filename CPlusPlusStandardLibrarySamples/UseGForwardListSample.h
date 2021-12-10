@@ -2,6 +2,7 @@
 #define USE_GORWARDLIST_LIST_SAMPLE
 
 #include <GForwardList.h>
+#include "CommonData.h"
 
 ostream& operator<<(ostream& os, GForwardList<SamplesElem>& list)
 {
@@ -66,27 +67,71 @@ void GForwardListSample()
 	GForwardList<SamplesElem>::iterator_type insert4 = forward_list7.insert_after(insert3,
 		{ 
 			SamplesElem(17, 13.14),
+			SamplesElem(17, 13.14),
 			SamplesElem(20, 13.14),
-			SamplesElem(17, 13.14)
+			SamplesElem(20, 13.14),
+			SamplesElem(17, 13.14),
+			SamplesElem(17, 13.14),
 		}
 	);
 	forward_list7.emplace_after(insert4, 12, 12);
 	forward_list7.emplace_front(0, 0);
-	cout << forward_list7;
-	forward_list7.remove(SamplesElem(20001, 20001));
+	forward_list7.remove(SamplesElem(2013, 14));
+
+	iter = forward_list7.begin();
+	for (int index = 0; index < 2; index++)
+		iter++;
+
+	GForwardList<SamplesElem>::iterator_type iter2 = forward_list1.begin();
+	for (int index = 0; index < 5; index++)
+		iter2++;
+
+	GForwardList<SamplesElem>::iterator_type iter3 = forward_list1.begin();
+	for (int index = 0; index < 8; index++)
+		iter3++;
+
+	iter->to_string();
+	iter2->to_string();
+	iter3->to_string();
+	//forward_list7.erase_after(iter);
+	//forward_list7.erase_after(iter, iter2);
+	//forward_list7.resize(3);
+	//forward_list7.resize(5, SamplesElem(1, 1));
+	//forward_list7.unique();
+	//forward_list7.splice_after(iter, forward_list1);
+	//forward_list7.splice_after(forward_list7.begin(), forward_list1, forward_list1.begin());
+	//forward_list1.merge(forward_list7);
+	//forward_list7.splice_after(iter, forward_list1, iter2, iter3);
+	//forward_list1.sort();
+	//forward_list7.sort();
+	//forward_list1.reverse();
+	cout << endl;
 	cout << forward_list1;
+	cout << forward_list7;
+	cout << endl;
+
+	cout << "forward_list1 = forward_list7" << (forward_list1 == forward_list7) << endl;
+	cout << "forward_list1 != forward_list7" << (forward_list1 != forward_list7) << endl;
+	cout << "forward_list1 > forward_list7" << (forward_list1 > forward_list7) << endl;
+	cout << "forward_list1 >= forward_list7" << (forward_list1 >= forward_list7) << endl;
+	cout << "forward_list1 < forward_list7" << (forward_list1 < forward_list7) << endl;
+	cout << "forward_list1 <= forward_list7" << (forward_list1 <= forward_list7) << endl;
+	/*
 	cout << forward_list2;
 	cout << forward_list3;
 	cout << forward_list4;
 	cout << forward_list5;
-	cout << forward_list6;
+	cout << forward_list6;*/
+	//cout << forward_list1;
+	
+	cout << forward_list1;
 	cout << forward_list7;
 
 
-	iter->to_string();
-	insert1->to_string();
+	//iter->to_string();
+	/*insert1->to_string();
 	insert2->to_string();
 	insert3->to_string();
-	insert4->to_string();
+	insert4->to_string();*/
 }
 #endif // !USE_GORWARDLIST_LIST_SAMPLE

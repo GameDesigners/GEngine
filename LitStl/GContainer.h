@@ -9,11 +9,11 @@ namespace GEngine{
         
 		/*
 		 *   序列式容器,实现方式为：数组、链表：
-		 *   GArray        -->   |   GArray.h        |   GArray.inl        |   GArray.cpp
-		 *   GVector       -->   |   GVector.h       |   GVector.inl       |   GVector.cpp
-		 *   GDeque        -->   |   GDeque.h        |   GDeque.inl        |   GDeque.cpp
-		 *   GList         -->   |   GList.h         |   GList.inl         |   GList.cpp
-		 *   GForwardList  -->   |   GForwardList.h  |   GForwardList.inl  |   GForwardList.cpp
+		 *   GArray        -->   |   GArray.h        |   GArray.inl        |   GArray.cpp         |   code review :
+		 *   GVector       -->   |   GVector.h       |   GVector.inl       |   GVector.cpp		  |	  code review :
+		 *   GDeque        -->   |   GDeque.h        |   GDeque.inl        |   GDeque.cpp		  |	  code review :
+		 *   GList         -->   |   GList.h         |   GList.inl         |   GList.cpp		  |	  code review :
+		 *   GForwardList  -->   |   GForwardList.h  |   GForwardList.inl  |   GForwardList.cpp	  |   code review :2021.10.12
 		 * 
 		 *  
 		 *   

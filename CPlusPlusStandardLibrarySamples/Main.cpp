@@ -19,71 +19,9 @@
 #include "GDirect3DVectorSample.h"
 
 
-class SamplesElem
-{
-private:
-	int* i;
-	float f;
-
-public:
-	SamplesElem()
-	{
-		i = GNEW int;
-		f = 0.0f;
-		std::cout << "调用了一次无参构造函数->SamplesElem" << std::endl;
-	}
-
-	SamplesElem(int _i, float _f)
-	{
-		i = GNEW int;
-		*i = _i;
-		f = _f;
-		std::cout << "调用了一次赋初值构造函数->SamplesElem(_i,_f)" << std::endl;
-	}
-
-	SamplesElem(const SamplesElem& elem)
-	{
-		i = GNEW int;
-		*i = *(elem.i);
-		f = elem.f;
-		std::cout << "调用了一次复制构造函数->SamplesElem(const SamplesElem&)" << std::endl;
-	}
-
-	void operator=(const SamplesElem& cv)
-	{
-		if (i != nullptr && cv.i != nullptr) {
-			*i = *(cv.i);
-			f = cv.f;
-		}
-	}
-
-	bool operator==(const SamplesElem& cv)
-	{
-		return (*i) == *(cv.i) && f == cv.f;
-	}
-
-	void operator=(SamplesElem&& rv) noexcept
-	{
-		GSAFE_DELETE(i)
-			i = rv.i;
-		f = rv.f;
-		rv.i = nullptr;
-	}
-
-	~SamplesElem() {
-		GSAFE_DELETE(i)
-	}
-
-	void to_string()
-	{
-		if (i != nullptr)
-			std::cout << "int:" << *i << " float:" << f << std::endl;
-		else
-			std::cout <<"float:" << f << std::endl;
-	}
-};
 
 
+#include "CommonData.h"
 #include "UseGArraySample.h"
 #include "UseGVectorSample.h"
 #include "UseGDequeSample.h"
@@ -213,14 +151,11 @@ class Parent
 {
 	int a;
 };
-
 class Child : public Parent
 {
 	int b;
 };
-
 void Set(Parent p) {}
-
 /*Test GStl*/
 void USE_GSTL_GARRAY()
 {
@@ -252,13 +187,6 @@ void USE_GSTL_GARRAY()
 
 
 
-
-
-
-
-
-
-
 int main()
 {
 	//CPLUSPLUS_11_NEW_FEATURE_MAIN();
@@ -275,12 +203,11 @@ int main()
 	//GArraySample();
 	//GVectorSample();
     //GDeuqeSample();
-	//GListSample();
-	GForwardListSample();
+	GListSample();
+	//GForwardListSample();
 	
-	//std::deque<SamplesElem> d;
-	//d.push_back(SamplesElem(1, 1));*/
-	//getchar();
+	
+	/*Render - Part*/
 	//UseDirect3DSample();
 	return 0;
 }

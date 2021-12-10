@@ -4,6 +4,7 @@
 #include "GIterator.h"
 namespace GEngine {
 	namespace GStl {
+		//向前声明
 		template<class T, GMemManagerFun MMFun> class GSTL_API GForwardList;
 
 		template<class T> struct __forward_list_node
@@ -140,15 +141,16 @@ namespace GEngine {
 			void resize(size_t _count,const T& cv);
 
 		//特殊更易型操作
+		public:
 			void unique();
 			template<class Operator> void unique(Operator op);
 			void splice_after(iterator_type pos, GForwardList& v);
 			void splice_after(iterator_type pos, GForwardList& v, iterator_type splice_target);
 			void splice_after(iterator_type pos, GForwardList& v, iterator_type _begin, iterator_type _end);
-			void sort();
+			void sort();  //选择排序
 			template<class Operator> void sort(Operator op);
-			void merge(const GForwardList& cv);
-			template<class Operator> void merge(const GForwardList& cv, Operator op);
+			void merge(GForwardList& rv);
+			template<class Operator> void merge(GForwardList& rv, Operator op);
 			void reverse();
 			
 		//虚函数重写
@@ -171,7 +173,8 @@ namespace GEngine {
 			iterator_type    end();
 			c_iterator_type  cbegin();
 			c_iterator_type  cend();
-
+			iterator_type    before_begin();
+			c_iterator_type  cbefore_begin();
 		protected:
 			class Equals
 			{
@@ -183,12 +186,21 @@ namespace GEngine {
 					return comp == elem;
 				}
 
-				bool operator()(const T& val1, const T& val2)
+				bool operator()(T& val1, const T& val2)
 				{
 					return val1 == val2;
 				}
 			private:
 				T comp;
+			};
+
+			class LessThan
+			{
+			public:
+				bool operator()(T& val, const T& val2)
+				{
+					return val < val2;
+				}
 			};
 		private:
 			virtual size_t size() { return 0; };
@@ -213,6 +225,7 @@ namespace GEngine {
 
 		private:
 			node_pointer m_head;
+			node_pointer before_head;
 		};
 
 #include "GForwardList.inl"

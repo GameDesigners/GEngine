@@ -2,11 +2,13 @@ template<class T, GMemManagerFun MMFun>
 GForwardList<T, MMFun>::GForwardList()
 {
 	m_head = nullptr;
+	before_head = this->New(1);
 }
 
 template<class T, GMemManagerFun MMFun>
 GForwardList<T, MMFun>::GForwardList(const GForwardList& cv)
 {
+	before_head = this->New(1);
 	if (cv.m_head == nullptr)
 		return;
 
@@ -28,36 +30,42 @@ template<class T, GMemManagerFun MMFun>
 GForwardList<T, MMFun>::GForwardList(GForwardList&& rv)
 {
 	m_head = rv.m_head;
+	before_head = this->New(1);
 	rv.m_head = nullptr;
 }
 
 template<class T, GMemManagerFun MMFun>
 GForwardList<T, MMFun>::GForwardList(size_t _count)
 {
+	before_head = this->New(1);
 	assign(_count, T());
 }
 
 template<class T, GMemManagerFun MMFun>
 GForwardList<T, MMFun>::GForwardList(size_t _count, const T& val)
 {
+	before_head = this->New(1);
 	assign(_count, val);
 }
 
 template<class T, GMemManagerFun MMFun>
 GForwardList<T, MMFun>::GForwardList(iterator_type _begin, iterator_type _end)
 {
+	before_head = this->New(1);
 	assign(_begin, _end);
 }
 
 template<class T, GMemManagerFun MMFun>
 GForwardList<T, MMFun>::GForwardList(std::initializer_list<T> values)
 {
+	before_head = this->New(1);
 	assign(values);
 }
 
 template<class T, GMemManagerFun MMFun>
 GForwardList<T, MMFun>::~GForwardList()
 {
+	this->Delete(before_head, 1, 0);
 	clear();
 }
 
@@ -463,8 +471,12 @@ void GForwardList<T, MMFun>::emplace_front(Args ...args)
 template<class T, GMemManagerFun MMFun>
 void GForwardList<T, MMFun>::erase_after(iterator_type pos)
 {
+	if (pos.current == nullptr)
+		return;
+
 	node_pointer p = pos.current->next;
-	for (p; p != nullptr; p++)
+	pos.current->next = nullptr;
+	while(p!=nullptr)
 	{
 		node_pointer temp = p->next;
 		this->Delete(p, 1, 1);
@@ -511,6 +523,9 @@ template<class T, GMemManagerFun MMFun>
 template<class Operator>
 void GForwardList<T, MMFun>::remove_if(Operator op)
 {
+	if (m_head == nullptr)
+		return;
+
 	node_pointer p = m_head;
 	node_pointer prev = m_head;
 	while (p != nullptr)
@@ -518,13 +533,21 @@ void GForwardList<T, MMFun>::remove_if(Operator op)
 		node_pointer temp = p->next;
 		if (op(p->value))
 		{
-			prev->next = p->next;
+			if (p == m_head)//头文件满足删除条件
+			{
+				m_head = p->next;
+				prev = m_head;
+			}
+			else if(p->next != nullptr)//没有删除到尾节点
+				prev->next = p->next;
 			this->Delete(p, 1, 1);
 		}
 		else
 			prev = p;
 		p = temp;
 	}
+	if (prev != nullptr)
+		prev->next = nullptr;
 }
 
 template<class T, GMemManagerFun MMFun>
@@ -536,6 +559,9 @@ void GForwardList<T, MMFun>::resize(size_t _count)
 template<class T, GMemManagerFun MMFun>
 void GForwardList<T, MMFun>::resize(size_t _count, const T& cv)
 {
+	if (_count == 0)
+		return;
+
 	if (m_head == nullptr)
 	{
 		assign(_count, cv);
@@ -543,22 +569,23 @@ void GForwardList<T, MMFun>::resize(size_t _count, const T& cv)
 	}
 
 	node_pointer p = m_head;
-	for (int index = 1; index < _count; index++)
+	node_pointer prev = m_head;
+	for (int index = 0; index < _count; index++)
 	{
 		if (p == nullptr)
 		{
-			node_pointer node = this->New(1);
-			GASSERT(node != nullptr);
-			construct(&node->value, *p);
-
-			p = node->next;
+			node_pointer node = __new_forwardlist_node(cv);
+			prev->next = node;
+			prev = node;
+			prev->next = nullptr;
 		}
 		else
 		{
+			prev = p;
 			p = p->next;
 		}
 	}
-	erase_after(_Forward_List_Iterator<T, MMFun>(p));
+	erase_after(_Forward_List_Iterator<T, MMFun>(prev));
 }
 
 //特殊更易型操作
@@ -574,11 +601,11 @@ template<class T, GMemManagerFun MMFun>
 template<class Operator>
 void GForwardList<T, MMFun>::unique(Operator op)
 {
-	if (m_head->next == nullptr || m_head==nullptr)
+	if (m_head->next == nullptr || m_head == nullptr)
 		return;
 
 	node_pointer p = m_head;
-	while (p != nullptr && p->next == nullptr)
+	while (p != nullptr && p->next != nullptr)
 	{
 		if (op(p->value, p->next->value))
 		{
@@ -596,7 +623,7 @@ void GForwardList<T, MMFun>::unique(Operator op)
 template<class T, GMemManagerFun MMFun>
 void GForwardList<T, MMFun>::splice_after(iterator_type pos, GForwardList& v)
 {
-	if (v.m_head == nullptr || pos==end())
+	if (v.m_head == nullptr || pos.current==nullptr)
 		return;
 
 	if (pos.current == nullptr && m_head == nullptr) //容器为空
@@ -612,21 +639,27 @@ void GForwardList<T, MMFun>::splice_after(iterator_type pos, GForwardList& v)
 
 	last->next = pos.current->next;
 	pos.current->next = v.m_head;
+	v.m_head = nullptr;
 }
 
 template<class T, GMemManagerFun MMFun>
 void GForwardList<T, MMFun>::splice_after(iterator_type pos, GForwardList& v, iterator_type splice_target)
 {
-	if (v.m_head == nullptr || splice_target.current == nullptr || pos==end())
+	if (v.m_head == nullptr || splice_target.current == nullptr || pos.current == nullptr)
 		return;
 
 	node_pointer p = v.m_head;
 	node_pointer target = splice_target.current;
-	while (p->next != target && p != nullptr)
-		p = p->next;
+	if (target == v.m_head)
+		v.m_head = v.m_head->next;
+	else
+	{
+		while (p->next != target && p != nullptr)
+			p = p->next;
 
-	//从v中移除目标节点
-	p->next = target->next;
+		//从v中移除目标节点
+		p->next = target->next;
+	}
 
 	if (v.m_head == nullptr && pos.current == nullptr)
 		m_head = target;
@@ -638,7 +671,164 @@ void GForwardList<T, MMFun>::splice_after(iterator_type pos, GForwardList& v, it
 template<class T, GMemManagerFun MMFun>
 void GForwardList<T, MMFun>::splice_after(iterator_type pos, GForwardList& v, iterator_type _begin, iterator_type _end)
 {
+	if (pos.current == nullptr)
+		return;
 
+	if (_begin == v.begin() && _end == v.end())
+	{
+		splice_after(pos, v);
+		return;
+	}
+	
+	node_pointer prev = v.m_head;
+	node_pointer prev_end = v.m_head;
+	node_pointer p = v.m_head;
+	while (p != nullptr)
+	{
+		if (p->next == _begin.current)
+			prev = p;
+		if (p->next == _end.current)
+			prev_end = p;
+
+		p = p->next;
+	}
+
+	if (_end == v.end())
+		prev->next = nullptr;
+	else
+		prev->next = _end.current;
+
+	if (pos.current->next == nullptr)
+		prev_end->next = nullptr;
+	else
+		prev_end->next = pos.current->next;
+	pos.current->next = _begin.current;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GForwardList<T, MMFun>::sort()
+{
+	sort(LessThan());
+}
+
+template<class T, GMemManagerFun MMFun>
+template<class Operator>
+void GForwardList<T, MMFun>::sort(Operator op)
+{
+	if (m_head == nullptr || m_head->next == nullptr)
+		return;
+
+	before_head->next = m_head;
+	node_pointer p = m_head->next;
+	m_head->next = nullptr;
+	while (p != nullptr)
+	{
+		node_pointer temp = p->next;
+		node_pointer q = before_head->next;
+		if (op(p->value, q->value))
+		{
+			//将p插入到临时链表的头节点
+			p->next = q;
+			before_head->next = p;
+		}
+		else
+		{
+			while (q->next!=nullptr)
+			{
+				if (op(p->value, q->next->value))
+					break;
+				q = q->next;
+			}
+
+			if (q->next == nullptr)
+			{
+				//插入点为尾节点
+				q->next = p;
+				p->next = nullptr;
+			}
+			else
+			{
+				p->next = q->next;
+				q->next = p;
+			}
+		}
+		p = temp;
+	}
+	m_head = before_head->next;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GForwardList<T, MMFun>::merge(GForwardList& rv)
+{
+	if (m_head == rv.m_head)
+		return;
+	merge(rv, LessThan());
+}
+
+template<class T, GMemManagerFun MMFun>
+template<class Operator>
+void GForwardList<T, MMFun>::merge(GForwardList& rv, Operator op)
+{
+	if (rv.m_head == nullptr || m_head == rv.m_head)
+		return;
+	if (m_head == nullptr)
+	{
+		m_head = rv.m_head;
+		rv.m_head = nullptr;
+		return;
+	}
+
+	node_pointer p = m_head;
+	node_pointer q = rv.m_head;
+	node_pointer current=nullptr;
+	node_pointer choosed = nullptr;
+	while (p != nullptr && q != nullptr)
+	{
+		if (op(p->value, q->value))
+		{
+			choosed = p;
+			p = p->next;
+		}
+		else
+		{
+			choosed = q;
+			q = q->next;
+		}
+
+		if (current == nullptr)
+			before_head->next = current = choosed;
+		else
+		{
+			current->next = choosed;
+			current = choosed;
+		}
+		choosed->next = nullptr;
+	}
+
+	if (p != nullptr)
+		current->next = p;
+	else if (q != nullptr)
+		current->next = q;
+	rv.m_head = nullptr;
+	m_head = before_head->next;
+}
+
+template<class T, GMemManagerFun MMFun>
+void GForwardList<T, MMFun>::reverse()
+{
+	if (m_head == nullptr) return;
+
+	before_head->next = m_head;
+	node_pointer p = m_head->next;
+	m_head->next = nullptr;
+	while (p != nullptr)
+	{
+		node_pointer temp = p->next;
+		p->next = before_head->next;
+		before_head->next = p;
+		p = temp;
+	}
+	m_head = before_head->next;
 }
 
 // 虚函数重写
@@ -795,5 +985,17 @@ template<class T, GMemManagerFun MMFun>
 typename GForwardList<T, MMFun>::c_iterator_type GForwardList<T, MMFun>::cend()
 {
 	return _Forward_List_CIterator<T, MMFun>(nullptr);
+}
+
+template<class T, GMemManagerFun MMFun>
+typename GForwardList<T, MMFun>::iterator_type GForwardList<T, MMFun>::before_begin()
+{
+	return _Forward_List_Iterator<T, MMFun>(before_head);
+}
+
+template<class T, GMemManagerFun MMFun>
+typename GForwardList<T, MMFun>::c_iterator_type GForwardList<T, MMFun>::cbefore_begin()
+{
+	return _Forward_List_CIterator<T, MMFun>(before_head);
 }
 
