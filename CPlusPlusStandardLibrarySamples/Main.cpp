@@ -202,8 +202,8 @@ int main()
 
 	//GArraySample();
 	//GVectorSample();
-    //GDeuqeSample();
-	GListSample();
+    GDeuqeSample();
+	//GListSample();
 	//GForwardListSample();
 	
 	

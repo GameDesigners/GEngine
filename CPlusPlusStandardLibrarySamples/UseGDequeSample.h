@@ -3,6 +3,12 @@
 #include "GDeque.h"
 using namespace GEngine::GSystem;
 using namespace GEngine::GStl;
+
+ostream& operator<<(ostream& os, const GDeque<SamplesElem>& deque)
+{
+
+}
+
 void GDeuqeSample()
 {
 	GDeque<SamplesElem> deque1;

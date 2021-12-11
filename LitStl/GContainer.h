@@ -17,14 +17,19 @@ namespace GEngine{
 		 * 
 		 *  
 		 *   
-		 *   关联式容器：
-		 *   set,multiset,map,multimap
-		 *   实现方式为：二叉树
+		 *   关联式容器,实现方式为：二叉树
+		 *   set		   -->   |
+		 *   multiset	   -->   |
+		 *   map           -->	 |
+		 *   multimap	   -->   |
 		 * 
-		 *   无序容器：
-		 *   unordered_set,unorder_multiset,unorder_map,unorder_multimap
-		 *   实现方式为：哈希表
 		 * 
+		 * 
+		 *   无序容器，实现方式为：哈希表
+		 *   unordered_set	     |
+		 *   unorder_multiset    |
+		 *   unorder_map	     |
+		 *   unorder_multimap    |
 		 */
 
 
