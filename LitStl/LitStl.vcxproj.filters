@@ -21,6 +21,15 @@
     <Filter Include="Source Files\GContainers">
       <UniqueIdentifier>{fea682ff-2df4-4e62-8e43-49bbf7eb59b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GDataStructure">
+      <UniqueIdentifier>{43899882-45c4-4222-abf9-0d7fa7401ef1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inl Files\GDataStrure">
+      <UniqueIdentifier>{bc351128-0709-4189-9cfb-8096c949dbdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GDataStructure">
+      <UniqueIdentifier>{ee7cc9e8-b5d3-4c75-8e46-69deb6b3c8b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUtility.h">
@@ -56,6 +65,9 @@
     <ClInclude Include="GForwardList.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
+    <ClInclude Include="GBalanceTree.h">
+      <Filter>Header Files\GDataStructure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUtility.cpp">
@@ -82,6 +94,9 @@
     <ClCompile Include="GForwardList.cpp">
       <Filter>Source Files\GContainers</Filter>
     </ClCompile>
+    <ClCompile Include="GBalanceTree.cpp">
+      <Filter>Source Files\GDataStructure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="GMemory.inl">
@@ -104,6 +119,9 @@
     </None>
     <None Include="GForwardList.inl">
       <Filter>Inl Files\GContainers</Filter>
+    </None>
+    <None Include="GBalanceTree.inl">
+      <Filter>Inl Files\GDataStrure</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -21,13 +21,13 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4a397a32-5dfe-4cff-b20a-c44003a58415}</ProjectGuid>
-    <RootNamespace>LitStl</RootNamespace>
+    <ProjectGuid>{ebad27fc-0d2e-4a0a-a28b-7e92bcd5b7d5}</ProjectGuid>
+    <RootNamespace>GApplication</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -87,7 +87,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;GSTL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../GSystem;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GSystem\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,39 +142,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="GAlgorithm.h" />
-    <ClInclude Include="GArray.h" />
-    <ClInclude Include="GBalanceTree.h" />
-    <ClInclude Include="GContainer.h" />
-    <ClInclude Include="GDeque.h" />
-    <ClInclude Include="GForwardList.h" />
-    <ClInclude Include="GIterator.h" />
-    <ClInclude Include="GList.h" />
-    <ClInclude Include="GMemory.h" />
-    <ClInclude Include="GStlMicro.h" />
-    <ClInclude Include="GUtility.h" />
-    <ClInclude Include="GVector.h" />
+    <ClInclude Include="GApplication.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GArray.inl" />
-    <None Include="GBalanceTree.inl" />
-    <None Include="GDeque.inl" />
-    <None Include="GForwardList.inl" />
-    <None Include="GList.inl" />
-    <None Include="GMemory.inl" />
-    <None Include="GUtility.inl" />
-    <None Include="GVector.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="GBalanceTree.cpp" />
-    <ClCompile Include="GArray.cpp" />
-    <ClCompile Include="GDeque.cpp" />
-    <ClCompile Include="GForwardList.cpp" />
-    <ClCompile Include="GIterator.cpp" />
-    <ClCompile Include="GList.cpp" />
-    <ClCompile Include="GMemory.cpp" />
-    <ClCompile Include="GUtility.cpp" />
-    <ClCompile Include="GVector.cpp" />
+    <ClCompile Include="GApplication.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
