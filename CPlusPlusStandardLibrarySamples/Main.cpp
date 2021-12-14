@@ -27,6 +27,9 @@
 #include "UseGDequeSample.h"
 #include "UseGListSample.h"
 #include "UseGForwardListSample.h"
+#include "UseGSetAndGMultiSetSample.h"
+
+#include "BalanceTreeTest.h"
 
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
@@ -202,9 +205,14 @@ int main()
 
 	//GArraySample();
 	//GVectorSample();
-    GDeuqeSample();
+    //GDeuqeSample();
 	//GListSample();
 	//GForwardListSample();
+	GSetSample();
+
+	//GBalanceTreeTest();
+
+
 	
 	
 	/*Render - Part*/

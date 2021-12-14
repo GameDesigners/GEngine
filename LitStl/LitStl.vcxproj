@@ -151,6 +151,7 @@
     <ClInclude Include="GIterator.h" />
     <ClInclude Include="GList.h" />
     <ClInclude Include="GMemory.h" />
+    <ClInclude Include="GSet.h" />
     <ClInclude Include="GStlMicro.h" />
     <ClInclude Include="GUtility.h" />
     <ClInclude Include="GVector.h" />
@@ -162,6 +163,7 @@
     <None Include="GForwardList.inl" />
     <None Include="GList.inl" />
     <None Include="GMemory.inl" />
+    <None Include="GSet.inl" />
     <None Include="GUtility.inl" />
     <None Include="GVector.inl" />
   </ItemGroup>
@@ -173,6 +175,7 @@
     <ClCompile Include="GIterator.cpp" />
     <ClCompile Include="GList.cpp" />
     <ClCompile Include="GMemory.cpp" />
+    <ClCompile Include="GSet.cpp" />
     <ClCompile Include="GUtility.cpp" />
     <ClCompile Include="GVector.cpp" />
   </ItemGroup>

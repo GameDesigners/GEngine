@@ -15,6 +15,9 @@
     <Filter Include="RenderLayerUseSample">
       <UniqueIdentifier>{025505eb-5f46-4908-8aab-170aaa5ab989}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CustomStlUseSample\Test">
+      <UniqueIdentifier>{9b0def2b-92a7-4e1d-9905-88da95916678}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -47,6 +50,12 @@
       <Filter>CustomStlUseSample</Filter>
     </ClInclude>
     <ClInclude Include="CommonData.h">
+      <Filter>CustomStlUseSample</Filter>
+    </ClInclude>
+    <ClInclude Include="BalanceTreeTest.h">
+      <Filter>CustomStlUseSample\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGSetAndGMultiSetSample.h">
       <Filter>CustomStlUseSample</Filter>
     </ClInclude>
   </ItemGroup>

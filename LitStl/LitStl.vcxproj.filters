@@ -68,6 +68,9 @@
     <ClInclude Include="GBalanceTree.h">
       <Filter>Header Files\GDataStructure</Filter>
     </ClInclude>
+    <ClInclude Include="GSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUtility.cpp">
@@ -88,14 +91,17 @@
     <ClCompile Include="GIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GForwardList.cpp">
       <Filter>Source Files\GContainers</Filter>
     </ClCompile>
     <ClCompile Include="GBalanceTree.cpp">
       <Filter>Source Files\GDataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="GList.cpp">
+      <Filter>Source Files\GContainers</Filter>
+    </ClCompile>
+    <ClCompile Include="GSet.cpp">
+      <Filter>Source Files\GContainers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +128,9 @@
     </None>
     <None Include="GBalanceTree.inl">
       <Filter>Inl Files\GDataStrure</Filter>
+    </None>
+    <None Include="GSet.inl">
+      <Filter>Inl Files\GContainers</Filter>
     </None>
   </ItemGroup>
 </Project>

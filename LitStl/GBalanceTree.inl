@@ -1,50 +1,78 @@
 //构造函数
 //*************************************************************************
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::__balance_tree()
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+__balance_tree<NodeType, Compare, MMFun>::__balance_tree()
 {
-	m_root = nuulptr;
+	m_root = nullptr;
+	m_count = 0;
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::~__balance_tree()
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+__balance_tree<NodeType, Compare, MMFun>::~__balance_tree()
 {
-	__destroy();
+	__destroy(m_root);
+	m_count = 0;
 }
+
 
 //增删查改、销毁
 //*************************************************************************
 
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun>::Search(const Key& key)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::PreOrder()
+{
+	node_pointer root = m_root;
+	__pre_order(root);
+}
+
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::InOrder()
+{
+	node_pointer root = m_root;
+	__in_order(root);
+}
+
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::PostOrder()
+{
+	node_pointer root = m_root;
+	__post_order(root);
+}
+
+
+//增删查改、销毁
+//*************************************************************************
+
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::Search(const key_type& key)
 {
 	node_pointer root = m_root;
 	return __search(root, key);
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun>::IterativeSearch(const Key& key)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::IterativeSearch(const key_type& key)
 {
 	node_pointer root = m_root;
 	return __interative_search(root, key);
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-Value& __balance_tree<Key, Value, MMFun>::Minmum()
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::Minmum()
 {
 	node_pointer tree = m_root; 
-	return __minimum(tree)->value;
+	return __minimum(tree);
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-Value& __balance_tree<Key, Value, MMFun>::Maxmum()
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::Maxmum()
 {
 	node_pointer tree = m_root;
-	return __maximum(tree)->value;
+	return __maximum(tree);
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun>::Successor(node_pointer node)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::Successor(node_pointer node)
 {
 	node_pointer p = node;
 	if (p->right != nullptr) return __minimum(p->right);
@@ -58,8 +86,8 @@ __balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun
 	return parent;
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun>::PreDecessor(node_pointer node)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::PreDecessor(node_pointer node)
 {
 	node_pointer p = node;
 	if (p->left != nullptr) return __maximum(p->left);
@@ -73,21 +101,24 @@ __balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun
 	return parent;
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::Insert(key_type key, value_type value)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+template<typename... Args>
+void __balance_tree<NodeType, Compare, MMFun>::Insert(Args ...args)
 {
-	node_pointer new_node = __create_node(key, value);
-	__insert(m_root, new_node);
+	node_pointer node = this->New(1);
+	GASSERT(node);
+	GNEW(node)NodeType(args...);
+	__insert(m_root, node);
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::Remove(key_type key)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::Remove(key_type key)
 {
 	__remove(m_root, key);
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::Destroy()
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::Destroy()
 {
 	__destroy(m_root);
 }
@@ -95,32 +126,42 @@ void __balance_tree<Key, Value, MMFun>::Destroy()
 //辅助函数
 //*************************************************************************
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::__create_node(const Key& key, const Value& value)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__pre_order(node_pointer tree) const
 {
-	node_pointer node = this->New(1);
-	GASSERT(node);
-	GNEW(node)__balance_tree_node<Key, Value>(key, value, colors::red, nullptr, nullptr, nullptr);
+	
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun>::__search(node_pointer x, Key key) const
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__in_order(node_pointer tree) const
+{
+
+}
+
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__post_order(node_pointer tree) const
+{
+
+}
+
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::__search(node_pointer x, const key_type& key) const
 {
 	if (x == nullptr || x->key == key)
 		return x;
 
-	if (key < x->key)
+	if (comparator(key, x->key))
 		return __search(x->left, key);
 	else
 		return __search(x->right, key);
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun>::__interative_search(node_pointer x, Key key) const
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::__interative_search(node_pointer x, const key_type& key) const
 {
 	while (x != nullptr && x->key != key)
 	{
-		if (key < x->key)
+		if (comparator(key, x->key))
 			x = x->left;
 		else
 			x = x->right;
@@ -128,8 +169,8 @@ __balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun
 	return x;
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun>::__minimum(node_pointer tree) const
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::__minimum(node_pointer tree) const
 {
 	if (tree == nullptr)
 		return nullptr;
@@ -139,8 +180,8 @@ __balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun
 	return tree;
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-__balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun>::__maximum(node_pointer tree) const
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::__maximum(node_pointer tree) const
 {
 	if (tree == nullptr)
 		return nullptr;
@@ -152,8 +193,8 @@ __balance_tree<Key, Value, MMFun>::node_pointer __balance_tree<Key, Value, MMFun
 
 
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::__left_rotate(node_pointer& root, node_pointer x)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__left_rotate(node_pointer& root, node_pointer x)
 {
 	node_pointer xp = x->parent;
 
@@ -166,7 +207,7 @@ void __balance_tree<Key, Value, MMFun>::__left_rotate(node_pointer& root, node_p
 	y->left = x;
 	x->parent = y;
 
-	if (parent != nullptr) {
+	if (xp==nullptr) {
 		root = y;
 		y->parent = nullptr;
 	}
@@ -182,8 +223,8 @@ void __balance_tree<Key, Value, MMFun>::__left_rotate(node_pointer& root, node_p
 	}
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::__right_rotate(node_pointer& root, node_pointer y)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__right_rotate(node_pointer& root, node_pointer y)
 {
 	node_pointer yp = y->parent;
 	node_pointer x = y->left;
@@ -210,70 +251,9 @@ void __balance_tree<Key, Value, MMFun>::__right_rotate(node_pointer& root, node_
 	}
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::__insert_fix_up(node_pointer& root, node_pointer node)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__insert_fix_up(node_pointer& root, node_pointer node)
 {
-	/*node_pointer parent, gparent;
-	while ((paren = node->parent) && parent->color == colors::red)
-	{
-		gparent = parent->parent;
-
-		if (parent == gparent->left)
-		{
-			node_pointer uncle = gparent->right;
-			if (uncle && uncle->color == colors::red)
-			{
-				uncle->color = colors::black;
-				parent->color = colors::black;
-				gparent->color = colors::red;
-
-				node = gparent;
-				continue;
-			}
-
-			if (parent->right == node)
-			{
-				node_pointer temp;
-				__left_rotate(root, parent);
-				temp = parent;
-				parent = node;
-				node = temp;
-			}
-
-			parent->color = colors::black;
-			gparent->color = colors::red;
-			__right_rotate(root, gparent);
-		}
-		else
-		{
-			node_pointer uncle = gparent->left;
-			if (uncle && uncle->color == colors::red)
-			{
-				uncle->color = colors::black;
-				parent->color = colors::black;
-				gparent->color = colors::red;
-
-				node = gparent;
-				continue;
-			}
-
-			if (parent->left == node)
-			{
-				node_pointer temp;
-				__right_rotate(root, parent);
-				temp = parent;
-				parent = node;
-				node = temp;
-			}
-
-			parent->color = colors::black;
-			gparent->color = colors::red;
-			__left_rotate(root, gparent);
-		}
-	}
-
-	root->color = colors::black;*/
-
 	node_pointer parent = node->parent;
 	node_pointer grand_parent = nullptr;
 	node_pointer uncle = nullptr;
@@ -299,12 +279,9 @@ void __balance_tree<Key, Value, MMFun>::__insert_fix_up(node_pointer& root, node
 				__left_rotate(root, parent);
 				__node_point_swap(node, parent);
 			}
-			else
-			{
-				parent->color = colors::black;
-				grand_parent->color = colors::red;
-				__right_rotate(root, grand_parent);
-			}
+			parent->color = colors::black;
+			grand_parent->color = colors::red;
+			__right_rotate(root, grand_parent);
 		}
 		else
 		{
@@ -323,53 +300,54 @@ void __balance_tree<Key, Value, MMFun>::__insert_fix_up(node_pointer& root, node
 				__right_rotate(root, parent);
 				__node_point_swap(node, parent);
 			}
-			else
-			{
-				parent->color = colors::black;
-				grand_parent->color = colors::red;
-				__left_rotate(root, grand_parent);
-			}
+			parent->color = colors::black;
+			grand_parent->color = colors::red;
+			__left_rotate(root, grand_parent);
 		}
 	}
 	root->color = colors::black;
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::__remove_fix_up(node_pointer& root, node_pointer node, node_pointer parent)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__remove_fix_up(node_pointer& root, node_pointer node, node_pointer parent)
 {
-	node_pointer other;
-	while ((!node || node->color == colors::black) && node != root)
+	//parent : deleted node's parent
+	//node   : deleted node's child
+
+	node_pointer s;
+	while ((!node || node->color == colors::black) && node != root)  //前面一段略过了node不为nullptr且为红色的情况，因为不需要做调整，仅需要将节点设置为黑色即可保持平衡
 	{
 		if (parent->left == node)
 		{
-			other = parent->right;
-			if (other->color == colors::red)
+			s = parent->right;
+			if (s->color == colors::red)
 			{
-				other->color = colors::black;
 				parent->color = colors::red;
+				s->color = colors::black;
 				__left_rotate(root, parent);
-				other = parent->right;
+				s = parent->right;
 			}
 
-			if ((!other->left || other->left->color==colors::black) && (!other->right || other->left->color == colors::black))
+			//下面都表示s节点的颜色是黑色的情况
+			if ((s->left == nullptr || s->left == colors::black) && (s->right == nullptr || s->right->color == colors::black))
 			{
-				other->color = colors::red;
+				s->color == colors::red;
 				node = parent;
 				parent = node->parent;
 			}
 			else
 			{
-				if (!other->right || other->right->color == colors::black)
+				if (s->right == nullptr || s->right->color == colors::black)
 				{
-					other->left->color = colors::black;
-					other->color = colors::red;
-					__right_rotate(root, other);
-					other = parent->right;
+					s->left->color = colors::black;
+					s->color = colors::red;
+					__right_rotate(root, s);
+					s = parent->right;
 				}
 
-				other->color = parent->color;
+				s->color = parent->color;
 				parent->color = colors::black;
-				other->right->color = colors::black;
+				s->right->color = colors::black;
 				__left_rotate(root, parent);
 				node = root;
 				break;
@@ -377,34 +355,35 @@ void __balance_tree<Key, Value, MMFun>::__remove_fix_up(node_pointer& root, node
 		}
 		else
 		{
-			other = parent->left;
-			if (other->color == colors::red)
+			s = parent->left;
+			if (s->color == colors::red)
 			{
-				other->color = colors::black;
 				parent->color = colors::red;
+				s->color = colors::black;
 				__right_rotate(root, parent);
-				other = parent->left;
+				s = parent->left;
 			}
 
-			if ((!other->left || other->left->color == colors::black) && (!other->right || other->left->color == colors::black))
+			//下面都表示s节点的颜色是黑色的情况
+			if ((s->left == nullptr || s->left == colors::black) && (s->right == nullptr || s->right->color == colors::black))
 			{
-				other->color = colors::red;
+				s->color == colors::red;
 				node = parent;
 				parent = node->parent;
 			}
 			else
 			{
-				if (!other->right || other->right->color == colors::black)
+				if (s->left == nullptr || s->left->color == colors::black)
 				{
-					other->right->color = colors::black;
-					other->color = colors::red;
-					__left_rotate(root, other);
-					other = parent->left;
+					s->right->color = colors::black;
+					s->color = colors::red;
+					__left_rotate(root, s);
+					s = parent->left;
 				}
 
-				other->color = parent->color;
+				s->color = parent->color;
 				parent->color = colors::black;
-				other->left->color = colors::black;
+				s->left->color = colors::black;
 				__right_rotate(root, parent);
 				node = root;
 				break;
@@ -412,12 +391,12 @@ void __balance_tree<Key, Value, MMFun>::__remove_fix_up(node_pointer& root, node
 		}
 	}
 
-	if (node)
-		node->color = colors::black;
+	if (node != nullptr)
+		node->color == colors::black;
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::__insert(node_pointer& root, node_pointer node)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__insert(node_pointer& root, node_pointer node)
 {
 	node_pointer x = root;
 	node_pointer y = nullptr;
@@ -426,16 +405,16 @@ void __balance_tree<Key, Value, MMFun>::__insert(node_pointer& root, node_pointe
 	while (x != nullptr)
 	{
 		y = x;
-		if (node->key < x->key)
+		if (comparator(node->key, x->key))
 			x = x->left;
-		else if (node->key > x->key)
+		else if (comparator(x->key, node->key))
 			x = x->right;
 	}
 
 	node->parent = y;
 	if (y != nullptr)
 	{
-		if (node->key < y->key)
+		if (comparator(node->key, y->key))
 			y->left = node;
 		else
 			y->right = node;
@@ -451,83 +430,12 @@ void __balance_tree<Key, Value, MMFun>::__insert(node_pointer& root, node_pointe
 	
 	//修正成红黑树
 	__insert_fix_up(root, node);
+	m_count++;
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::__remove(node_pointer& root, node_pointer node)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__remove(node_pointer& root, node_pointer node)
 {
-	/*node_pointer child, parent;
-	colors color;
-
-	if ((node->left != nullptr) && (node->right != nullptr))
-	{
-		node_pointer replace = node->right;
-		while (replace->left != nullptr)
-			replace = replace->left;
-
-		if (node->parent != nullptr)
-		{
-			if (node->parent->left == node)
-				node->parent->left = replace;
-			else
-				node->parent->right = replace;
-		}
-		else
-			root = replace;
-
-		child = replace->right;
-		parent = replace->parent;
-		color = replace->color;
-
-		if (parent == node)
-			parent = replace;
-		else
-		{
-			if (child)
-				child->parent = parent;
-			parent->left = child;
-
-			replace->right = node->right;
-			node->right->parent = replace;
-		}
-
-		replace->parent = node->parent;
-		replace->color = node->color;
-		replace->left = node->left;
-		node->left->parent = replace;
-
-		if (color == colors::black)
-			__remove_fix_up(root, child, parent);
-
-		this->Delete(node, 1, 1);
-		return;
-	}
-
-	if (node->left != nullptr)
-		child = node->left;
-	else
-		child = node->right;
-
-	parent = node->parent;
-	color = node->color;
-
-	if (child)
-		child->parent = parent;
-
-	if (parent)
-	{
-		if (parent->left == node)
-			parent->left = child;
-		else
-			parent->right = child;
-	}
-	else
-		root = child;
-
-	if (color == colors::black)
-		__remove_fix_up(root, child, parent);
-	this->Delete(node, 1, 1);*/
-
 	node_pointer child, parent;
 	colors color;
 
@@ -570,12 +478,36 @@ void __balance_tree<Key, Value, MMFun>::__remove(node_pointer& root, node_pointe
 		if (color == colors::black)  //修正：[从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点]，因为删除了黑节点意味着在该路上将会 -1
 			__remove_fix_up(root, child, parent);
 		this->Delete(node, 1, 1);
+		m_count--;
 		return;
 	}
+
+	if (node->left != nullptr)
+		child = node->left;
+	else
+		child = node->right;
+
+	parent = node->parent;
+	color = node->color;
+	if (child != nullptr)
+		child->parent = parent;
+	if (parent != nullptr)//不是根节点
+	{
+		if (parent->left == node)
+			parent->left = child;
+		else
+			parent->right = child;
+	}
+	else
+		root = child;
+	if (color == colors::black)
+		__remove_fix_up(root, child, parent);
+	this->Delete(node, 1, 1);
+	m_count--;
 }
 
-template<class Key, class Value, GMemManagerFun MMFun>
-void __balance_tree<Key, Value, MMFun>::__destroy(node_pointer& tree)
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
+void __balance_tree<NodeType, Compare, MMFun>::__destroy(node_pointer& tree)
 {
 	if (tree == nullptr)
 		return;

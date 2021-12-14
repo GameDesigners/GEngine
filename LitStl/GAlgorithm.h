@@ -35,6 +35,17 @@ namespace GEngine {
 				val = -val;
 			}
 		};
+
+		//小于的对象函数
+		template<class T>
+		class GSTL_API less
+		{
+		public:
+			inline bool operator()(T& val1, T& val2)
+			{
+				return val1 < val2;
+			}
+		};
 	}
 }
 

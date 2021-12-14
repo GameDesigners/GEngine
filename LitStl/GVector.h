@@ -8,11 +8,11 @@ namespace GEngine{
 		class GSTL_API GVector : public GContainer<T, MMFun>
 		{
 		public:
-			typedef size_t                  size_type;
-			typedef T                       value_type;
-			typedef T&                      reference_type;
-			typedef const T&                const_reference_type;
-			typedef T*                      pointer;
+			typedef size_t                         size_type;
+			typedef T                              value_type;
+			typedef T&                             reference_type;
+			typedef const T&                       const_reference_type;
+			typedef T*                             pointer;
 
 			typedef _SingleMemUnit_Iterator<T>     iterator_type;
 			typedef _SingleMemUnit_CIterator<T>    c_iterator_type;

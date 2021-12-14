@@ -22,10 +22,10 @@ namespace GEngine {
 			typedef bidirectional_iterator_tag      iterator_category;
 			typedef ptrdiff_t                       distance;
 			typedef T                               value_type;
-			typedef T* value_pointer;
-			typedef T& value_reference;
+			typedef T*                              value_pointer;
+			typedef T&                              value_reference;
 
-			typedef __list_node<T>* node_pointer;
+			typedef __list_node<T>*                 node_pointer;
 			typedef _List_Iterator<T, MMFun>        self_type;
 
 		public:

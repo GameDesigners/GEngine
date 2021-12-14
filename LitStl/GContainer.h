@@ -18,7 +18,7 @@ namespace GEngine{
 		 *  
 		 *   
 		 *   关联式容器,实现方式为：二叉树
-		 *   set		   -->   |
+		 *   set		   -->   |   GSet.h          |   GSet.inl          |   GSet.cpp           |   code review :
 		 *   multiset	   -->   |
 		 *   map           -->	 |
 		 *   multimap	   -->   |
