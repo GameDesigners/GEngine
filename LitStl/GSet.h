@@ -3,6 +3,7 @@
 #include "GBalanceTree.h"
 #include "GAlgorithm.h"
 #include "GIterator.h"
+#include "GUtility.h"
 
 namespace GEngine {
 	namespace GStl {
@@ -370,6 +371,17 @@ namespace GEngine {
 			bool operator>(const GSet& rhs);
 			bool operator>=(const GSet& rhs);
 			bool operator<=(const GSet& rhs);
+
+		//迭代器相关函数
+		public:
+			iterator_type    begin();
+			iterator_type    end();
+			c_iterator_type  cbegin();
+			c_iterator_type  cend();
+			r_iterator_type  rbegin();
+			r_iterator_type  rend();
+			cr_iterator_type crbegin();
+			cr_iterator_type crend();
 
 
 		private:

@@ -108,6 +108,7 @@ namespace GEngine {
 			node_pointer Successor(node_pointer node);  //查找后继节点
 			node_pointer PreDecessor(node_pointer node);//查找前驱节点
 			template<typename... Args> void Insert(Args ...args);
+			template<typename... Args> void Insert(node_pointer pos, Args... args);
 			void Remove(key_type key);
 			void Destroy();
 			
@@ -167,6 +168,11 @@ namespace GEngine {
 			void __insert(const Key& key)
 			{
 				this->Insert(key, colors::red, nullptr, nullptr, nullptr);
+			}
+
+			void __insert(node_pointer pos, const Key& key)
+			{
+				this->Insert(pos, key, colors::red, nullptr, nullptr, nullptr);
 			}
 		};
 

@@ -112,6 +112,16 @@ void __balance_tree<NodeType, Compare, MMFun>::Insert(Args ...args)
 }
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
+template<typename... Args>
+void __balance_tree<NodeType, Compare, MMFun>::Insert(node_pointer pos,Args ...args)
+{
+	node_pointer node = this->New(1);
+	GASSERT(node);
+	GNEW(node)NodeType(args...);
+	__insert(pos, node);
+}
+
+template<class NodeType, typename Compare, GMemManagerFun MMFun>
 void __balance_tree<NodeType, Compare, MMFun>::Remove(key_type key)
 {
 	__remove(m_root, key);
