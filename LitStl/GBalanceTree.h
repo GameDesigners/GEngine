@@ -11,7 +11,7 @@ namespace GEngine {
 		 * https://www.cnblogs.com/tongy0/p/5460623.html        node-remove graphic description
 		 */
 		template<class NodeType, typename Compare, GMemManagerFun MMFun> class __balance_tree;
-
+		template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun> class GSTL_API __GSet;
 		enum __tree_node_color : unsigned short 
 		{
 			red,
@@ -23,6 +23,7 @@ namespace GEngine {
 		{
 			friend class __balance_tree<__map_balance_tree_node<Key, Value, Compare, MMFun>, Compare, MMFun>;
 			friend class GContainer<__map_balance_tree_node<Key, Value, Compare, MMFun>>;
+
 
 		public:
 			typedef Key    key_type;
@@ -42,7 +43,7 @@ namespace GEngine {
 					value.~Value();
 			}
 
-		private:
+		public:
 			__tree_node_color color;
 			node_pointer      left;
 			node_pointer      right;
@@ -54,8 +55,10 @@ namespace GEngine {
 		template<class Key, typename Compare=less<Key>, GMemManagerFun MMFun = GMemObject::GetMemManager>
 		class __set_balance_tree_node
 		{
-			friend class __balance_tree<__set_balance_tree_node<Key, Compare, MMFun>, Compare, MMFun>;
 			friend class GContainer<__set_balance_tree_node<Key, Compare, MMFun>>;
+			friend class __balance_tree<__set_balance_tree_node<Key, Compare, MMFun>, Compare, MMFun>;
+			friend class __GSet<Key, true, Compare, MMFun>;
+			friend class __GSet<Key, false, Compare, MMFun>;
 
 		public:
 			typedef Key                                  key_type;
@@ -71,8 +74,6 @@ namespace GEngine {
 			}
 		public:
 			Key               key;
-
-		private:
 			__tree_node_color color;
 			node_pointer      left;
 			node_pointer      right;
@@ -107,9 +108,9 @@ namespace GEngine {
 			node_pointer Maxmum();
 			node_pointer Successor(node_pointer node);  //查找后继节点
 			node_pointer PreDecessor(node_pointer node);//查找前驱节点
-			template<typename... Args> void Insert(Args ...args);
-			template<typename... Args> void Insert(node_pointer pos, Args... args);
-			void Remove(key_type key);
+			template<typename... Args> node_pointer Insert(Args ...args);
+			template<typename... Args> node_pointer Insert(node_pointer pos, Args... args);
+			void Remove(const key_type& key);
 			void Destroy();
 			
 		protected:
@@ -126,9 +127,6 @@ namespace GEngine {
 				p2 = temp;
 			}
 
-			void __pre_order(node_pointer tree) const;
-			void __in_order(node_pointer tree) const;
-			void __post_order(node_pointer tree) const;
 			node_pointer __search(node_pointer x, const key_type& key) const;
 			node_pointer __interative_search(node_pointer x, const key_type& key) const;
 			node_pointer __minimum(node_pointer tree) const;
@@ -165,14 +163,42 @@ namespace GEngine {
 			virtual void clear() {}
 
 		protected:
-			void __insert(const Key& key)
+			node_pointer __insert(const Key& key)
 			{
-				this->Insert(key, colors::red, nullptr, nullptr, nullptr);
+				return this->Insert(key, colors::red, nullptr, nullptr, nullptr);
 			}
 
-			void __insert(node_pointer pos, const Key& key)
+			node_pointer __insert(node_pointer pos, const Key& key)
 			{
-				this->Insert(pos, key, colors::red, nullptr, nullptr, nullptr);
+				return this->Insert(pos, key, colors::red, nullptr, nullptr, nullptr);
+			}
+		};
+
+		
+		template<class Key, class Value,typename Compare = less<Key>, GMemManagerFun MMFun = GMemObject::GetMemManager>
+		class GSTL_API __map_balance_tree : public __balance_tree<__map_balance_tree_node<Key,Value,Compare, MMFun>, Compare, MMFun>
+		{
+		public:
+			typedef __map_balance_tree_node<Key,Value, Compare, MMFun>* node_pointer;
+			typedef Key                                           key_type;
+			typedef Value                                         value_type;
+			typedef __tree_node_color                             colors;
+
+		protected:
+			virtual bool empty() { return false; }
+			virtual size_t size() { return 0; }
+			virtual size_t capcity() { return 0; }
+			virtual void clear() {}
+
+		protected:
+			node_pointer __insert(const Key& key,const Value& value)
+			{
+				return this->Insert(key, value, colors::red, nullptr, nullptr, nullptr);
+			}
+
+			node_pointer __insert(node_pointer pos, const Key& key, const Value& value)
+			{
+				return this->Insert(pos, key, value, colors::red, nullptr, nullptr, nullptr);
 			}
 		};
 
@@ -181,4 +207,5 @@ namespace GEngine {
 	}
 }
 #endif // !GBLANCE_TREE_H
+
 

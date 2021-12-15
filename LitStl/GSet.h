@@ -8,12 +8,13 @@
 namespace GEngine {
 	namespace GStl {
 
-		template<class T, typename Compare, GMemManagerFun MMFun> class GSTL_API GSet;
+		template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun> class GSTL_API __GSet;
 
 		template<class T, typename Compare=less<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
 		class GSTL_API _GSet_Iterator : public iterator<bidirectional_iterator_tag, T>
 		{
-			friend class GSet<T, Compare, MMFun>;
+			friend class __GSet<T, true, Compare, MMFun>;
+			friend class __GSet<T, false, Compare, MMFun>;
 
 		public:
 			typedef bidirectional_iterator_tag        iterator_category;
@@ -81,14 +82,14 @@ namespace GEngine {
 				}
 				return parent;
 			}
-
 			node_pointer current;
 		};
 
 		template<class T, typename Compare = less<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
 		class GSTL_API _GSet_CIterator : public iterator<bidirectional_iterator_tag, T>
 		{
-			friend class GSet<T, Compare, MMFun>;
+			friend class __GSet<T, true, Compare, MMFun>;
+			friend class __GSet<T, false, Compare, MMFun>;
 
 		public:
 			typedef bidirectional_iterator_tag        iterator_category;
@@ -163,7 +164,8 @@ namespace GEngine {
 		template<class T, typename Compare = less<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
 		class GSTL_API _GSet_RIterator : public iterator<bidirectional_iterator_tag, T>
 		{
-			friend class GSet<T, Compare, MMFun>;
+			friend class __GSet<T, true, Compare, MMFun>;
+			friend class __GSet<T, false, Compare, MMFun>;
 
 		public:
 			typedef bidirectional_iterator_tag        iterator_category;
@@ -238,7 +240,8 @@ namespace GEngine {
 		template<class T, typename Compare = less<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
 		class GSTL_API _GSet_CRIterator : public iterator<bidirectional_iterator_tag, T>
 		{
-			friend class GSet<T, Compare, MMFun>;
+			friend class __GSet<T, true, Compare, MMFun>;
+			friend class __GSet<T, false, Compare, MMFun>;
 
 		public:
 			typedef bidirectional_iterator_tag        iterator_category;
@@ -312,8 +315,8 @@ namespace GEngine {
 
 
 
-		template<class T,typename Compare=less<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
-		class GSTL_API GSet : public __set_balance_tree<T, Compare, MMFun>
+		template<class T,bool IsMulti,typename Compare=less<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
+		class GSTL_API __GSet : public __set_balance_tree<T, Compare, MMFun>
 		{
 		public:
 			typedef _GSet_Iterator<T,Compare,MMFun>        iterator_type;
@@ -322,34 +325,35 @@ namespace GEngine {
 			typedef _GSet_CRIterator<T,Compare,MMFun>      cr_iterator_type;
 
 			typedef __set_balance_tree_node<T, Compare, MMFun>* node_pointer;
-
+			typedef Compare                           comparator_type;
 		public:
-			GSet();
-			GSet(const GSet& cv);
-			GSet(GSet&& rv) noexcept;
-			GSet(iterator_type _begin, iterator_type _end);
-			GSet(std::initializer_list<T> values);
-			~GSet();
+			__GSet();
+			__GSet(const __GSet& cv);
+			__GSet(__GSet&& rv) noexcept;
+			__GSet(iterator_type _begin, iterator_type _end);
+			__GSet(std::initializer_list<T> values);
+			~__GSet();
 
 	    //赋值函数
 		public:
-			void operator=(const GSet& cv);
-			void operator=(GSet&& rv) noexcept;
+			void operator=(const __GSet& cv);
+			void operator=(__GSet&& rv) noexcept;
 			void operator=(std::initializer_list<T> values);
-			void swap(GSet& v);
+			void swap(__GSet& v);
 
 			Compare value_comparator();
 
 		//安插和移除
 		public:
-			void insert(const T& val);
-			void insert(const iterator_type& pos, const T& val);
+			GPair<iterator_type,bool> insert(const T& val);
+			//void insert(const iterator_type& pos, const T& val);
 			void insert(iterator_type _begin, iterator_type _end);
-			template<typename... Args> void emplace(Args... args);
-			template<typename... Args> void emplace(iterator_type pos, Args... args);
+			void insert(std::initializer_list<T> values);
+			template<typename... Args> GPair<iterator_type, bool> emplace(Args... args);
+			//template<typename... Args> void emplace(iterator_type pos, Args... args);
 			void earse(const T& val);
-			void earse(const iterator_type& pos);
-			void earse(const iterator_type _begin, iterator_type _end);
+			void earse(iterator_type pos);
+			void earse(iterator_type _begin, iterator_type _end);
 
 		//虚函数重写
 		public:
@@ -363,14 +367,14 @@ namespace GEngine {
 			iterator_type find(const T& val);
 
 
-		//运算发重载
+		//运算符重载
 		public:
-			bool operator==(const GSet& rhs);
-			bool operator!=(const GSet& rhs);
-			bool operator<(const GSet& rhs);
-			bool operator>(const GSet& rhs);
-			bool operator>=(const GSet& rhs);
-			bool operator<=(const GSet& rhs);
+			bool operator==(const __GSet& rhs);
+			bool operator!=(const __GSet& rhs);
+			bool operator<(const __GSet& rhs);
+			bool operator>(const __GSet& rhs);
+			bool operator>=(const __GSet& rhs);
+			bool operator<=(const __GSet& rhs);
 
 		//迭代器相关函数
 		public:
@@ -388,11 +392,11 @@ namespace GEngine {
 			virtual size_t capcity() { return 0; }
 		};
 
-		template<class T,typename Compare = less<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
-		class GSTL_API GMultiSet : public __set_balance_tree<T, Compare, MMFun>
-		{
+		template<class T, typename Compare = less<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
+		using GSet = __GSet<T, false, Compare, MMFun>;
 
-		};
+		template<class T, typename Compare = less<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
+		using GMultiSet = __GSet<T, true, Compare, MMFun>;
 
 #include "GSet.inl"
 

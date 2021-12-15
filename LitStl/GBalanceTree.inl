@@ -103,28 +103,32 @@ typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<N
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
 template<typename... Args>
-void __balance_tree<NodeType, Compare, MMFun>::Insert(Args ...args)
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::Insert(Args ...args)
 {
 	node_pointer node = this->New(1);
 	GASSERT(node);
 	GNEW(node)NodeType(args...);
 	__insert(m_root, node);
+	return node;
 }
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
 template<typename... Args>
-void __balance_tree<NodeType, Compare, MMFun>::Insert(node_pointer pos,Args ...args)
+typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::Insert(node_pointer pos,Args ...args)
 {
 	node_pointer node = this->New(1);
 	GASSERT(node);
 	GNEW(node)NodeType(args...);
 	__insert(pos, node);
+	return node;
 }
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
-void __balance_tree<NodeType, Compare, MMFun>::Remove(key_type key)
+void __balance_tree<NodeType, Compare, MMFun>::Remove(const key_type& key)
 {
-	__remove(m_root, key);
+	node_pointer searchres = Search(key);
+	if (searchres != nullptr)
+		__remove(m_root, searchres);
 }
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
@@ -137,33 +141,15 @@ void __balance_tree<NodeType, Compare, MMFun>::Destroy()
 //*************************************************************************
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
-void __balance_tree<NodeType, Compare, MMFun>::__pre_order(node_pointer tree) const
-{
-	
-}
-
-template<class NodeType, typename Compare, GMemManagerFun MMFun>
-void __balance_tree<NodeType, Compare, MMFun>::__in_order(node_pointer tree) const
-{
-
-}
-
-template<class NodeType, typename Compare, GMemManagerFun MMFun>
-void __balance_tree<NodeType, Compare, MMFun>::__post_order(node_pointer tree) const
-{
-
-}
-
-template<class NodeType, typename Compare, GMemManagerFun MMFun>
 typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::__search(node_pointer x, const key_type& key) const
 {
 	if (x == nullptr || x->key == key)
 		return x;
 
-	if (comparator(key, x->key))
-		return __search(x->left, key);
-	else
+	if (comparator(x->key, key))
 		return __search(x->right, key);
+	else
+		return __search(x->left, key);
 }
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
@@ -339,7 +325,7 @@ void __balance_tree<NodeType, Compare, MMFun>::__remove_fix_up(node_pointer& roo
 			}
 
 			//下面都表示s节点的颜色是黑色的情况
-			if ((s->left == nullptr || s->left == colors::black) && (s->right == nullptr || s->right->color == colors::black))
+			if ((s->left == nullptr || s->left->color == colors::black) && (s->right == nullptr || s->right->color == colors::black))
 			{
 				s->color == colors::red;
 				node = parent;
@@ -375,7 +361,7 @@ void __balance_tree<NodeType, Compare, MMFun>::__remove_fix_up(node_pointer& roo
 			}
 
 			//下面都表示s节点的颜色是黑色的情况
-			if ((s->left == nullptr || s->left == colors::black) && (s->right == nullptr || s->right->color == colors::black))
+			if ((s->left == nullptr || s->left->color == colors::black) && (s->right == nullptr || s->right->color == colors::black))
 			{
 				s->color == colors::red;
 				node = parent;
@@ -432,6 +418,7 @@ void __balance_tree<NodeType, Compare, MMFun>::__insert(node_pointer& root, node
 	else {
 		root = node;
 		node->color = colors::black;  //根节点是黑色
+		m_count++;
 		return;
 	}
 
@@ -454,6 +441,14 @@ void __balance_tree<NodeType, Compare, MMFun>::__remove(node_pointer& root, node
 		node_pointer replace = node->right;
 		while (replace->left != nullptr)
 			replace = replace->left;
+
+		child = replace->right;
+		parent = replace->parent;
+		color = replace->color;
+
+		//交换值，将删除的节点转移到replace
+		//node->key = replace->key;
+
 
 		if (node->parent != nullptr)
 		{
@@ -483,11 +478,17 @@ void __balance_tree<NodeType, Compare, MMFun>::__remove(node_pointer& root, node
 		replace->parent = node->parent;
 		replace->color = node->color;
 		replace->left = node->left;
+
+
 		node->left->parent = replace;
+		node->right->parent = replace;
+
+
 
 		if (color == colors::black)  //修正：[从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点]，因为删除了黑节点意味着在该路上将会 -1
 			__remove_fix_up(root, child, parent);
 		this->Delete(node, 1, 1);
+		node = nullptr;
 		m_count--;
 		return;
 	}
@@ -523,9 +524,10 @@ void __balance_tree<NodeType, Compare, MMFun>::__destroy(node_pointer& tree)
 		return;
 
 	if (tree->left != nullptr)
-		return __destroy(tree->left);
+		__destroy(tree->left);
 	if (tree->right)
-		return __destroy(tree->right);
+		__destroy(tree->right);
 	this->Delete(tree, 1, 1);
 	tree = nullptr;
+	m_count = 0;
 }

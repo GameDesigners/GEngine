@@ -38,10 +38,17 @@ namespace GEngine {
 
 		//小于的对象函数
 		template<class T>
-		class GSTL_API less
+		struct GSTL_API less
 		{
 		public:
-			inline bool operator()(T& val1, T& val2)
+			less() {}
+			~less() {}
+			inline bool operator()(T& val1, T& val2) const
+			{
+				return val1 < val2;
+			}
+
+			inline bool operator()(T& val1, const T& val2) const
 			{
 				return val1 < val2;
 			}

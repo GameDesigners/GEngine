@@ -1,13 +1,13 @@
 // 构造函数
 //*************************************************************************
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-GSet<T, Compare, MMFun>::GSet() {}
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+__GSet<T, IsMulti, Compare, MMFun>::__GSet() {}
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-GSet<T, Compare, MMFun>::GSet(const GSet& cv)
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+__GSet<T, IsMulti, Compare, MMFun>::__GSet(const __GSet& cv)
 {
-	node_pointer temp = cv.m_root;
+	node_pointer temp = this->__minimum(cv.m_root);
 	while (temp != nullptr)
 	{
 		this->__insert(temp->key);
@@ -15,8 +15,8 @@ GSet<T, Compare, MMFun>::GSet(const GSet& cv)
 	}
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-GSet<T, Compare, MMFun>::GSet(GSet&& rv) noexcept
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+__GSet<T, IsMulti, Compare, MMFun>::__GSet(__GSet&& rv) noexcept
 {
 	this->m_root = rv.m_root;
 	this->m_count = rv.m_count;
@@ -24,33 +24,34 @@ GSet<T, Compare, MMFun>::GSet(GSet&& rv) noexcept
 	rv.m_count = 0;
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-GSet<T, Compare, MMFun>::GSet(iterator_type _begin, iterator_type _end)
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+__GSet<T, IsMulti, Compare, MMFun>::__GSet(iterator_type _begin, iterator_type _end)
 {
 	for (auto p = _begin; p != _end; p++)
 		this->__insert(*p);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-GSet<T, Compare, MMFun>::GSet(std::initializer_list<T> values)
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+__GSet<T, IsMulti, Compare, MMFun>::__GSet(std::initializer_list<T> values)
 {
 	for (auto p = values.begin(); p != values.end(); p++)
-		this->__insert(*p);
+		insert(*p);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-GSet<T, Compare, MMFun>::~GSet()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+__GSet<T, IsMulti, Compare, MMFun>::~__GSet()
 {
 	this->Destroy();
 }
 
 //赋值函数
 //*************************************************************************
-template<class T, typename Compare, GMemManagerFun MMFun>
-void GSet<T, Compare, MMFun>::operator=(const GSet& cv)
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::operator=(const __GSet& cv)
 {
 	iterator_type cpy_node = begin();
-	node_pointer cv_firste = this->__minimum(cv.m_root);
+	node_pointer cv_root = cv.m_root;
+	node_pointer cv_firste = this->__minimum(cv_root);
 	iterator_type src_node = _GSet_Iterator<T, Compare, MMFun>(cv_firste);
 	iterator_type _end = _GSet_Iterator<T, Compare, MMFun>(nullptr);
 
@@ -58,26 +59,24 @@ void GSet<T, Compare, MMFun>::operator=(const GSet& cv)
 	{
 		if (cpy_node != _end && src_node != _end)
 		{
-			cpy_node->key = src_node->key;
+			*cpy_node = *src_node;
 			cpy_node++;
 			src_node++;
 		}
 		else if (cpy_node == _end && src_node != _end)
 		{
-			this->__insert(src_node->key);
+			this->__insert(*src_node);
 			src_node++;
 		}
 		else
 		{
-			node_pointer temp = this->Successor(src_node->current);
-			this->__remove(this->m_root, src_node->current);
-			src_node.current = temp;
+			this->__remove(this->m_root, (cpy_node++).current);
 		}
 	}
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-void GSet<T, Compare, MMFun>::operator=(GSet&& rv) noexcept
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::operator=(__GSet&& rv) noexcept
 {
 	clear();
 	this->m_root = rv.m_root;
@@ -86,34 +85,18 @@ void GSet<T, Compare, MMFun>::operator=(GSet&& rv) noexcept
 	rv.m_count = 0;
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-void GSet<T, Compare, MMFun>::operator=(std::initializer_list<T> values)
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::operator=(std::initializer_list<T> values)
 {
-	iterator_type q = begin();
-	iterator_type _end = begin();
+	clear();
 	for (auto p = values.begin(); p != values.end(); p++)
 	{
-		if (q != _end)
-		{
-			*q = *p;
-			q++;
-		}
-		else
-		{
-			this->__insert(*p);
-		}
-	}
-
-	while (q != _end)
-	{
-		node_pointer temp = this->Successor(q->current);
-		this->__remove(this->m_root, q->current);
-		q.current = temp;
+		insert(*p);
 	}
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-void GSet<T, Compare, MMFun>::swap(GSet& v)
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::swap(__GSet& v)
 {
 	node_pointer temp = v.m_root;
 	size_t temp_size = v.m_count;
@@ -127,8 +110,8 @@ void GSet<T, Compare, MMFun>::swap(GSet& v)
 
 
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-Compare GSet<T, Compare, MMFun>::value_comparator()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+Compare __GSet<T, IsMulti, Compare, MMFun>::value_comparator()
 {
 	return this->comparator;
 }
@@ -136,108 +119,277 @@ Compare GSet<T, Compare, MMFun>::value_comparator()
 //安插和移除
 //*************************************************************************
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-void GSet<T, Compare, MMFun>::insert(const T& val)
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+GPair<typename __GSet<T, IsMulti, Compare, MMFun>::iterator_type, bool> __GSet<T, IsMulti, Compare, MMFun>::insert(const T& val)
 {
-	if (count(val) == 1)
-		return;
-	this->__insert(val);
+	if (IsMulti)
+	{
+		node_pointer node = this->__insert(val);
+		return GPair<iterator_type, bool>(_GSet_Iterator<T, Compare, MMFun>(node), true);
+	}
+	else
+	{
+		node_pointer res = this->Search(val);
+		if (res != nullptr)
+			return GPair<iterator_type, bool>(res, false);
+		node_pointer node = this->__insert(val);
+		return GPair<iterator_type, bool>(_GSet_Iterator<T, Compare, MMFun>(node), true);
+	}
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-void GSet<T, Compare, MMFun>::insert(const iterator_type& pos, const T& val)
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::insert(iterator_type _begin, iterator_type _end)
 {
-	this->__insert(pos->current, val);
+	for (iterator_type p = _begin; p != _end; p++)
+		insert(*p);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-void GSet<T, Compare, MMFun>::insert(iterator_type _begin, iterator_type _end)
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::insert(std::initializer_list<T> values)
 {
-	for (iterator p = _begin; p != _end; p++)
-		this->__insert(*p);
+	for (auto p = values.begin(); p != values.end(); p++)
+		insert(*p);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 template<typename... Args>
-void GSet<T, Compare, MMFun>::emplace(Args... args)
+GPair<typename __GSet<T, IsMulti, Compare, MMFun>::iterator_type, bool> __GSet<T, IsMulti, Compare, MMFun>::emplace(Args... args)
 {
 	T val(args...);
-	this->__insert(val);
+	return insert(val);
+}
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::earse(const T& val)
+{
+	if (IsMulti)
+	{
+		node_pointer res = this->Search(val);
+		while (res != nullptr)
+		{
+			this->__remove(this->m_root,res);
+			res = this->Search(val);
+		}
+	}
+	else
+	{
+		this->Remove(val);
+	}
+}
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::earse(iterator_type pos)
+{
+	node_pointer node = pos.current;
+	if (node != nullptr) {
+		this->__remove(this->m_root, node);
+		pos.current = nullptr;
+	}
+}
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::earse(iterator_type _begin, iterator_type _end)
+{
+	iterator_type p = _begin;
+	while(p!=_end)
+		this->__remove(this->m_root, (p--).current);
 }
 
 
 // 虚函数重写
 //*************************************************************************
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-bool GSet<T, Compare, MMFun>::empty()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+bool __GSet<T, IsMulti, Compare, MMFun>::empty()
 {
 	return this->m_count == 0;
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-size_t GSet<T, Compare, MMFun>::size()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+size_t __GSet<T, IsMulti, Compare, MMFun>::size()
 {
 	return this->m_count;
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-void GSet<T, Compare, MMFun>::clear()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+void __GSet<T, IsMulti, Compare, MMFun>::clear()
 {
 	this->Destroy();
+}
+
+
+//特殊的查找函数
+//*************************************************************************
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+size_t __GSet<T, IsMulti, Compare, MMFun>::count(const T& val)
+{
+	node_pointer res = this->Search(val);
+	if (res == nullptr)
+		return 0;
+	else
+		return 1;
+}
+
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+typename __GSet<T, IsMulti, Compare, MMFun>::iterator_type __GSet<T, IsMulti, Compare, MMFun>::find(const T& val)
+{
+	node_pointer res= this->Search(val);
+	return _GSet_Iterator<T, Compare, MMFun>(res);
+}
+
+
+// 运算符重载
+//*************************************************************************
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+bool __GSet<T, IsMulti, Compare, MMFun>::operator==(const __GSet& rhs)
+{
+	if (rhs.m_count != this->m_count)
+		return false;
+
+	iterator_type lhs_iter = begin();
+	node_pointer rhs_firste = this->__minimum(rhs.m_root);
+	iterator_type rhs_iter = _GSet_Iterator<T, Compare, MMFun>(rhs_firste);
+	iterator_type _end = _GSet_Iterator<T, Compare, MMFun>(nullptr);
+
+	while (lhs_iter != _end && rhs_iter != _end)
+	{
+		if (*lhs_iter != *rhs_iter)
+			return false;
+		lhs_iter++;
+		rhs_iter++;
+	}
+}
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+bool __GSet<T, IsMulti, Compare, MMFun>::operator!=(const __GSet& rhs)
+{
+	iterator_type lhs_iter = begin();
+	node_pointer rhs_firste = this->__minimum(rhs.m_root);
+	iterator_type rhs_iter = _GSet_Iterator<T, Compare, MMFun>(rhs_firste);
+	iterator_type _end = _GSet_Iterator<T, Compare, MMFun>(nullptr);
+
+	while (lhs_iter != _end && rhs_iter != _end)
+	{
+		if (*lhs_iter != *rhs_iter)
+			return false;
+		lhs_iter++;
+		rhs_iter++;
+	}
+
+	return lhs_iter != _end || rhs_iter != _end;
+}
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+bool __GSet<T, IsMulti, Compare, MMFun>::operator<(const __GSet& rhs)
+{
+	iterator_type lhs_iter = begin();
+	node_pointer rhs_firste = this->__minimum(rhs.m_root);
+	iterator_type rhs_iter = _GSet_Iterator<T, Compare, MMFun>(rhs_firste);
+	iterator_type _end = _GSet_Iterator<T, Compare, MMFun>(nullptr);
+
+	while (lhs_iter != _end && rhs_iter != _end)
+	{
+		if (*lhs_iter < *rhs_iter)
+			return true;
+		if ((*lhs_iter > *rhs_iter))
+			return false;
+
+		lhs_iter++;
+		rhs_iter++;
+	}
+
+	return rhs_iter != _end;
+}
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+bool __GSet<T, IsMulti, Compare, MMFun>::operator>(const __GSet& rhs)
+{
+	iterator_type lhs_iter = begin();
+	node_pointer rhs_firste = this->__minimum(rhs.m_root);
+	iterator_type rhs_iter = _GSet_Iterator<T, Compare, MMFun>(rhs_firste);
+	iterator_type _end = _GSet_Iterator<T, Compare, MMFun>(nullptr);
+
+	while (lhs_iter != _end && rhs_iter != _end)
+	{
+		if (*lhs_iter > *rhs_iter)
+			return true;
+		if ((*lhs_iter < *rhs_iter))
+			return false;
+
+		lhs_iter++;
+		rhs_iter++;
+	}
+
+	return lhs_iter != _end;
+}
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+bool __GSet<T, IsMulti, Compare, MMFun>::operator>=(const __GSet& rhs)
+{
+	return *this > rhs || *this == rhs;
+}
+
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+bool __GSet<T, IsMulti, Compare, MMFun>::operator<=(const __GSet& rhs)
+{
+	return *this < rhs || *this == rhs;
 }
 
 // 迭代器相关函数
 //*************************************************************************
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-typename GSet<T, Compare, MMFun>::iterator_type GSet<T, Compare, MMFun>::begin()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+typename __GSet<T, IsMulti, Compare, MMFun>::iterator_type __GSet<T, IsMulti, Compare, MMFun>::begin()
 {
 	node_pointer minmum = this->Minmum();
 	return _GSet_Iterator<T, Compare, MMFun>(minmum);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-typename GSet<T, Compare, MMFun>::iterator_type GSet<T, Compare, MMFun>::end()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+typename __GSet<T, IsMulti, Compare, MMFun>::iterator_type __GSet<T, IsMulti, Compare, MMFun>::end()
 {
 	return _GSet_Iterator<T, Compare, MMFun>(nullptr);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-typename GSet<T, Compare, MMFun>::c_iterator_type GSet<T, Compare, MMFun>::cbegin()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+typename __GSet<T, IsMulti, Compare, MMFun>::c_iterator_type __GSet<T, IsMulti, Compare, MMFun>::cbegin()
 {
 	node_pointer minmum = this->Minmum();
 	return _GSet_CIterator<T, Compare, MMFun>(minmum);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-typename GSet<T, Compare, MMFun>::c_iterator_type GSet<T, Compare, MMFun>::cend()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+typename __GSet<T, IsMulti, Compare, MMFun>::c_iterator_type __GSet<T, IsMulti, Compare, MMFun>::cend()
 {
 	return _GSet_CIterator<T, Compare, MMFun>(nullptr);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-typename GSet<T, Compare, MMFun>::r_iterator_type GSet<T, Compare, MMFun>::rbegin()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+typename __GSet<T, IsMulti, Compare, MMFun>::r_iterator_type __GSet<T, IsMulti, Compare, MMFun>::rbegin()
 {
 	node_pointer maxmum = this->Maxmum();
 	return _GSet_RIterator<T, Compare, MMFun>(maxmum);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-typename GSet<T, Compare, MMFun>::r_iterator_type GSet<T, Compare, MMFun>::rend()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+typename __GSet<T, IsMulti, Compare, MMFun>::r_iterator_type __GSet<T, IsMulti, Compare, MMFun>::rend()
 {
 	return _GSet_RIterator<T, Compare, MMFun>(nullptr);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-typename GSet<T, Compare, MMFun>::cr_iterator_type GSet<T, Compare, MMFun>::crbegin()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+typename __GSet<T, IsMulti, Compare, MMFun>::cr_iterator_type __GSet<T, IsMulti, Compare, MMFun>::crbegin()
 {
 	node_pointer maxmum = this->Maxmum();
 	return _GSet_CRIterator<T, Compare, MMFun>(maxmum);
 }
 
-template<class T, typename Compare, GMemManagerFun MMFun>
-typename GSet<T, Compare, MMFun>::cr_iterator_type GSet<T, Compare, MMFun>::crend()
+template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
+typename __GSet<T, IsMulti, Compare, MMFun>::cr_iterator_type __GSet<T, IsMulti, Compare, MMFun>::crend()
 {
 	return _GSet_CRIterator<T, Compare, MMFun>(nullptr);
 }
+
