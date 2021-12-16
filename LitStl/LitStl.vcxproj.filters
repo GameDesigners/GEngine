@@ -81,7 +81,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GUnorderedSet.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GContainers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +158,9 @@
     </None>
     <None Include="GHashTable.inl">
       <Filter>Inl Files\GDataStrure</Filter>
+    </None>
+    <None Include="GUnorderedSet.inl">
+      <Filter>Inl Files</Filter>
     </None>
   </ItemGroup>
 </Project>
