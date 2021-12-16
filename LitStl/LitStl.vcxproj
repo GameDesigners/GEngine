@@ -156,6 +156,7 @@
     <ClInclude Include="GMemory.h" />
     <ClInclude Include="GSet.h" />
     <ClInclude Include="GStlMicro.h" />
+    <ClInclude Include="GUnorderedSet.h" />
     <ClInclude Include="GUtility.h" />
     <ClInclude Include="GVector.h" />
   </ItemGroup>
@@ -183,6 +184,7 @@
     <ClCompile Include="GMap.cpp" />
     <ClCompile Include="GMemory.cpp" />
     <ClCompile Include="GSet.cpp" />
+    <ClCompile Include="GUnorderedSet.cpp" />
     <ClCompile Include="GUtility.cpp" />
     <ClCompile Include="GVector.cpp" />
   </ItemGroup>

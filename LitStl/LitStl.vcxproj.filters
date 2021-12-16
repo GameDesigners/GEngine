@@ -80,6 +80,9 @@
     <ClInclude Include="GHashFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GUnorderedSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUtility.cpp">
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="GHashTable.cpp">
       <Filter>Source Files\GDataStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="GUnorderedSet.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
