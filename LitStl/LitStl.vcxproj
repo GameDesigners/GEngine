@@ -148,6 +148,8 @@
     <ClInclude Include="GContainer.h" />
     <ClInclude Include="GDeque.h" />
     <ClInclude Include="GForwardList.h" />
+    <ClInclude Include="GHashFunction.h" />
+    <ClInclude Include="GHashTable.h" />
     <ClInclude Include="GIterator.h" />
     <ClInclude Include="GList.h" />
     <ClInclude Include="GMap.h" />
@@ -162,6 +164,7 @@
     <None Include="GBalanceTree.inl" />
     <None Include="GDeque.inl" />
     <None Include="GForwardList.inl" />
+    <None Include="GHashTable.inl" />
     <None Include="GList.inl" />
     <None Include="GMap.inl" />
     <None Include="GMemory.inl" />
@@ -174,6 +177,7 @@
     <ClCompile Include="GArray.cpp" />
     <ClCompile Include="GDeque.cpp" />
     <ClCompile Include="GForwardList.cpp" />
+    <ClCompile Include="GHashTable.cpp" />
     <ClCompile Include="GIterator.cpp" />
     <ClCompile Include="GList.cpp" />
     <ClCompile Include="GMap.cpp" />

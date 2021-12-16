@@ -11,18 +11,17 @@ namespace GEngine{
 		 *   序列式容器,实现方式为：数组、链表：
 		 *   GArray        -->   |   GArray.h        |   GArray.inl        |   GArray.cpp         |   code review :
 		 *   GVector       -->   |   GVector.h       |   GVector.inl       |   GVector.cpp		  |	  code review :
-		 *   GDeque        -->   |   GDeque.h        |   GDeque.inl        |   GDeque.cpp		  |	  code review :
+		 *   GDeque        -->   |   GDeque.h        |   GDeque.inl        |   GDeque.cpp		  |	  code review :no finish
 		 *   GList         -->   |   GList.h         |   GList.inl         |   GList.cpp		  |	  code review :2021.10.12
 		 *   GForwardList  -->   |   GForwardList.h  |   GForwardList.inl  |   GForwardList.cpp	  |   code review :2021.10.12
 		 * 
 		 *  
 		 *   
 		 *   关联式容器,实现方式为：二叉树
-		 *   set		   -->   |   GSet.h          |   GSet.inl          |   GSet.cpp           |   code review :
-		 *   multiset	   -->   |
-		 *   map           -->	 |
-		 *   multimap	   -->   |
-		 * 
+		 *   set		   -->   |   GSet.h          |   GSet.inl          |   GSet.cpp           |   code review :2021.12.16
+		 *   multiset	   -->   |   GSet.h          |   GSet.inl          |   GSet.cpp           |   code review :2021.12.16
+		 *   map           -->	 |   GMap.h          |   GMap.inl          |   GMap.cpp           |   code review :
+		 *   multimap	   -->   |	 GMap.h          |   GMap.inl          |   GMap.cpp           |   code review :
 		 * 
 		 * 
 		 *   无序容器，实现方式为：哈希表

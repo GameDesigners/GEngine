@@ -144,11 +144,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BalanceTreeTest.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="CommonTool.h" />
     <ClInclude Include="CPlusPlus_11_NewFeature.h" />
     <ClInclude Include="GDirect3DVectorSample.h" />
+    <ClInclude Include="UseGMapAndGMultiMapSample.h" />
     <ClInclude Include="UseGSetAndGMultiSetSample.h" />
     <ClInclude Include="UseGArraySample.h" />
     <ClInclude Include="UseGDequeSample.h" />

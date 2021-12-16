@@ -365,6 +365,10 @@ namespace GEngine {
 		public:
 			size_t count(const T& val);
 			iterator_type find(const T& val);
+			iterator_type lower_bound(const T& val);
+			iterator_type upper_bound(const T& val);
+			GPair<iterator_type, iterator_type> equal_range(const T& val);
+
 
 
 		//ÔËËã·ûÖØÔØ

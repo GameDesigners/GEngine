@@ -28,8 +28,8 @@
 #include "UseGListSample.h"
 #include "UseGForwardListSample.h"
 #include "UseGSetAndGMultiSetSample.h"
+#include "UseGMapAndGMultiMapSample.h"
 
-#include "BalanceTreeTest.h"
 
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
@@ -208,10 +208,8 @@ int main()
     //GDeuqeSample();
 	//GListSample();
 	//GForwardListSample();
-	GSetSample();
-
-	//GBalanceTreeTest();
-
+	//GSetSample();
+	GMapSample();
 
 	
 	

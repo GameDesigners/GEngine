@@ -14,6 +14,15 @@ ostream& operator<<(ostream& os, GSet<SamplesElem>& set)
 	return os;
 }
 
+ostream& operator<<(ostream& os, GMultiSet<SamplesElem>& set)
+{
+	os << "set 's count:" << set.size() << endl;
+	for (GMultiSet<SamplesElem>::iterator_type p = set.begin(); p != set.end(); p++)
+		p->to_string();
+	os << endl;
+	return os;
+}
+
 void GSetSample()
 {
 	GSet<SamplesElem> set1;
@@ -65,16 +74,32 @@ void GSetSample()
 		});
 	set7.emplace(1, 2);
 	set7.earse(SamplesElem(1, 2));
+
 	auto itera = ++set7.begin();
 	set7.earse(itera);
-	
-	cout << set1;
+	itera = ++set7.begin();
+
+	cout << set7;
+	itera->to_string();
+
+	//set7.earse(itera, set7.end());
+	itera = set7.find(SamplesElem(1, 1.1111));
+	/*cout << set1;
 	cout << set2;
 	cout << set3;
 	cout << set4;
 	cout << set5;
-	cout << set6;
+	cout << set6;*/
 	cout << set7;
+
+	GMultiSet<SamplesElem> multiset;
+	multiset.insert({
+		SamplesElem(1,1.1111),
+		SamplesElem(1,1.1111),
+		SamplesElem(1,1.1111),
+		SamplesElem(1,1.1111),
+		});
+	cout << multiset;
 
 }
 

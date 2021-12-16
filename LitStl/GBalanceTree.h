@@ -12,6 +12,7 @@ namespace GEngine {
 		 */
 		template<class NodeType, typename Compare, GMemManagerFun MMFun> class __balance_tree;
 		template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun> class GSTL_API __GSet;
+
 		enum __tree_node_color : unsigned short 
 		{
 			red,
@@ -43,6 +44,16 @@ namespace GEngine {
 					value.~Value();
 			}
 
+			void swap_value(__map_balance_tree_node& rhs)
+			{
+				Key temp_key = rhs.key;
+				Value temp_value = rhs.value;
+				rhs.key = key;
+				rhs.value = value;
+				key = temp_key;
+				value = temp_value;
+			}
+
 		public:
 			__tree_node_color color;
 			node_pointer      left;
@@ -72,6 +83,14 @@ namespace GEngine {
 				if (ValueBase<Key>::NeedsDestructor)
 					key.~Key();
 			}
+
+			void swap_value(__set_balance_tree_node& rhs)
+			{
+				Key temp = rhs.key;
+				rhs.key = temp;
+				key = temp;
+			}
+
 		public:
 			Key               key;
 			__tree_node_color color;

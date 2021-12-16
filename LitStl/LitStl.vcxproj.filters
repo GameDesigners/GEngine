@@ -69,9 +69,15 @@
       <Filter>Header Files\GDataStructure</Filter>
     </ClInclude>
     <ClInclude Include="GSet.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GContainers</Filter>
     </ClInclude>
     <ClInclude Include="GMap.h">
+      <Filter>Header Files\GContainers</Filter>
+    </ClInclude>
+    <ClInclude Include="GHashTable.h">
+      <Filter>Header Files\GDataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="GHashFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -109,6 +115,9 @@
     <ClCompile Include="GMap.cpp">
       <Filter>Source Files\GContainers</Filter>
     </ClCompile>
+    <ClCompile Include="GHashTable.cpp">
+      <Filter>Source Files\GDataStructure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="GMemory.inl">
@@ -140,6 +149,9 @@
     </None>
     <None Include="GMap.inl">
       <Filter>Inl Files\GContainers</Filter>
+    </None>
+    <None Include="GHashTable.inl">
+      <Filter>Inl Files\GDataStrure</Filter>
     </None>
   </ItemGroup>
 </Project>

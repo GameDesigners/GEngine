@@ -13,7 +13,7 @@ public:
 	{
 		i = GNEW int;
 		f = 0.0f;
-		std::cout << "调用了一次无参构造函数->SamplesElem" << std::endl;
+		//std::cout << "调用了一次无参构造函数->SamplesElem" << std::endl;
 	}
 
 	SamplesElem(int _i, float _f)
@@ -21,7 +21,7 @@ public:
 		i = GNEW int;
 		*i = _i;
 		f = _f;
-		std::cout << "调用了一次赋初值构造函数->SamplesElem(_i,_f)" << std::endl;
+		//std::cout << "调用了一次赋初值构造函数->SamplesElem(_i,_f)" << std::endl;
 	}
 
 	SamplesElem(const SamplesElem& elem)

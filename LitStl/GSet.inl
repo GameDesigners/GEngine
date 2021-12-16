@@ -2,12 +2,13 @@
 //*************************************************************************
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
-__GSet<T, IsMulti, Compare, MMFun>::__GSet() {}
+__GSet<T, IsMulti, Compare, MMFun>::__GSet() { }
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 __GSet<T, IsMulti, Compare, MMFun>::__GSet(const __GSet& cv)
 {
-	node_pointer temp = this->__minimum(cv.m_root);
+	node_pointer cv_root = cv.m_root;
+	node_pointer temp = this->__minimum(cv_root);
 	while (temp != nullptr)
 	{
 		this->__insert(temp->key);
@@ -28,7 +29,7 @@ template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 __GSet<T, IsMulti, Compare, MMFun>::__GSet(iterator_type _begin, iterator_type _end)
 {
 	for (auto p = _begin; p != _end; p++)
-		this->__insert(*p);
+		insert(*p);
 }
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
@@ -49,30 +50,14 @@ __GSet<T, IsMulti, Compare, MMFun>::~__GSet()
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 void __GSet<T, IsMulti, Compare, MMFun>::operator=(const __GSet& cv)
 {
-	iterator_type cpy_node = begin();
+	clear();
 	node_pointer cv_root = cv.m_root;
 	node_pointer cv_firste = this->__minimum(cv_root);
-	iterator_type src_node = _GSet_Iterator<T, Compare, MMFun>(cv_firste);
+	iterator_type src_iter = _GSet_Iterator<T, Compare, MMFun>(cv_firste);
 	iterator_type _end = _GSet_Iterator<T, Compare, MMFun>(nullptr);
 
-	while (cpy_node != _end || src_node != _end)
-	{
-		if (cpy_node != _end && src_node != _end)
-		{
-			*cpy_node = *src_node;
-			cpy_node++;
-			src_node++;
-		}
-		else if (cpy_node == _end && src_node != _end)
-		{
-			this->__insert(*src_node);
-			src_node++;
-		}
-		else
-		{
-			this->__remove(this->m_root, (cpy_node++).current);
-		}
-	}
+	for (src_iter; src_iter != _end; src_iter++)
+		insert(*src_iter);
 }
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
@@ -192,7 +177,7 @@ void __GSet<T, IsMulti, Compare, MMFun>::earse(iterator_type _begin, iterator_ty
 {
 	iterator_type p = _begin;
 	while(p!=_end)
-		this->__remove(this->m_root, (p--).current);
+		this->__remove(this->m_root, (p++).current);
 }
 
 
@@ -224,11 +209,28 @@ void __GSet<T, IsMulti, Compare, MMFun>::clear()
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 size_t __GSet<T, IsMulti, Compare, MMFun>::count(const T& val)
 {
-	node_pointer res = this->Search(val);
-	if (res == nullptr)
-		return 0;
+	if (IsMulti)
+	{
+		node_pointer res = this->Search(val);
+		if (res == nullptr)
+			return 0;
+		size_t _count = 1;
+		res = this->Successor(res);
+		while (res != nullptr && res->key == val)
+		{
+			_count++;
+			res = this->Successor(res);
+		}
+		return _count;
+	}
 	else
-		return 1;
+	{
+		node_pointer res = this->Search(val);
+		if (res == nullptr)
+			return 0;
+		else
+			return 1;
+	}
 }
 
 
@@ -392,4 +394,3 @@ typename __GSet<T, IsMulti, Compare, MMFun>::cr_iterator_type __GSet<T, IsMulti,
 {
 	return _GSet_CRIterator<T, Compare, MMFun>(nullptr);
 }
-
