@@ -43,6 +43,10 @@ namespace GEngine {
 
 		protected:
 			__hash_table();
+			__hash_table(size_t bnum);
+
+		protected:
+			void __resize_bucket_table(size_t bnum);
 			
 		protected:
 			static const size_t __stl_num_primes = 28;
@@ -52,6 +56,8 @@ namespace GEngine {
 			ExtractKey            extractKey;
 			EqualHashCode         hashEquals;
 
+			size_t                m_current_bucket_idx;
+			size_t                m_count;
 			GVector<NodeType*>    m_bucket;
 		};
 

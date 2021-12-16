@@ -17,5 +17,23 @@ const unsigned long __hash_table<NodeType, HashFunc, ExtractKey, EqualHashCode, 
 template<class NodeType, class HashFunc, class ExtractKey, class EqualHashCode, GMemManagerFun MMFun>
 __hash_table<NodeType, HashFunc, ExtractKey, EqualHashCode, MMFun>::__hash_table()
 {
-    m_bucket.assign(__stl_prime_list[0]);
+    m_count = 0;
+    m_current_bucket_idx = 0;
+    m_bucket.assign(__stl_prime_list[m_current_bucket_idx]);
+}
+
+template<class NodeType, class ConflictHandlingFun, class ExtractKey, class EqualHashCode, GMemManagerFun MMFun>
+inline GEngine::GStl::__hash_table<NodeType, ConflictHandlingFun, ExtractKey, EqualHashCode, MMFun>::__hash_table(size_t bnum)
+{
+    m_count == 0;
+    m_current_bucket_idx = 0;
+    while (__stl_num_primes[m_current_bucket_idx] < bnum)
+        m_current_bucket_idx++;
+    m_bucket.assign(__stl_num_primes[m_current_bucket_idx];)
+}
+
+template<class NodeType, class ConflictHandlingFun, class ExtractKey, class EqualHashCode, GMemManagerFun MMFun>
+inline void GEngine::GStl::__hash_table<NodeType, ConflictHandlingFun, ExtractKey, EqualHashCode, MMFun>::__resize_bucket_table(size_t bnum)
+{
+    
 }
