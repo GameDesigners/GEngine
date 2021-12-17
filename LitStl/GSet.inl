@@ -1,5 +1,5 @@
 // 构造函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 __GSet<T, IsMulti, Compare, MMFun>::__GSet() { }
@@ -46,7 +46,7 @@ __GSet<T, IsMulti, Compare, MMFun>::~__GSet()
 }
 
 //赋值函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 void __GSet<T, IsMulti, Compare, MMFun>::operator=(const __GSet& cv)
 {
@@ -102,7 +102,7 @@ Compare __GSet<T, IsMulti, Compare, MMFun>::value_comparator()
 }
 
 //安插和移除
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 GPair<typename __GSet<T, IsMulti, Compare, MMFun>::iterator_type, bool> __GSet<T, IsMulti, Compare, MMFun>::insert(const T& val)
@@ -182,7 +182,7 @@ void __GSet<T, IsMulti, Compare, MMFun>::earse(iterator_type _begin, iterator_ty
 
 
 // 虚函数重写
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 bool __GSet<T, IsMulti, Compare, MMFun>::empty()
@@ -204,7 +204,7 @@ void __GSet<T, IsMulti, Compare, MMFun>::clear()
 
 
 //特殊的查找函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 size_t __GSet<T, IsMulti, Compare, MMFun>::count(const T& val)
@@ -243,7 +243,7 @@ typename __GSet<T, IsMulti, Compare, MMFun>::iterator_type __GSet<T, IsMulti, Co
 
 
 // 运算符重载
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 bool __GSet<T, IsMulti, Compare, MMFun>::operator==(const __GSet& rhs)
@@ -341,7 +341,7 @@ bool __GSet<T, IsMulti, Compare, MMFun>::operator<=(const __GSet& rhs)
 }
 
 // 迭代器相关函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 typename __GSet<T, IsMulti, Compare, MMFun>::iterator_type __GSet<T, IsMulti, Compare, MMFun>::begin()

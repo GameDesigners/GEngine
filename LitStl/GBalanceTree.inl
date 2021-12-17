@@ -1,5 +1,5 @@
 //构造函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
 __balance_tree<NodeType, Compare, MMFun>::__balance_tree()
 {
@@ -16,7 +16,7 @@ __balance_tree<NodeType, Compare, MMFun>::~__balance_tree()
 
 
 //增删查改、销毁
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
 void __balance_tree<NodeType, Compare, MMFun>::PreOrder()
@@ -41,7 +41,7 @@ void __balance_tree<NodeType, Compare, MMFun>::PostOrder()
 
 
 //增删查改、销毁
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
 typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::Search(const key_type& key)
@@ -141,7 +141,7 @@ void __balance_tree<NodeType, Compare, MMFun>::Destroy()
 }
 
 //辅助函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class NodeType, typename Compare, GMemManagerFun MMFun>
 typename __balance_tree<NodeType, Compare, MMFun>::node_pointer __balance_tree<NodeType, Compare, MMFun>::__search(node_pointer x, const key_type& key) const

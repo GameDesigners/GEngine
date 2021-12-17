@@ -1,6 +1,6 @@
 #include "GMap.h"
 // 构造函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::__GMap() {}
@@ -48,7 +48,7 @@ GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::~__GMap()
 
 
 // 赋值函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 void GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::operator=(const __GMap& cv)
@@ -109,7 +109,7 @@ Compare GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::key_comparat
 }
 
 // 访问函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 Value& GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::operator[](const Key& key)
@@ -133,7 +133,7 @@ Value& GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::at(const Key&
 
 
 //安插和移除
-//*************************************************************************
+//**********************************************************************************************************************************************
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 GPair<typename GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::iterator_type, bool> GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::insert(const Key& key, const Value& val)
 {
@@ -215,7 +215,7 @@ void GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::earse(iterator_
 
 
 // 虚函数重写
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 bool GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::empty()
@@ -239,7 +239,7 @@ void GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::clear()
 
 
 //特殊的查找函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 inline size_t GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::count(const Key& key)
 {
@@ -275,7 +275,7 @@ inline typename GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::iter
 }
 
 //运算符重载
-//*************************************************************************
+//**********************************************************************************************************************************************
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 bool __GMap<Key, Value, IsMulti, Compare, MMFun>::operator==(const __GMap& rhs)
 {
@@ -366,7 +366,7 @@ inline bool GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::operator
 
 
 // 迭代器相关函数
-//*************************************************************************
+//**********************************************************************************************************************************************
 
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
 typename GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::iterator_type GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::begin()

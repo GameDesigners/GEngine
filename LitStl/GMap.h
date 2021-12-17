@@ -12,7 +12,7 @@ namespace GEngine {
 
 
 		template<class Key, class Value, typename Compare = less<Key>, GMemManagerFun MMFun = GMemObject::GetMemManager>
-		class GSTL_API _GMap_Iterator
+		class GSTL_API _GMap_Iterator : public iterator<bidirectional_iterator_tag, Value>
 		{
 			friend class __GMap<Key, Value, true, Compare, MMFun>;
 			friend class __GMap<Key, Value, false, Compare, MMFun>;
@@ -95,7 +95,7 @@ namespace GEngine {
 		using _GMap_CIterator = _GMap_Iterator<Key, Value, Compare, MMFun>;
 
 		template<class Key, class Value, typename Compare = less<Key>, GMemManagerFun MMFun = GMemObject::GetMemManager>
-		class GSTL_API _GMap_RIterator
+		class GSTL_API _GMap_RIterator : public iterator<bidirectional_iterator_tag, Value>
 		{
 			friend class __GMap<Key, Value, true, Compare, MMFun>;
 			friend class __GMap<Key, Value, false, Compare, MMFun>;
