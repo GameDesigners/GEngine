@@ -83,6 +83,12 @@
     <ClInclude Include="GUnorderedSet.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
+    <ClInclude Include="GUnorderedMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GStrings.h">
+      <Filter>Header Files\GContainers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUtility.cpp">
@@ -122,7 +128,13 @@
       <Filter>Source Files\GDataStructure</Filter>
     </ClCompile>
     <ClCompile Include="GUnorderedSet.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GContainers</Filter>
+    </ClCompile>
+    <ClCompile Include="GUnorderedMap.cpp">
+      <Filter>Source Files\GContainers</Filter>
+    </ClCompile>
+    <ClCompile Include="GStrings.cpp">
+      <Filter>Source Files\GContainers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -159,8 +171,14 @@
     <None Include="GHashTable.inl">
       <Filter>Inl Files\GDataStrure</Filter>
     </None>
+    <None Include="GUnorderedMap.inl">
+      <Filter>Inl Files\GContainers</Filter>
+    </None>
     <None Include="GUnorderedSet.inl">
-      <Filter>Inl Files</Filter>
+      <Filter>Inl Files\GContainers</Filter>
+    </None>
+    <None Include="GStrings.inl">
+      <Filter>Inl Files\GContainers</Filter>
     </None>
   </ItemGroup>
 </Project>

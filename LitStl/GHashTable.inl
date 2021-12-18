@@ -20,7 +20,7 @@ __hash_table<NodeType, HashFunc, ExtractKey, EqualKey, MMFun>::__hash_table()
     m_max_load_factor = 0.75;
     m_current_bucket_idx = 0;
     m_count = 0;
-    m_bucket.assign(__stl_prime_list[m_current_bucket_idx]);
+    m_bucket.assign(__stl_prime_list[m_current_bucket_idx], nullptr);
     
 }
 
@@ -28,7 +28,7 @@ template<class NodeType, class ConflictHandlingFun, class ExtractKey, class Equa
 inline GEngine::GStl::__hash_table<NodeType, ConflictHandlingFun, ExtractKey, EqualKey, MMFun>::__hash_table(size_t bnum)
 {
     m_count == 0;
-    m_current_bucket_idx = __location_capcity_idx();
+    m_current_bucket_idx = __location_capcity_idx(bnum);
     m_bucket.assign(__stl_num_primes[m_current_bucket_idx]);
 }
 
@@ -36,6 +36,7 @@ template<class NodeType, class ExtractKey, class ConflictHandlingFun, class Equa
 template<typename ...Args>
 inline NodeType* GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::__hash_insert(Args ...args)
 {
+    __is_reset_hash_table();
     __is_rehash_table();//检查是否需要扩容
     node_pointer node = this->New(1);
     GASSERT(node != nullptr);
@@ -51,43 +52,50 @@ inline NodeType* GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandl
 template<class NodeType, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
 inline void GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::__remove(const key_type& key)
 {
-    size_t idx = __get_bucket_idx_by_key(key);
+    key_type template_key = key;
+    __is_reset_hash_table();
+    size_t idx = __get_bucket_idx_by_key(template_key);
     node_pointer p = m_bucket[idx];
-    if (p->key == key)
+    while (p != nullptr && p->key == template_key)
     {
         //删除首节点
-        m_bucket[idx] = p->next;
+        node_pointer temp;
+        m_bucket[idx] = temp = p->next;
         this->Delete(p, 1, 1);
+        m_count--;
+        p = temp;
     }
-    else
+    if (p == nullptr)
+        return;
+
+    //查找删除节点
+    node_pointer q = p->next;
+    while (q != nullptr)
     {
-        //查找删除节点
-        node_pointer q = p->next;
-        while (q != nullptr)
+        if (q->key == template_key)
         {
-            if (q->key == key)
-            {
-                p->next = q->next;
-                this->Delete(q, 1, 1);
-                q = p->next;
-                continue;
-            }
-            p = q;
-            q = q->next;
+            p->next = q->next;
+            this->Delete(q, 1, 1);
+            q = p->next;
+            m_count--;
+            continue;
         }
-        
+        p = q;
+        q = q->next;
     }
 }
 
 template<class NodeType, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
 inline NodeType* GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::__search(const key_type& key)
 {
+    __is_reset_hash_table();
     size_t idx = __get_bucket_idx_by_key(key);
     node_pointer p = m_bucket[idx];
     while (p!=nullptr)
     {
         if (keyEquals(p->key, key))
             return p;
+        p = p->next;
     }
     return nullptr;
 }
@@ -98,14 +106,16 @@ inline void GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFu
     for (int index = 0; index < m_bucket.size(); index++)
     {
         node_pointer p = m_bucket[index];
-        node_pointer q = p;
-        while (q!=nullptr)
+        node_pointer q = nullptr;
+        while (p!=nullptr)
         {
             q = p->next;
-            this->Delete(q, 1, 1);
+            this->Delete(p, 1, 1);
+            p = q;
         }
+        m_bucket[index] = nullptr;
     }
-    m_count;
+    m_count = 0;
 }
 
 template<class NodeType, class ConflictHandlingFun, class ExtractKey, class EqualKey, GMemManagerFun MMFun>
@@ -117,7 +127,11 @@ inline void GEngine::GStl::__hash_table<NodeType, ConflictHandlingFun, ExtractKe
         bnum = __stl_prime_list[m_current_bucket_idx];
     }
 
+    if (bnum == m_bucket.size())
+        return;
+
     GVector<node_pointer> temp(bnum, nullptr);
+    temp.resize(bnum);
     for (auto p = m_bucket.begin(); p != m_bucket.end(); p++)
     {
         node_pointer q = *p;
@@ -125,8 +139,8 @@ inline void GEngine::GStl::__hash_table<NodeType, ConflictHandlingFun, ExtractKe
         {
             node_pointer node = q->next;
             node_pointer new_node = this->New(1);
-            new_node->move_data(g_move(q));
-            __insert(new_node);
+            new_node->move_data(g_move(*q));
+            __rehash_insert(new_node, temp, bnum);
             this->Delete(q, 1, 1);
             q = node;
         }

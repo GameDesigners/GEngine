@@ -1,7 +1,9 @@
 #include <GSystem.h>
 #include <iostream>
+#include <GHashFunction.h>
 #ifndef COMMON_DATA_H
 #define COMMON_DATA_H
+using namespace GEngine::GStl;
 class SamplesElem
 {
 public:
@@ -106,4 +108,5 @@ public:
 			std::cout << "float:" << f << std::endl;
 	}
 };
+IMPLEMENT_EXTRACT_HASH_KEY_FUNCTOR1(SamplesElem, float, f)
 #endif // !COMMON_DATA_H

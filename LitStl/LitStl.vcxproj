@@ -156,6 +156,8 @@
     <ClInclude Include="GMemory.h" />
     <ClInclude Include="GSet.h" />
     <ClInclude Include="GStlMicro.h" />
+    <ClInclude Include="GStrings.h" />
+    <ClInclude Include="GUnorderedMap.h" />
     <ClInclude Include="GUnorderedSet.h" />
     <ClInclude Include="GUtility.h" />
     <ClInclude Include="GVector.h" />
@@ -170,6 +172,8 @@
     <None Include="GMap.inl" />
     <None Include="GMemory.inl" />
     <None Include="GSet.inl" />
+    <None Include="GStrings.inl" />
+    <None Include="GUnorderedMap.inl" />
     <None Include="GUnorderedSet.inl" />
     <None Include="GUtility.inl" />
     <None Include="GVector.inl" />
@@ -185,6 +189,8 @@
     <ClCompile Include="GMap.cpp" />
     <ClCompile Include="GMemory.cpp" />
     <ClCompile Include="GSet.cpp" />
+    <ClCompile Include="GStrings.cpp" />
+    <ClCompile Include="GUnorderedMap.cpp" />
     <ClCompile Include="GUnorderedSet.cpp" />
     <ClCompile Include="GUtility.cpp" />
     <ClCompile Include="GVector.cpp" />

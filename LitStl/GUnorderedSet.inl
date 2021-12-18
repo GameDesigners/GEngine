@@ -1,26 +1,33 @@
 //构造函数
 //**********************************************************************************************************************************************
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::__GUnorderedSet() {}
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::__GUnorderedSet() {}
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::__GUnorderedSet(size_t bnum) : __hash_table(bnum) {}
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::__GUnorderedSet(size_t bnum)
+{
+	this->__rehash_table(bnum);
+}
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::__GUnorderedSet(const __GUnorderedSet& cv)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::__GUnorderedSet(const __GUnorderedSet& cv)
 {
 	this->m_current_bucket_idx = cv.m_current_bucket_idx;
-	for (int index = 0; index < cv.m_bucket.size(); index++)
+	GVector<node_pointer> cv_bucket = cv.m_bucket;
+	for (int index = 0; index < cv_bucket.size(); index++)
 	{
-		node_pointer p = cv.m_bucket[index];
-		while (p!=nullptr)
+		node_pointer p = cv_bucket[index];
+		while (p != nullptr) 
+		{
 			insert(p->key);
+			p = p->next;
+		}
 	}
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::__GUnorderedSet(__GUnorderedSet&& rv)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::__GUnorderedSet(__GUnorderedSet&& rv)
 {
 	this->m_max_load_factor = rv.m_max_load_factor;
 	this->m_current_bucket_idx = rv.m_current_bucket_idx;
@@ -31,45 +38,55 @@ inline GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHa
 	rv.m_count = 0;
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::__GUnorderedSet(iterator_type _begin, iterator_type _end)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::__GUnorderedSet(iterator_type _begin, iterator_type _end)
 {
 	for(iterator_type p = _begin; p != _end; p++)
 		this->__insert(*p);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::__GUnorderedSet(iterator_type _begin, iterator_type _end, size_t bnum):__hash_table(bnum)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::__GUnorderedSet(iterator_type _begin, iterator_type _end, size_t bnum)
 {
+	this->__rehash_table(bnum);
 	for(iterator_type p = _begin; p != _end; p++)
 		this->__insert(*p);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::__GUnorderedSet(std::initializer_list<T> values)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::__GUnorderedSet(std::initializer_list<T> values)
 {
 	for(auto p=values.begin();p!=values.end();p++)
 		this->__insert(*p);
 }
 
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::~__GUnorderedSet()
+{
+	this->__clear();
+}
+
 //赋值函数
 //*******************************************************************************************************************************************************************************************************************
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::operator=(const __GUnorderedSet& cv)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::operator=(const __GUnorderedSet& cv)
 {
 	clear();
 	this->m_current_bucket_idx = cv.m_current_bucket_idx;
-	for (int index = 0; index < cv.m_bucket.size(); index++)
+	GVector<node_pointer> cv_vec = cv.m_bucket;
+	for (int index = 0; index < cv_vec.size(); index++)
 	{
-		node_pointer p = cv.m_bucket[index];
-		while (p != nullptr)
+		node_pointer p = cv_vec[index];
+		while (p != nullptr) {
 			insert(p->key);
+			p = p->next;
+		}
 	}
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::operator=(__GUnorderedSet&& rv)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::operator=(__GUnorderedSet&& rv)
 {
 	clear();
 	this->m_max_load_factor = rv.m_max_load_factor;
@@ -77,20 +94,19 @@ inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, E
 	this->m_count = rv.m_count;
 	this->m_bucket = g_move(rv.m_bucket);
 
-	rv.m_current_bucket_idx = 0;
 	rv.m_count = 0;
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::operator=(std::initializer_list<T> values)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::operator=(std::initializer_list<T> values)
 {
 	clear();
 	for (auto p = values.begin(); p != values.end(); p++)
 		this->__insert(*p);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::swap(__GUnorderedSet& v)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::swap(__GUnorderedSet& v)
 {
 	float temp_max_load_factor = v.m_max_load_factor;
 	size_t temp_bucket_idx = v.m_current_bucket_idx;
@@ -111,59 +127,63 @@ inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, E
 //插入和删除
 //*******************************************************************************************************************************************************************************************************************
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::iterator_type, bool> GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::insert(const T& val)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::iterator_type, bool> GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::insert(const T& val)
 {
 	if (IsMulti)
 	{
 		node_pointer res = this->__insert(val);
-		return GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::iterator_type, bool>(res, false);
+		iterator_type cur_iter = iterator_type(res, &this->m_bucket);
+		return GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::iterator_type, bool>(cur_iter, false);
 	}
 	else
 	{
 		node_pointer res = this->__search(val);
-		if (res != nullptr)
-			return GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::iterator_type, bool>(res, false);
+		if (res != nullptr) {
+			iterator_type cur_iter = iterator_type(res, &this->m_bucket);
+			return GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::iterator_type, bool>(cur_iter, false);
+		}
 		res = this->__insert(val);
-		return GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::iterator_type, bool>(res, false);
+		iterator_type cur_iter = iterator_type(res, &this->m_bucket);
+		return GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::iterator_type, bool>(cur_iter, true);
 	}
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::insert(iterator_type _begin, iterator_type _end)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::insert(iterator_type _begin, iterator_type _end)
 {
 	for (iterator_type p = _begin; p != _end; p++)
 		insert(*p);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::insert(std::initializer_list<T> values)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::insert(std::initializer_list<T> values)
 {
 	for (auto p = values.begin(); p != values.end(); p++)
 		insert(*p);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
 template<typename ...Args>
-inline GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::iterator_type, bool> GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::emplace(Args ...args)
+inline GPair<typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::iterator_type, bool> GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::emplace(Args ...args)
 {
 	return insert(T(args...));
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::earse(const T& val)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::earse(const T& val)
 {
 	this->__remove(val);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::earse(iterator_type pos)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::earse(iterator_type pos)
 {
 	this->__remove(*pos);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::earse(iterator_type _begin, iterator_type _end)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::earse(iterator_type _begin, iterator_type _end)
 {
 
 	while (_begin!=_end)
@@ -173,109 +193,109 @@ inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, E
 //布局操作
 //*******************************************************************************************************************************************************************************************************************
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline ConflictHandlingFun GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::coflict_handling_function()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline ConflictHandlingFun GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::coflict_handling_function()
 {
 	return this->__get_conflict_handling_fun();
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline ExtractKey GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::hash_function()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline ExtractKey GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::hash_function()
 {
 	return this->__get_extract_key_fun();
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline EqualHashCode GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::hash_code_equals_function()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline EqualKey GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::hash_code_equals_function()
 {
 	return this->__get_hash_equals_fun();
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline size_t GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::bucket_count()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline size_t GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::bucket_count()
 {
 	return this->__get_current_bucket_count();
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline size_t GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::max_bucket_count()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline size_t GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::max_bucket_count()
 {
 	return this->__get_max_bucket_count();
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline float GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::load_factor()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline float GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::load_factor()
 {
 	return this->__get_load_factor();
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline float GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::max_load_factor()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline float GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::max_load_factor()
 {
 	return this->__max_load_factor();
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::set_max_load_factor(size_t max_factor)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::set_max_load_factor(size_t max_factor)
 {
 	this->__max_load_factor() = max_factor;
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualHashCode,MMFun,IsMulti>::rehash(size_t bnum)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T,ExtractKey,ConflictHandlingFun,  EqualKey,MMFun,IsMulti>::rehash(size_t bnum)
 {
 	this->__rehash_table(bnum);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::begin(size_t buckidx)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::begin(size_t buckidx)
 {
 	if (buckidx < this->m_bucket.size())
-		return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(this->m_bucket[buckidx], &this->m_bucket);
-	return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(nullptr, &this->m_bucket);
+		return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(this->m_bucket[buckidx], &this->m_bucket);
+	return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(nullptr, &this->m_bucket);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::end(size_t buckidx)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::end(size_t buckidx)
 {
 	if (buckidx < this->m_bucket.size()) {
 		node_pointer p = this->m_bucket[buckidx];
 		while (p->next != nullptr)p = p->next;
-		return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(p, &this->m_bucket);
+		return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(p, &this->m_bucket);
 	}
-	return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(nullptr, &this->m_bucket);
+	return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(nullptr, &this->m_bucket);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::c_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::cbegin(size_t buckidx)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::c_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::cbegin(size_t buckidx)
 {
 	if (buckidx < this->m_bucket.size())
-		return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(this->m_bucket[buckidx], &this->m_bucket);
-	return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(nullptr, &this->m_bucket);
+		return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(this->m_bucket[buckidx], &this->m_bucket);
+	return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(nullptr, &this->m_bucket);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::c_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::cend(size_t buckidx)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::c_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::cend(size_t buckidx)
 {
 	if (buckidx < this->m_bucket.size()) {
 		node_pointer p = this->m_bucket[buckidx];
 		while (p->next != nullptr)p = p->next;
-		return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(p, &this->m_bucket);
+		return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(p, &this->m_bucket);
 	}
-	return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(nullptr, &this->m_bucket);
+	return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(nullptr, &this->m_bucket);
 }
 
 //特殊查找操作
 //*******************************************************************************************************************************************************************************************************************
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline size_t GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::count(const T& val)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline size_t GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::count(const T& val)
 {
 	return this->__countof(val);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline T& GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::find(const T& val)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline T& GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::find(const T& val)
 {
 	if (this->m_count == 0)
 		return T();
@@ -288,20 +308,20 @@ inline T& GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, Equ
 //虚函数重写
 //*******************************************************************************************************************************************************************************************************************
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::empty()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::empty()
 {
 	return this->m_count == 0;
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline size_t GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::size()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline size_t GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::size()
 {
 	return this->m_count;
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::clear()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::clear()
 {
 	this->__clear();
 }
@@ -309,8 +329,8 @@ inline void GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, E
 //运算符重写
 //*******************************************************************************************************************************************************************************************************************
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::operator==(const __GUnorderedSet& rhs)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::operator==(const __GUnorderedSet& rhs)
 {
 	if (this->m_bucket.size() != rhs.m_bucket.size() || this->m_count != rhs.m_count)
 		return false;
@@ -331,8 +351,8 @@ inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, E
 	return true;
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::operator!=(const __GUnorderedSet& rhs)
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::operator!=(const __GUnorderedSet& rhs)
 {
 	return !(*this == rhs);
 }
@@ -342,54 +362,54 @@ inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, E
 //迭代器
 //*******************************************************************************************************************************************************************************************************************
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::begin()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::begin()
 {
 	node_pointer p = this->__first_node();
-	return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(p, &this->m_bucket);
+	return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(p, &this->m_bucket);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::end()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::end()
 {
-	return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(nullptr, &this->m_bucket);
+	return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(nullptr, &this->m_bucket);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::c_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::cbegin()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::c_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::cbegin()
 {
 	node_pointer p = this->__first_node();
-	return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(p, &this->m_bucket);
+	return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(p, &this->m_bucket);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::c_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::cend()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::c_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::cend()
 {
-	return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(nullptr, &this->m_bucket);
+	return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(nullptr, &this->m_bucket);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::r_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::rbegin()
-{
-	node_pointer p = this->__last_node();
-	return _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(p, &this->m_bucket);
-}
-
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::r_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::rend()
-{
-	return _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(nullptr, &this->m_bucket);
-}
-
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::cr_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::crbegin()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::r_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::rbegin()
 {
 	node_pointer p = this->__last_node();
-	return _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(p, &this->m_bucket);
+	return _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(p, &this->m_bucket);
 }
 
-template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti>
-inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::cr_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, IsMulti>::crend()
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::r_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::rend()
 {
-	return _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(nullptr, &this->m_bucket);
+	return _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(nullptr, &this->m_bucket);
+}
+
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::cr_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::crbegin()
+{
+	node_pointer p = this->__last_node();
+	return _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(p, &this->m_bucket);
+}
+
+template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
+inline typename __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::cr_iterator_type GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::crend()
+{
+	return _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(nullptr, &this->m_bucket);
 }

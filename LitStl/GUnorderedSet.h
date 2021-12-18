@@ -6,13 +6,13 @@
 
 namespace GEngine {
 	namespace GStl {
-		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun, bool IsMulti> class __GUnorderedSet;
+		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti> class __GUnorderedSet;
 
-		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun> 
-		class _GUnorderedSet_Iterator : public iterator<forward_iterator_tag, T>
+		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun> 
+		class GSTL_API _GUnorderedSet_Iterator : public iterator<forward_iterator_tag, T>
 		{
-			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, true>;
-			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, false>;
+			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, true>;
+			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, false>;
 
 		public:
 			typedef forward_iterator_tag              iterator_category;
@@ -22,7 +22,7 @@ namespace GEngine {
 			typedef T& value_reference;
 
 			typedef __set_hash_table_node<T>* node_pointer;
-			typedef _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode,MMFun>  self_type;
+			typedef _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualKey,MMFun>  self_type;
 
 		public:
 			_GUnorderedSet_Iterator() : current(nullptr),m_pBucket(nullptr) {}
@@ -32,7 +32,7 @@ namespace GEngine {
 			void operator=(const _GUnorderedSet_Iterator& _itera) { current = _itera.current; m_pBucket = _itera.m_pBucket; }
 
 			self_type& operator++() { current = next(); return *this; }
-			self_type operator++(int) { node_pointer temp = current; current = next(); return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(temp, m_pBucket); }
+			self_type operator++(int) { node_pointer temp = current; current = next(); return _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(temp, m_pBucket); }
 
 			T& operator*() { return current->key; }
 			T* operator->() { return &current->key; }
@@ -47,12 +47,12 @@ namespace GEngine {
 					return current->next;
 				else
 				{
-					size_t capcity = m_pBucket->capcity();
+					size_t capcity = m_pBucket->size();
 					size_t hashcode = extractKey(current->key);//获取哈希值
 					size_t idx = ConflictHandlingFun()(hashcode, capcity);
 					GASSERT(idx < capcity);
 					idx++;
-					while (m_pBucket->at(idx)==nullptr||idx<capcity)
+					while (idx < capcity && m_pBucket->at(idx) == nullptr)
 						idx++;
 
 					if (idx == capcity) return nullptr;
@@ -65,11 +65,11 @@ namespace GEngine {
 			ExtractKey extractKey;
 		};
 
-		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun>
-		class _GUnorderedSet_CIterator : public iterator<forward_iterator_tag, T>
+		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
+		class GSTL_API _GUnorderedSet_CIterator : public iterator<forward_iterator_tag, T>
 		{
-			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, true>;
-			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, false>;
+			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, true>;
+			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, false>;
 
 		public:
 			typedef forward_iterator_tag              iterator_category;
@@ -79,7 +79,7 @@ namespace GEngine {
 			typedef T& value_reference;
 
 			typedef __set_hash_table_node<T>* node_pointer;
-			typedef _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>  self_type;
+			typedef _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>  self_type;
 
 		public:
 			_GUnorderedSet_CIterator() : current(nullptr), m_pBucket(nullptr) {}
@@ -89,7 +89,7 @@ namespace GEngine {
 			void operator=(const _GUnorderedSet_CIterator& _itera) { current = _itera.current; m_pBucket = _itera.m_pBucket; }
 
 			self_type& operator++() { current = next(); return *this; }
-			self_type operator++(int) { node_pointer temp = current; current = next(); return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(temp, m_pBucket); }
+			self_type operator++(int) { node_pointer temp = current; current = next(); return _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(temp, m_pBucket); }
 
 			const T& operator*() { return current->key; }
 			T* operator->() { return &current->key; }
@@ -104,12 +104,12 @@ namespace GEngine {
 					return current->next;
 				else
 				{
-					size_t capcity = m_pBucket->capcity();
+					size_t capcity = m_pBucket->size();
 					size_t hashcode = extractKey(current->key);//获取哈希值
 					size_t idx = ConflictHandlingFun()(hashcode, capcity);
 					GASSERT(idx < capcity);
 					idx++;
-					while (m_pBucket->at(idx) == nullptr || idx < capcity)
+					while (idx < capcity && m_pBucket->at(idx) == nullptr)
 						idx++;
 
 					if (idx == capcity) return nullptr;
@@ -122,11 +122,11 @@ namespace GEngine {
 			ExtractKey extractKey;
 		};
 
-		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun>
-		class _GUnorderedSet_RIterator : public iterator<forward_iterator_tag, T>
+		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
+		class GSTL_API _GUnorderedSet_RIterator : public iterator<forward_iterator_tag, T>
 		{
-			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, true>;
-			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, false>;
+			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, true>;
+			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, false>;
 
 		public:
 			typedef forward_iterator_tag              iterator_category;
@@ -136,7 +136,7 @@ namespace GEngine {
 			typedef T& value_reference;
 
 			typedef __set_hash_table_node<T>* node_pointer;
-			typedef _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>  self_type;
+			typedef _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>  self_type;
 
 		public:
 			_GUnorderedSet_RIterator() : current(nullptr), m_pBucket(nullptr) {}
@@ -146,7 +146,7 @@ namespace GEngine {
 			void operator=(const _GUnorderedSet_RIterator& _itera) { current = _itera.current; m_pBucket = _itera.m_pBucket; }
 
 			self_type& operator++() { current = prev(); return *this; }
-			self_type operator++(int) { node_pointer temp = current; current = prev(); return _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(temp, m_pBucket); }
+			self_type operator++(int) { node_pointer temp = current; current = prev(); return _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(temp, m_pBucket); }
 
 			T& operator*() { return current->key; }
 			T* operator->() { return &current->key; }
@@ -161,12 +161,12 @@ namespace GEngine {
 					return current->next;
 				else
 				{
-					size_t capcity = m_pBucket->capcity();
+					size_t capcity = m_pBucket->size();
 					size_t hashcode = extractKey(current->key);//获取哈希值
 					size_t idx = ConflictHandlingFun()(hashcode, capcity);
 					GASSERT(idx < capcity);
 					idx--;
-					while (idx > 0 || m_pBucket->at(idx) == nullptr)
+					while (idx > 0 && m_pBucket->at(idx) == nullptr)
 						idx--;
 
 					if (idx == 0) return nullptr;
@@ -179,11 +179,11 @@ namespace GEngine {
 			ExtractKey extractKey;
 		};
 
-		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualHashCode, GMemManagerFun MMFun>
-		class _GUnorderedSet_CRIterator : public iterator<forward_iterator_tag, T>
+		template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
+		class GSTL_API _GUnorderedSet_CRIterator : public iterator<forward_iterator_tag, T>
 		{
-			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, true>;
-			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, false>;
+			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, true>;
+			friend class __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, false>;
 
 		public:
 			typedef forward_iterator_tag              iterator_category;
@@ -193,7 +193,7 @@ namespace GEngine {
 			typedef T& value_reference;
 
 			typedef __set_hash_table_node<T>* node_pointer;
-			typedef _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>  self_type;
+			typedef _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>  self_type;
 
 		public:
 			_GUnorderedSet_CRIterator() : current(nullptr), m_pBucket(nullptr) {}
@@ -203,7 +203,7 @@ namespace GEngine {
 			void operator=(const _GUnorderedSet_CRIterator& _itera) { current = _itera.current; m_pBucket = _itera.m_pBucket; }
 
 			self_type& operator++() { current = prev(); return *this; }
-			self_type operator++(int) { node_pointer temp = current; current = prev(); return _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>(temp, m_pBucket); }
+			self_type operator++(int) { node_pointer temp = current; current = prev(); return _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>(temp, m_pBucket); }
 
 			const T& operator*() { return current->key; }
 			T* operator->() { return &current->key; }
@@ -218,7 +218,7 @@ namespace GEngine {
 					return current->next;
 				else
 				{
-					size_t capcity = m_pBucket->capcity();
+					size_t capcity = m_pBucket->size();
 					size_t hashcode = extractKey(current->key);//获取哈希值
 					size_t idx = ConflictHandlingFun()(hashcode, capcity);
 					GASSERT(idx < capcity);
@@ -236,16 +236,16 @@ namespace GEngine {
 			ExtractKey extractKey;
 		};
 
-		template<class T,class ExtractKey= __extract_key_fun<T>, class ConflictHandlingFun = __conflict_handling_fun<size_t>, class EqualHashCode= __hash_equal<T>, GMemManagerFun MMFun = GMemObject::GetMemManager,bool IsMulti=true>
-		class GSTL_API __GUnorderedSet : public __set_hash_table<T, ExtractKey, ConflictHandlingFun,EqualHashCode,MMFun>
+		template<class T,class ExtractKey= __extract_key_fun<T>, class ConflictHandlingFun = __conflict_handling_fun<size_t>, class EqualKey= __hash_equal<T>, GMemManagerFun MMFun = GMemObject::GetMemManager,bool IsMulti=true>
+		class GSTL_API __GUnorderedSet : public __set_hash_table<T, ExtractKey, ConflictHandlingFun,EqualKey,MMFun>
 		{
 		public:
-			typedef _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>    iterator_type;
-			typedef _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>   c_iterator_type;
-			typedef _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>   r_iterator_type;
-			typedef _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun>  cr_iterator_type;
+			typedef _GUnorderedSet_Iterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>    iterator_type;
+			typedef _GUnorderedSet_CIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>   c_iterator_type;
+			typedef _GUnorderedSet_RIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>   r_iterator_type;
+			typedef _GUnorderedSet_CRIterator<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>  cr_iterator_type;
 
-			typedef __set_hash_table_node<T>    node_pointer;
+			typedef __set_hash_table_node<T>*    node_pointer;
 		public:
 			__GUnorderedSet();
 			__GUnorderedSet(size_t bnum);
@@ -254,6 +254,7 @@ namespace GEngine {
 			__GUnorderedSet(iterator_type _begin, iterator_type _end);
 			__GUnorderedSet(iterator_type _begin, iterator_type _end,size_t bnum);
 			__GUnorderedSet(std::initializer_list<T> values);
+			~__GUnorderedSet();
 
 		//赋值函数
 		public:
@@ -278,7 +279,7 @@ namespace GEngine {
 		public:
 			ConflictHandlingFun coflict_handling_function();
 			ExtractKey hash_function();
-			EqualHashCode hash_code_equals_function();
+			EqualKey hash_code_equals_function();
 			size_t bucket_count();
 			size_t max_bucket_count();
 			float load_factor();
@@ -323,11 +324,11 @@ namespace GEngine {
 
 		};
 
-		template<class T, class ExtractKey = __extract_key_fun<T>, class ConflictHandlingFun = __conflict_handling_fun<size_t>, class EqualHashCode = __hash_equal<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
-		using GUnorderedSet = __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun,false>;
+		template<class T, class ExtractKey = __extract_key_fun<T>, class ConflictHandlingFun = __conflict_handling_fun<size_t>, class EqualKey = __hash_equal<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
+		using GUnorderedSet = __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun,false>;
 
-		template<class T, class ExtractKey = __extract_key_fun<T>, class ConflictHandlingFun = __conflict_handling_fun<size_t>, class EqualHashCode = __hash_equal<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
-		using GUnorderedMultiSet = __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualHashCode, MMFun, true>;
+		template<class T, class ExtractKey = __extract_key_fun<T>, class ConflictHandlingFun = __conflict_handling_fun<size_t>, class EqualKey = __hash_equal<T>, GMemManagerFun MMFun = GMemObject::GetMemManager>
+		using GUnorderedMultiSet = __GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, true>;
 
 
 #include "GUnorderedSet.inl"

@@ -74,18 +74,20 @@ namespace GEngine {
 			inline ConflictHandlingFun __get_conflict_handling_fun() { return conflictHandlingFun; }
 			inline ExtractKey __get_extract_key_fun() { return extractKey; }
 			inline EqualKey __get_hash_equals_fun() { return keyEquals; }
-			inline size_t __get_current_bucket_count() { return __stl_prime_list[m_current_bucket_idx]; }
+			inline size_t __get_current_bucket_count() { return m_bucket.size(); }
 			inline size_t __get_max_bucket_count() const { return __stl_prime_list[__stl_num_primes - 1]; }
 			inline float __get_load_factor() const { return static_cast<float>(m_count) / __stl_prime_list[m_current_bucket_idx];}
 			inline float& __max_load_factor() { return m_max_load_factor;}
 			inline size_t __location_capcity_idx(size_t bnum) {
 				size_t  idx = 0;
-				while (__stl_num_primes[m_current_bucket_idx] < bnum)
+				while (__stl_prime_list[idx] < bnum)
 					idx++;
 				return idx;
 			}
 			inline size_t __get_bucket_idx_by_key(const key_type& key){
-				size_t capcity = m_bucket.capcity();
+				size_t capcity = m_bucket.size();
+				if (capcity == 0)
+					return -1;
 				size_t hashcode = extractKey(key);//获取哈希值
 				size_t idx = conflictHandlingFun(hashcode, capcity);
 				GASSERT(idx < capcity);
@@ -93,9 +95,19 @@ namespace GEngine {
 			}
 			inline void __is_rehash_table(){
 				float factor = __get_load_factor();
-				GASSERT(++m_current_bucket_idx < __stl_num_primes);
 				if (factor > m_max_load_factor)//需要重新调整哈希表桶的容量
+				{
+					GASSERT(++m_current_bucket_idx < __stl_num_primes);
 					__rehash_table(__stl_prime_list[m_current_bucket_idx], false);
+				}
+			}
+
+			inline void __is_reset_hash_table()
+			{
+				if (m_bucket.size() == 0) {
+					m_current_bucket_idx = 0;
+					__rehash_table(__stl_prime_list[m_current_bucket_idx]);
+				}
 			}
 
 		protected:
