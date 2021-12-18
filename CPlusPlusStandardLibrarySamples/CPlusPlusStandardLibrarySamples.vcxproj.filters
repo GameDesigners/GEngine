@@ -55,5 +55,8 @@
     <ClInclude Include="UseGMapAndGMultiMapSample.h">
       <Filter>CustomStlUseSample</Filter>
     </ClInclude>
+    <ClInclude Include="UseGUnorderedSetAndGUnorderedMultiSetSample.h">
+      <Filter>CustomStlUseSample</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

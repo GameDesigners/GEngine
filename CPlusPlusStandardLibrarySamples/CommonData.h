@@ -4,7 +4,7 @@
 #define COMMON_DATA_H
 class SamplesElem
 {
-private:
+public:
 	int* i;
 	float f;
 

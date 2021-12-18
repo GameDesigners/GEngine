@@ -154,6 +154,7 @@
     <ClInclude Include="UseGDequeSample.h" />
     <ClInclude Include="UseGForwardListSample.h" />
     <ClInclude Include="UseGListSample.h" />
+    <ClInclude Include="UseGUnorderedSetAndGUnorderedMultiSetSample.h" />
     <ClInclude Include="UseGVectorSample.h" />
   </ItemGroup>
   <ItemGroup>

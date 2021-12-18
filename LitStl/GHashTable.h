@@ -64,12 +64,16 @@ namespace GEngine {
 			template<typename... Args> node_pointer __hash_insert(Args... args);
 			void __remove(const key_type& key);
 			node_pointer __search(const key_type& key);
-			void __rehash_table(size_t bnum);
+			void __clear();
+			void __rehash_table(size_t bnum, bool need_caculate_bucket_idx = true);
 			void __rehash_insert(node_pointer node, GVector<node_pointer>& rehash_vec,const size_t& capcity);
+			node_pointer __first_node();
+			node_pointer __last_node();
+			size_t __countof(const key_type& key);
 
 			inline ConflictHandlingFun __get_conflict_handling_fun() { return conflictHandlingFun; }
 			inline ExtractKey __get_extract_key_fun() { return extractKey; }
-			inline EqualKey __get_hash_equals_fun() { return hashEquals; }
+			inline EqualKey __get_hash_equals_fun() { return keyEquals; }
 			inline size_t __get_current_bucket_count() { return __stl_prime_list[m_current_bucket_idx]; }
 			inline size_t __get_max_bucket_count() const { return __stl_prime_list[__stl_num_primes - 1]; }
 			inline float __get_load_factor() const { return static_cast<float>(m_count) / __stl_prime_list[m_current_bucket_idx];}
@@ -86,6 +90,12 @@ namespace GEngine {
 				size_t idx = conflictHandlingFun(hashcode, capcity);
 				GASSERT(idx < capcity);
 				return idx;
+			}
+			inline void __is_rehash_table(){
+				float factor = __get_load_factor();
+				GASSERT(++m_current_bucket_idx < __stl_num_primes);
+				if (factor > m_max_load_factor)//需要重新调整哈希表桶的容量
+					__rehash_table(__stl_prime_list[m_current_bucket_idx], false);
 			}
 
 		protected:
@@ -105,6 +115,9 @@ namespace GEngine {
 		template<class Key,  class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun = GMemObject::GetMemManager>
 		class GSTL_API __set_hash_table : public __hash_table<__set_hash_table_node<Key>, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>
 		{
+		public:
+			typedef __set_hash_table_node<Key>* node_pointer;
+
 		protected:
 			virtual bool empty() { return false; }
 			virtual size_t size() { return 0; }

@@ -36,13 +36,14 @@ template<class NodeType, class ExtractKey, class ConflictHandlingFun, class Equa
 template<typename ...Args>
 inline NodeType* GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::__hash_insert(Args ...args)
 {
+    __is_rehash_table();//检查是否需要扩容
     node_pointer node = this->New(1);
     GASSERT(node != nullptr);
     GNEW(node)NodeType(args...);
 
     size_t idx = __get_bucket_idx_by_key(node->key);
-    node->next = rehash_vec[idx];
-    rehash_vec[idx] = node;
+    node->next = m_bucket[idx];
+    m_bucket[idx] = node;
     m_count++;
     return node;
 }
@@ -91,11 +92,32 @@ inline NodeType* GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandl
     return nullptr;
 }
 
-template<class NodeType, class ConflictHandlingFun, class ExtractKey, class EqualKey, GMemManagerFun MMFun>
-inline void GEngine::GStl::__hash_table<NodeType, ConflictHandlingFun, ExtractKey, EqualKey, MMFun>::__rehash_table(size_t bnum)
+template<class NodeType, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
+inline void GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::__clear()
 {
-    size_t idx = __location_capcity_idx(bnum);
-    GVector<node_pointer> temp(__stl_prime_list[idx], nullptr);
+    for (int index = 0; index < m_bucket.size(); index++)
+    {
+        node_pointer p = m_bucket[index];
+        node_pointer q = p;
+        while (q!=nullptr)
+        {
+            q = p->next;
+            this->Delete(q, 1, 1);
+        }
+    }
+    m_count;
+}
+
+template<class NodeType, class ConflictHandlingFun, class ExtractKey, class EqualKey, GMemManagerFun MMFun>
+inline void GEngine::GStl::__hash_table<NodeType, ConflictHandlingFun, ExtractKey, EqualKey, MMFun>::__rehash_table(size_t bnum, bool need_caculate_bucket_idx)
+{
+    if (need_caculate_bucket_idx)
+    {
+        m_current_bucket_idx = __location_capcity_idx(bnum);
+        bnum = __stl_prime_list[m_current_bucket_idx];
+    }
+
+    GVector<node_pointer> temp(bnum, nullptr);
     for (auto p = m_bucket.begin(); p != m_bucket.end(); p++)
     {
         node_pointer q = *p;
@@ -109,6 +131,7 @@ inline void GEngine::GStl::__hash_table<NodeType, ConflictHandlingFun, ExtractKe
             q = node;
         }
     }
+    m_bucket = g_move(temp);
 }
 
 template<class NodeType, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
@@ -119,4 +142,40 @@ inline void GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFu
     GASSERT(idx < capcity);
     node->next = rehash_vec[idx];
     rehash_vec[idx] = node;
+}
+
+template<class NodeType, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
+inline typename __hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::node_pointer GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::__first_node()
+{
+    for (int index = 0; index < m_bucket.size(); index++)
+    {
+        if (m_bucket[index] != nullptr)
+            return m_bucket[index];
+    }
+    return nullptr;
+}
+
+template<class NodeType, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
+inline typename __hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::node_pointer GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::__last_node()
+{
+    for (int index = m_bucket.size() - 1; index >= 0; index--)
+    {
+        if (m_bucket[index] != nullptr)
+            return m_bucket[index];
+    }
+    return nullptr;
+}
+
+template<class NodeType, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun>
+inline size_t GEngine::GStl::__hash_table<NodeType, ExtractKey, ConflictHandlingFun, EqualKey, MMFun>::__countof(const key_type& key)
+{
+    size_t _count = 0;
+    int idx = __get_bucket_idx_by_key(key);
+    node_pointer p = m_bucket[idx];
+    while (p!=nullptr)
+    {
+        if (keyEquals(p->key,key))
+            _count++;
+    }
+    return _count;
 }

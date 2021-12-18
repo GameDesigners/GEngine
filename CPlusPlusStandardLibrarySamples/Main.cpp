@@ -29,6 +29,7 @@
 #include "UseGForwardListSample.h"
 #include "UseGSetAndGMultiSetSample.h"
 #include "UseGMapAndGMultiMapSample.h"
+#include "UseGUnorderedSetAndGUnorderedMultiSetSample.h"
 
 
 using namespace GEngine::GStl;
@@ -190,6 +191,8 @@ void USE_GSTL_GARRAY()
 
 
 
+
+
 int main()
 {
 	//CPLUSPLUS_11_NEW_FEATURE_MAIN();
@@ -209,8 +212,8 @@ int main()
 	//GListSample();
 	//GForwardListSample();
 	//GSetSample();
-	GMapSample();
-
+	//GMapSample();
+	GUnorderedSetSample();
 	
 	
 	/*Render - Part*/
