@@ -58,5 +58,8 @@
     <ClInclude Include="UseGUnorderedSetAndGUnorderedMultiSetSample.h">
       <Filter>CustomStlUseSample</Filter>
     </ClInclude>
+    <ClInclude Include="UseGStringSample.h">
+      <Filter>CustomStlUseSample</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

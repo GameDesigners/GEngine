@@ -30,6 +30,7 @@
 #include "UseGSetAndGMultiSetSample.h"
 #include "UseGMapAndGMultiMapSample.h"
 #include "UseGUnorderedSetAndGUnorderedMultiSetSample.h"
+#include "UseGStringSample.h"
 
 
 using namespace GEngine::GStl;
@@ -213,9 +214,11 @@ int main()
 	//GForwardListSample();
 	//GSetSample();
 	//GMapSample();
-	GUnorderedSetSample();
+	//GUnorderedSetSample();
 	
-	
+
+	GStringsSample();
+
 	/*Render - Part*/
 	//UseDirect3DSample();
 	return 0;
