@@ -51,9 +51,58 @@ namespace GEngine {
 			__base_string(std::initializer_list<charT> values);
 			~__base_string();
 
-			char_pointer c_str() { if (m_first == nullptr) return &m_nil; return m_first; }
-			char_pointer data() { if (m_first == nullptr) return &m_nil; return m_first; }
-			size_t length() { return size(); }
+		//赋值函数
+		public:
+			void operator=(const __base_string& cv);
+			void operator=(__base_string&& rv);
+			void assign(const __base_string& cv);
+			void assign(const __base_string& str, size_t stridx);
+			void assign(const __base_string& str, size_t stridx, size_t len);
+			void assign(char_type chars[]);
+			void assign(char_type chars[], size_t charslen);
+			void assign(const char_type chars[]);
+			void assign(const char_type chars[], size_t charslen);
+			void assign(size_t num, char_type c);
+			
+		//C-Style 字符串的获取
+		public:
+			const char_pointer c_str() const { if (m_first == nullptr) return &__nil; return m_first; }
+			const char_pointer data() const { if (m_first == nullptr) return &__nil; return m_first; }
+
+		//安插和移除字符
+		public:
+			void operator+=(const __base_string& str);
+			void operator+=(const char_type& c);
+			void operator+=(std::initializer_list<char_type> values);
+			void append(const __base_string& str);
+			void append(const __base_string& str, size_t stridx);
+			void append(const __base_string& str, size_t stridx, size_t len);
+			void append(char_type chars[]);
+			void append(char_type chars[], size_t charslen);
+			void append(const char_type chars[]);
+			void append(const char_type chars[], size_t charslen);
+			void append(size_t num, const char_type& c);
+			void push_back(const char_type& c);
+			__base_string& insert(size_t pos, size_t num, const char_type& c);
+			__base_string& insert(size_t pos, const __base_string& str);
+			__base_string& insert(size_t pos, const __base_string& str, size_t len);
+			__base_string& insert(size_t pos, const __base_string& str, size_t npos, size_t len);
+
+		//子字符串操作
+		public:
+			__base_string substr();
+			__base_string substr(size_t stridx);
+			__base_string substr(size_t stridx, size_t len);
+
+		//搜索和查找
+		public:
+			size_t find(const __base_string& child);
+			size_t rfind(const __base_string& child);
+			size_t find_first_of(const __base_string& child);
+			size_t find_last_of(const __base_string& child);
+			size_t find_first_not_of(const __base_string& child);
+			size_t find_last_not_of(const __base_string& child);
+
 
 		//元素访问
 		public:
@@ -64,19 +113,12 @@ namespace GEngine {
 
 		//运算符重载
 		public:
-			bool operator==(const __base_string& rhs);
-			bool operator!=(const __base_string& rhs);
-			bool operator<(const __base_string& rhs);
-			bool operator>(const __base_string& rhs);
-			bool operator>=(const __base_string& rhs);
-			bool operator<=(const __base_string& rhs);
-
-			//bool operator==(const char_type chars[]);
-			//bool operator!=(const char_type chars[]);
-			//bool operator<(const char_type chars[]);
-			//bool operator>(const char_type chars[]);
-			//bool operator>=(const char_type chars[]);
-			//bool operator<=(const char_type chars[]);
+			bool operator==(const __base_string& rhs) const;
+			bool operator!=(const __base_string& rhs) const;
+			bool operator<(const __base_string& rhs)  const;
+			bool operator>(const __base_string& rhs)  const;
+			bool operator>=(const __base_string& rhs) const;
+			bool operator<=(const __base_string& rhs) const;
 
 		//虚函数重写
 		public:
@@ -84,6 +126,15 @@ namespace GEngine {
 			virtual bool empty();
 			virtual size_t size();
 			virtual void clear();
+
+			size_t length() const
+			{
+				if (m_first == nullptr || *m_first == __nil)
+					return 0;
+				else
+					return m_last - m_first;
+			}
+			void erase() { clear(); }
 
 		//迭代器
 		public:
@@ -103,10 +154,9 @@ namespace GEngine {
 				GASSERT(new_mem != nullptr);
 				_first = new_mem;
 				*_first = '\0';
-				m_last = _first + 1;
+				m_last = _first;
 				_endofstorage = new_mem + len;
 			}
-
 			inline size_t __adjust_string_capcity(size_t target_len)
 			{
 				if (m_first == nullptr && m_last == nullptr && m_end_of_storage == nullptr)
@@ -134,19 +184,22 @@ namespace GEngine {
 				this->Delete(m_first, old_capcity, old_capcity);
 
 				m_first = new_mem;
-				m_last = new_mem + current_len;
+				m_last = new_mem + current_len - 1;
 				m_end_of_storage = new_mem + current_capcity;
 				return current_capcity;
 			}
+			inline size_t __caculate_current_string_size() const { if (m_first == nullptr) return 0; return static_cast<size_t>(m_last - m_first + 1); }
+			inline size_t __caculate_current_string_capcity() const { if (m_first == nullptr) return 0; return static_cast<size_t>(m_end_of_storage - m_first); }
 
-			inline size_t __caculate_current_string_size() { if (m_first == nullptr) return 0; return static_cast<size_t>(m_last - m_first); }
-			inline size_t __caculate_current_string_capcity() { if (m_first == nullptr) return 0; return static_cast<size_t>(m_end_of_storage - m_first); }
+			//字符串查找方法
+			inline size_t __brute_force_substring_search(const __base_string& pattern);
 
-			char_pointer  m_first;
-			char_pointer  m_last;
-			char_pointer  m_end_of_storage;
+
+			char_pointer  m_first=nullptr;
+			char_pointer  m_last = nullptr;
+			char_pointer  m_end_of_storage = nullptr;
 			GStrLenFun    __str_len_functor;   //计算字符串长度的仿函数（不包含结尾字符：0）
-			static char_type     m_nil;
+			static char_type     __nil;
 		};
 
 		//全特化

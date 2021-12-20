@@ -6,7 +6,9 @@ using namespace GEngine::GStl;
 
 ostream& operator<<(ostream& os, GString& str)
 {
+	os << "isempty:" << str.empty() << "  size:" << str.size() << endl;
 	os << str.c_str();
+	os << endl;
 	return os;
 }
 
@@ -29,6 +31,24 @@ void GStringsSample()
 	GString string11(string7.begin(), string7.end());
 	GString string12({ 'h','i','!' });
 
+	string12 = string11;
+	string12 = g_move(string11);
+	string12 += "GEngine is a custom game engine by myself...";
+	string12 += '\n';
+	string12 += 'G';
+	string12 += {'a', 'm', 'e'};
+	GString child = " dev is more fun than playing game.";
+	string12.append(child);
+	string12.insert(15, 1, '\n');
+	string12.insert(15, 1, '\n');
+	string12.insert(16, 44, '*');
+	string12.insert(16, "It's not classical sentance <hello world!>...\n");
+	string12.insert(16, "x x x x x x x x x x x x\n", 28);
+
+	string2= string12.substr();
+	string3 = string12.substr(16);
+	string4 = string12.substr(16,5);
+
 
 	cout << string1 << endl;
 	cout << string2 << endl;
@@ -43,8 +63,24 @@ void GStringsSample()
 	cout << string11 << endl;
 	cout << string12 << endl;
 
-	
-	cout << "string12  isempty:" << string12.empty() << "  size:" << string12.size() << endl;
+	cout << string12.find("llo") << endl;
+
+
+	/*cout << "string1 > string12:" << (string1 > string12) << endl;
+	cout << "string1 >= string12:" << (string1 >= string12) << endl;
+	cout << "string1 < string12:" << (string1 < string12) << endl;
+	cout << "string1 <= string12:" << (string1 <= string12) << endl;
+	cout << "string1 == string12:" << (string1 == string12) << endl;
+
+
+	cout << "string1 > hill:" << (string1 > "hill") << endl;
+	cout << "string1 >= hill:" << (string1 >= "hill") << endl;
+	cout << "string1 < hill:" << (string1 < "hill") << endl;
+	cout << "string1 <= hill:" << (string1 <= "hill") << endl;
+	cout << "string1 == hill:" << (string1 == "hill") << endl;*/
+
+	//const GString cstring1("hello world!");
+	//cout << (cstring1 == "hello") << endl;
 
 }
 #endif // !USE_GSTRING_SAMPLE_H
