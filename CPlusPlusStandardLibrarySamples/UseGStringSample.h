@@ -49,7 +49,6 @@ void GStringsSample()
 	string3 = string12.substr(16);
 	string4 = string12.substr(16,5);
 
-
 	cout << string1 << endl;
 	cout << string2 << endl;
 	cout << string3 << endl;
@@ -63,7 +62,7 @@ void GStringsSample()
 	cout << string11 << endl;
 	cout << string12 << endl;
 
-	cout << string12.find("llo") << endl;
+	cout << string12.find("GEngine") << endl;
 
 
 	/*cout << "string1 > string12:" << (string1 > string12) << endl;

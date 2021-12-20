@@ -146,6 +146,8 @@
     <ClInclude Include="GArray.h" />
     <ClInclude Include="GBalanceTree.h" />
     <ClInclude Include="GContainer.h" />
+    <ClInclude Include="GDelegate.h" />
+    <ClInclude Include="GDelegateTemplate.h" />
     <ClInclude Include="GDeque.h" />
     <ClInclude Include="GForwardList.h" />
     <ClInclude Include="GHashFunction.h" />

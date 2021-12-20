@@ -61,5 +61,8 @@
     <ClInclude Include="UseGStringSample.h">
       <Filter>CustomStlUseSample</Filter>
     </ClInclude>
+    <ClInclude Include="UseDelegateSample.h">
+      <Filter>CustomStlUseSample</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -398,7 +398,8 @@ inline __base_string<charT, GStrLenFun, MMFun> GEngine::GStl::__base_string<char
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
 inline size_t GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::find(const __base_string& child)
 {
-	return __brute_force_substring_search(child);
+	//return __brute_force_substring_search(child);
+	return __kmp_substring_search(child);
 }
 
 
@@ -635,15 +636,53 @@ inline size_t GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__brute_fo
 	size_t pattern_len = pattern.length();
 	size_t source_len = length();
 	char_pointer _pattern = pattern.m_first;
-
+	char_pointer _source = m_first;
 	for (int i = 0; i < source_len-pattern_len; i++)
 	{
 		for (int j = 0, k = i; j < pattern_len; j++, k++)
 		{
-			if ((*this)[k] == *(_pattern + j) && j != pattern_len - 1)
+			if (*(_source + k) != *(_pattern + j) && j != pattern_len - 1)
 				break;
-			if ((*this)[k] == *(_pattern + j) && j == pattern_len - 1)
+			if (*(_source + k) == *(_pattern + j) && j == pattern_len - 1)
 				return i;				
 		}
 	}
+	return -1;
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline size_t GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__kmp_substring_search(const __base_string& pattern)
+{
+	size_t pattern_len = pattern.length();
+	size_t source_len = length();
+	char_pointer _pattern = pattern.m_first;
+	char_pointer _source = m_first;
+	//步骤1：构造部分匹配表
+	int* partial_match_table = GNEW int[pattern_len];
+	partial_match_table[0] = 0;  //无前缀后缀，共有元素长度为0
+	for (int i = 1, j = 0; i < pattern_len; i++)
+	{
+		while (j > 0 && *(_pattern + j) != *(_pattern + i))
+			j = partial_match_table[j - 1];
+
+		if (*(_pattern + j) != *(_pattern + i))
+			j++;
+		partial_match_table[i] = j;
+	}
+
+	//步骤二：查找
+	for (int i = 0, j = 0; i < source_len; i++) {
+		while (j > 0 && *(_source + i) != *(_pattern+ j)) {
+			j = partial_match_table[j - 1];
+		}
+		if (*(_source + i) == *(_pattern + j))
+			j++;
+		if (j == pattern_len) {
+			GSAFE_DELETE_ARRAY(partial_match_table)
+			return i - j + 1;
+		}
+	}
+	GSAFE_DELETE_ARRAY(partial_match_table);
+	return -1;
+	
 }

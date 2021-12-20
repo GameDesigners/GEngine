@@ -2,6 +2,9 @@
 #define GSTRINGS_H
 #include "GContainer.h"
 #include "GIterator.h"
+#define CONVERT_TO_STRING_BUFFER_LENGTH  32
+#define CONVERT_TO_WSTRING_BUFFER_LENGTH 64
+
 namespace GEngine {
 	namespace GStl {
 
@@ -193,7 +196,7 @@ namespace GEngine {
 
 			//×Ö·û´®²éÕÒ·½·¨
 			inline size_t __brute_force_substring_search(const __base_string& pattern);
-
+			inline size_t __kmp_substring_search(const __base_string& pattern);
 
 			char_pointer  m_first=nullptr;
 			char_pointer  m_last = nullptr;
@@ -207,7 +210,110 @@ namespace GEngine {
 		typedef __base_string<TCHAR, GStrLenFuntor<TCHAR>>         GTString;
 		typedef __base_string<wchar_t, GStrLenFuntor<wchar_t>>     GWString;
 		typedef __base_string<char16_t, GStrLenFuntor<char16_t>>   GU16String;
-		typedef __base_string<char32_t, GStrLenFuntor<char16_t>>   GU32String;
+		typedef __base_string<char32_t, GStrLenFuntor<char32_t>>   GU32String;
+
+		inline int strtoi(const GString& str) { return atoi(str.c_str()); }
+		inline long strtol(GString& str) { return atol(str.c_str()); }
+		inline long long strtoll(GString& str) { return atoll(str.c_str()); }
+		inline float strtof(GString& str) { return static_cast<float>(atof(str.c_str())); }
+		inline double strtod(GString& str) { return atof(str.c_str()); }
+
+		inline GString to_string(int val)
+		{
+			char tmp[CONVERT_TO_STRING_BUFFER_LENGTH];
+			_itoa_s(val, tmp, 10);
+			return GString(tmp);
+		}
+		inline GString to_string(long val)
+		{
+			char tmp[CONVERT_TO_STRING_BUFFER_LENGTH];
+			_ltoa_s(val, tmp, 10);
+			return GString(tmp);
+		}
+		inline GString to_string(long long val)
+		{
+			char tmp[CONVERT_TO_STRING_BUFFER_LENGTH];
+			_ltoa_s(val, tmp, 10);
+			return GString(tmp);
+		}
+		inline GString to_string(float val)
+		{
+			char tmp[CONVERT_TO_STRING_BUFFER_LENGTH];
+			sprintf_s(tmp, "%f", val);
+			return GString(tmp);
+		}
+		inline GString to_string(double val)
+		{
+			char tmp[CONVERT_TO_STRING_BUFFER_LENGTH];
+			sprintf_s(tmp, "%lf", val);
+			return GString(tmp);
+		}
+
+
+
+		inline int tstrtoi(GTString& str) { return _wtoi(str.c_str()); }
+		inline long tstrtol(GTString& str) { return _wtol(str.c_str()); }
+		inline long long tstrtoll(GTString& str) { return _wtoll(str.c_str()); }
+		inline float tstrtof(GTString& str) { return static_cast<float>(_wtof(str.c_str())); }
+		inline double tstrtod(GTString& str) { return _wtof(str.c_str()); }
+
+		inline GTString to_tstring(int val)
+		{
+			TCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];
+			_itow_s(val, tmp, 10);
+			return GTString(tmp);
+		}
+		inline GTString to_tstring(long val)
+		{
+			TCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];
+			_ltow_s(val, tmp, 10);
+			return GTString(tmp);
+		}
+		inline GTString to_tstring(float val)
+		{
+			TCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];
+			_stprintf_s(tmp, TEXT("%f"), val);
+			return GTString(tmp);
+		}
+		inline GTString to_tstring(double val)
+		{
+			TCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];
+			_stprintf_s(tmp, TEXT("%lf"), val);
+			return GTString(tmp);
+		}
+
+
+
+		inline int wstrtoi(GWString& str) { return _wtoi(str.c_str()); }
+		inline long wstrtol(GWString& str) { return _wtol(str.c_str()); }
+		inline long long wstrtoll(GWString& str) { return _wtoll(str.c_str()); }
+		inline float wstrtof(GWString& str) { return static_cast<float>(_wtof(str.c_str())); }
+		inline double wstrtod(GWString& str) { return _wtof(str.c_str()); }
+
+		inline GWString to_wstring(int val)
+		{
+			WCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];
+			_itow_s(val, tmp, 10);
+			return GWString(tmp);	
+		}
+		inline GWString to_wstring(long val)
+		{
+			WCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];
+			_ltow_s(val, tmp, 10);
+			return GWString(tmp);
+		}
+		inline GWString to_wstring(float val)
+		{
+			WCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];
+			_stprintf_s(tmp, TEXT("%f"), val);
+			return GWString(tmp);
+		}
+		inline GWString to_wstring(double val)
+		{
+			WCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];
+			_stprintf_s(tmp, TEXT("%lf"), val);
+			return GWString(tmp);
+		}
 
 #include "GStrings.inl"	
 	}

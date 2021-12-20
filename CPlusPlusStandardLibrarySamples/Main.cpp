@@ -32,6 +32,8 @@
 #include "UseGUnorderedSetAndGUnorderedMultiSetSample.h"
 #include "UseGStringSample.h"
 
+#include "UseDelegateSample.h"
+
 
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
@@ -217,8 +219,8 @@ int main()
 	//GUnorderedSetSample();
 	
 
-	GStringsSample();
-
+	//GStringsSample();
+	DelegateSample();
 	/*Render - Part*/
 	//UseDirect3DSample();
 	return 0;

@@ -89,6 +89,12 @@
     <ClInclude Include="GStrings.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
+    <ClInclude Include="GDelegateTemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GDelegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GUtility.cpp">
