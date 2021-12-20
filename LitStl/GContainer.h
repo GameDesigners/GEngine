@@ -29,6 +29,10 @@ namespace GEngine{
 		 *   unorder_multiset    |
 		 *   unorder_map	     |
 		 *   unorder_multimap    |
+		 * 
+		 * 
+		 *   特殊容器
+		 *   __base_string <include:\GString\GTString\GWString\GU16String\GU32String>  可归为序列式容器
 		 */
 
 

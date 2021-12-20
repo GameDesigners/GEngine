@@ -42,8 +42,9 @@ namespace GEngine {
 			__base_string(__base_string&& rv);
 			__base_string(const __base_string& str, size_t stridx);
 			__base_string(const __base_string& str, size_t stridx, size_t len);
-			__base_string(const _string cstr);
-			__base_string(const char_type chars[]);
+			__base_string(char_type chars[]);
+			__base_string(char_type chars[], size_t charslen);  //char_pointer type
+			__base_string(const char_type chars[]);             //const char_pointer type
 			__base_string(const char_type chars[], size_t charslen);
 			__base_string(size_t num, char_type c);
 			__base_string(iterator_type _begin, iterator_type _end);
@@ -61,12 +62,39 @@ namespace GEngine {
 			char_reference front();
 			char_reference back();
 
+		//运算符重载
+		public:
+			bool operator==(const __base_string& rhs);
+			bool operator!=(const __base_string& rhs);
+			bool operator<(const __base_string& rhs);
+			bool operator>(const __base_string& rhs);
+			bool operator>=(const __base_string& rhs);
+			bool operator<=(const __base_string& rhs);
+
+			//bool operator==(const char_type chars[]);
+			//bool operator!=(const char_type chars[]);
+			//bool operator<(const char_type chars[]);
+			//bool operator>(const char_type chars[]);
+			//bool operator>=(const char_type chars[]);
+			//bool operator<=(const char_type chars[]);
+
 		//虚函数重写
 		public:
 			virtual size_t capcity();
 			virtual bool empty();
 			virtual size_t size();
 			virtual void clear();
+
+		//迭代器
+		public:
+			iterator_type   begin();
+			iterator_type   end();
+			c_iterator_type  cbegin();
+			c_iterator_type  cend();
+			r_iterator_type  rbegin();
+			r_iterator_type  rend();
+			cr_iterator_type crbegin();
+			cr_iterator_type crend();
 
 		private:
 			inline void __create_new_str_mem(size_t len, char_pointer& _first, char_pointer& _last, char_pointer& _endofstorage)
@@ -117,7 +145,7 @@ namespace GEngine {
 			char_pointer  m_first;
 			char_pointer  m_last;
 			char_pointer  m_end_of_storage;
-			GStrLenFun    __str_len_functor;
+			GStrLenFun    __str_len_functor;   //计算字符串长度的仿函数（不包含结尾字符：0）
 			static char_type     m_nil;
 		};
 

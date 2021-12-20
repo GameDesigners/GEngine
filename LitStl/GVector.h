@@ -81,7 +81,7 @@ namespace GEngine{
 			void reserve(size_t _capcity);
 			void shrink_to_fit();
 
-		//运算发重载
+		//运算符重载
 		public:
 			bool operator==(const GVector& rhs);
 			bool operator!=(const GVector& rhs);

@@ -58,20 +58,33 @@ inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__base_string(con
 		__create_new_str_mem(StringDefaultBufferSize, m_first, m_last, m_end_of_storage);
 
 	char_pointer cpy_start = str.m_first + stridx;
-	size_t remainder = static_cast<size_t>(str.m_last - cpy_start);
+	size_t remainder = static_cast<size_t>(str.m_last - cpy_start - 1);  //不包含'\0'的长度
 	size_t cpy_len = len <= remainder ? len : remainder;
 	size_t current_capcity = __adjust_string_capcity(cpy_len);
 	GMemoryCpy(m_first, current_capcity, cpy_start, cpy_len);
-	m_last = m_first + cpy_len;
+	*(m_first + cpy_len) = '\0';
+	m_last = m_first + cpy_len + 1;
 }
 
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
-inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__base_string(const _string cstr)
+inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__base_string(char_type chars[])
 {
-	size_t cstr_len = __str_len_functor(cstr);
-	size_t current_capcity = __adjust_string_capcity(cstr_len);
-	GMemoryCpy(m_first, current_capcity, cstr, cstr_len);
-	m_last = m_first + cstr_len;
+	size_t char_arr_len = __str_len_functor(chars);
+	size_t current_capcity = __adjust_string_capcity(char_arr_len);
+	GMemoryCpy(m_first, current_capcity, chars, char_arr_len);
+	m_first[char_arr_len] = '\0';
+	m_last = m_first + char_arr_len + 1;
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__base_string(char_type chars[], size_t charslen)
+{
+	size_t char_arr_len = __str_len_functor(chars);
+	charslen = charslen <= char_arr_len ? charslen : char_arr_len;
+	size_t current_capcity = __adjust_string_capcity(charslen);
+	GMemoryCpy(m_first, current_capcity, chars, charslen);
+	*(m_first + charslen) = '\0';
+	m_last = m_first + charslen + 1;
 }
 
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
@@ -91,14 +104,16 @@ inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__base_string(con
 	size_t char_arr_len = __str_len_functor(chars);
 	charslen = charslen <= char_arr_len ? charslen : char_arr_len;
 	size_t current_capcity = __adjust_string_capcity(charslen);
-	GMemoryCpy(m_first, current_capcity, chars, charslen);
-	m_last = m_first + charslen;
+	char_pointer cpy_start = const_cast<char_pointer>(chars);
+	GMemoryCpy(m_first, current_capcity, cpy_start, charslen);
+	*(m_first + charslen) = '\0';
+	m_last = m_first + charslen + 1;
 }
 
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
 inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__base_string(size_t num, char_type c)
 {
-	size_t current_capcity = __adjust_string_capcity(num + 1);
+	size_t current_capcity = __adjust_string_capcity(num);
 	char_pointer p = m_first;
 	int index = 0;
 	for (index = 0; index < num && p + 1 != m_end_of_storage; index++)
@@ -110,7 +125,7 @@ inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__base_string(siz
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
 inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__base_string(iterator_type _begin, iterator_type _end)
 {
-	size_t cpy_len = static_cast<size_t>(_end - _begin);
+	size_t cpy_len = static_cast<size_t>(_end - _begin);//多了'\0'
 	__adjust_string_capcity(cpy_len);
 	char_pointer p = m_first;
 
@@ -120,6 +135,7 @@ inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__base_string(ite
 		p[index] = *iter;
 		index++;
 	}
+
 	p[index] = '\0';
 	m_last = m_first + index + 1;
 }
@@ -144,13 +160,45 @@ inline GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::~__base_string()
 
 //元素访问
 //**********************************************************************************************************************************************
+
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
-inline charT& GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::operator[](size_t idx)
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::char_reference GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::operator[](size_t idx)
 {
 	return m_first[idx];
 }
 
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::char_reference GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::at(size_t idx)
+{
+	size_t str_len = size();
+	GASSERT(idx < str_len);
+	return m_first[idx];
+}
 
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::char_reference GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::front()
+{
+	size_t str_len = size();
+	GASSERT(str_len != 0);
+	return m_first[0];
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::char_reference GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::back()
+{
+	size_t str_len = size();
+	GASSERT(str_len != 0);
+	return m_first[str_len - 1];
+}
+
+//虚函数重写
+//**********************************************************************************************************************************************
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline bool GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::operator==(const __base_string& rhs)
+{
+	return false;
+}
 
 
 
@@ -194,4 +242,55 @@ inline void GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::clear()
 	m_first = nullptr;
 	m_last = nullptr;
 	m_end_of_storage = nullptr;
+}
+
+//虚函数重写
+//**********************************************************************************************************************************************
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::iterator_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::begin()
+{
+	return _SingleMemUnit_Iterator<charT>(m_first);
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::iterator_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::end()
+{
+	return _SingleMemUnit_Iterator<charT>(m_last-1);
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::c_iterator_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::cbegin()
+{
+	return _SingleMemUnit_CIterator<charT>(m_first);
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::c_iterator_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::cend()
+{
+	return _SingleMemUnit_CIterator<charT>(m_last-1);
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::r_iterator_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::rbegin()
+{
+	return _SingleMemUnit_RIterator<charT>(m_last - 2);
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::r_iterator_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::rend()
+{
+	return _SingleMemUnit_RIterator<charT>(m_first-1);
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::cr_iterator_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::crbegin()
+{
+	return _SingleMemUnit_CRIterator<charT>(m_last - 2);
+}
+
+template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
+inline typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::cr_iterator_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::crend()
+{
+	return _SingleMemUnit_CRIterator<charT>(m_first - 1);
 }
