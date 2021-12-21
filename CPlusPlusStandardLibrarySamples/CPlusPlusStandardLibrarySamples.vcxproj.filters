@@ -67,14 +67,12 @@
     <ClInclude Include="UseDelegateSample.h">
       <Filter>CustomStlUseSample</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Add.asm">
+    <ClInclude Include="ASMs.h">
       <Filter>ASM_Sample</Filter>
-    </None>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="ASMs.h">
+    <CustomBuild Include="Add.asm">
       <Filter>ASM_Sample</Filter>
     </CustomBuild>
   </ItemGroup>

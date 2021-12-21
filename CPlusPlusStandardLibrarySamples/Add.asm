@@ -1,7 +1,8 @@
-.CODE
-myAdd PROC
-    add rcx,rdx
-    mov rax,rcx
+.code  :这是代码区
+sum PROC
+    mov eax,R1
+    add eax,R2
     ret
-myAdd ENDP
+sum ENDP
+
 END

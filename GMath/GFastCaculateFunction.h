@@ -4,6 +4,9 @@
 /*ª„±‡∞ÊSSE*/
 namespace GEngine {
 	namespace GMath {
+		class GVector2;
+
+		void GFastNormalize(const GVector2& InV, GVector2& OutV);
 	}
 }
 
