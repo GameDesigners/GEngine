@@ -15,6 +15,9 @@
     <Filter Include="RenderLayerUseSample">
       <UniqueIdentifier>{025505eb-5f46-4908-8aab-170aaa5ab989}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ASM_Sample">
+      <UniqueIdentifier>{8dd5c040-5fb6-437e-b1ea-2db78fd77401}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -64,5 +67,15 @@
     <ClInclude Include="UseDelegateSample.h">
       <Filter>CustomStlUseSample</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Add.asm">
+      <Filter>ASM_Sample</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="ASMs.h">
+      <Filter>ASM_Sample</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

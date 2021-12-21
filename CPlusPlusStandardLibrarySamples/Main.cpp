@@ -34,6 +34,10 @@
 
 #include "UseDelegateSample.h"
 
+#include "ASMs.h"
+
+#include <GVectors.h>
+using namespace GEngine::GMath;
 
 using namespace GEngine::GStl;
 using namespace GEngine::GSystem;
@@ -211,7 +215,7 @@ int main()
 
 	//GArraySample();
 	//GVectorSample();
-    //GDeuqeSample();
+    //GDeuqeSample();   
 	//GListSample();
 	//GForwardListSample();
 	//GSetSample();
@@ -220,7 +224,11 @@ int main()
 	
 
 	//GStringsSample();
-	DelegateSample();
+	//DelegateSample();
+	AsmSample();
+	GVector2 vec2;
+
+
 	/*Render - Part*/
 	//UseDirect3DSample();
 	return 0;

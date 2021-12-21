@@ -1,13 +1,13 @@
 #ifndef GDELEGATE_H
 #define GDELEGATE_H
-#include "GStlMicro.h"
+#include "GVector.h"
 namespace GEngine {
 	namespace GStl {
 
 #define DELEGATE_DEFERERRED_SYNTAX
 #ifdef DELEGATE_DEFERERRED_SYNTAX
 		template<typename TSingnature> class GDelegate;
-		template<typename TSingnature> class GDelegateEvent;
+		template<typename TSingnature> class GEvents;
 #endif // DELEGATE_DEFERERRED_SYNTAX
 
 

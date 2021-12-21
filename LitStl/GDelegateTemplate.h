@@ -23,14 +23,14 @@
 #define STR_CAT(X,Y)        X##Y
 #define COMMBINE(X,Y)       STR_CAT(X,Y)
 #define GDELEGATE_CLASSNAME GDelegate
-#define GEVENT_CLASSNAME    GEvent
+#define GEVENT_CLASSNAME    GEvents
 
 TEMPLATE
 #ifdef DELEGATE_DEFERERRED_SYNTAX
-class  GDELEGATE_CLASSNAME<TEMPLATE_RETURN_TYPE(FUNC_PARAMS_TYPE)>
+class  GSTL_API GDELEGATE_CLASSNAME<TEMPLATE_RETURN_TYPE(FUNC_PARAMS_TYPE)>
 #else
 #define GDELEGATE_CLASSNAME COMMBINE(GDelegate,CLASS_SUFFIX)
-class GSTL_API GDELEGATE_CLASSNAME
+class GSTL_API GDELEGATE_CLASSNAME<TEMPLATE_RETURN_TYPE(FUNC_PARAMS_TYPE)>
 #endif
 {
 public:
@@ -100,4 +100,93 @@ private:
 private:
 	void* __instance;
 	function __fun;
+};
+
+
+TEMPLATE
+#ifdef DELEGATE_DEFERERRED_SYNTAX
+class GSTL_API GEVENT_CLASSNAME<TEMPLATE_RETURN_TYPE(FUNC_PARAMS_TYPE)>
+#else
+#define GEVENT_CLASSNAME COMMBINE(GDelegateEvent,CLASS_SUFFIX)
+class GSTL_API GEVENT_CLASSNAME
+#endif
+{
+#ifdef DELEGATE_DEFERERRED_SYNTAX
+typedef GDELEGATE_CLASSNAME<TEMPLATE_RETURN_TYPE(FUNC_PARAMS_TYPE)> Handler;
+#else
+typedef GDELEGATE_CLASSNAME<TEMPLATE_RETURN_TYPE,FUNC_PARAMS_TYPE> Handler;
+#endif
+typedef GVector<Handler> Handlers;
+
+public:
+	GEVENT_CLASSNAME() {}
+
+	inline void operator+=(const Handler& handler) 
+	{ 
+		add(handler);
+	}
+
+	inline void operator-=(const Handler& handler)
+	{
+		remove(handler);
+	}
+
+	inline void add(const Handler& handler)
+	{
+		for(typename GVector<Handler>::iterator_type p = m_delegateList.begin(); p != m_delegateList.end(); p++)
+		{
+			if (*p == handler)
+				return;
+		}
+		m_delegateList.push_back(handler);
+	}
+
+	inline void remove(const Handler& handler)
+	{
+		for (typename GVector<Handler>::iterator_type p = m_delegateList.begin(); p != m_delegateList.end(); p++)
+		{
+			if (*p == handler)
+			{
+				m_delegateList.erase(p);
+				break;
+			}
+		}
+	}
+
+	inline bool isVaild()
+	{
+		return m_delegateList.size() > 0;
+	}
+
+	inline void reset()
+	{
+		m_delegateList.clear();
+	}
+
+	inline void operator()(FUNC_PARAMS)
+	{
+		invoke(FUNC_USE_PARAMS);
+	}
+
+	inline void invoke(FUNC_PARAMS)
+	{
+		for (typename GVector<Handler>::iterator_type p = m_delegateList.begin(); p != m_delegateList.end(); p++)
+			p->execute(FUNC_USE_PARAMS);
+	}
+
+	inline void invoke_without(FUNC_PARAMS
+#if GDELEGATE_PARAM_COUNT>0
+		,
+#endif
+		const Handler& without)
+	{
+		for (typename GVector<Handler>::iterator_type p = m_delegateList.begin(); p != m_delegateList.end(); p++)
+		{
+			if (*p != without)
+				p->execute(FUNC_USE_PARAMS);
+		}
+	}
+
+private:
+	Handlers m_delegateList;
 };
