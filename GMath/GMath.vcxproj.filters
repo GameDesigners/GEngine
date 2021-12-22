@@ -14,15 +14,21 @@
     <ClInclude Include="GMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GVectors.h">
+    <ClInclude Include="GVector2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GFastCaculateFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GVector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GVectors.cpp">
+    <ClCompile Include="GVector2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GVector3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

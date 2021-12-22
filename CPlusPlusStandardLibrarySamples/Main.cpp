@@ -36,7 +36,8 @@
 
 #include "ASMs.h"
 
-#include <GVectors.h>
+#include <GVector2.h>
+#include <GVector3.h>
 using namespace GEngine::GMath;
 
 using namespace GEngine::GStl;
@@ -225,9 +226,21 @@ int main()
 
 	//GStringsSample();
 	//DelegateSample();
-	AsmSample();
-	GVector2 vec2;
+	//AsmSample();
+	GVector2 direction(-1, 1);
+	GVector2 normal(0, 1);
+	GVector2 reflction = GVector2::Reflect(direction, normal);
+	cout << "(" << reflction.x << "," << reflction.y << ")" << endl;
 
+	cout << "min:" << GFLOAT_MIN << endl;
+	cout << "max:" << GFLOAT_NAX << endl;
+
+	wcout << GVector3::One.ToString().c_str() << endl;
+
+	char c = 'a';
+	TCHAR tc = (TCHAR)c;
+	cout << c << ":" << sizeof(c) << endl;
+	cout << tc << ":" << sizeof(tc) << endl;
 
 	/*Render - Part*/
 	//UseDirect3DSample();
