@@ -93,6 +93,74 @@ namespace GEngine {
 		GVector3 GEngine::GMath::GVector3::Right(1, 0, 0);
 		GVector3 GEngine::GMath::GVector3::Up(0, 1, 0);
 		GVector3 GEngine::GMath::GVector3::Zero(0, 0, 0);
+
+
+		class GMATH_API GVector3Int
+		{
+		public:
+			GVector3Int();
+			GVector3Int(int val);
+			GVector3Int(int _x, int _y, int _z);
+			~GVector3Int();
+
+		public:
+			static GVector3Int CeilToInt(const GVector3& vec);
+			static GVector3Int FloorToInt(const GVector3& vec);
+			static GVector3Int RoundToInt(const GVector3& vec);
+			static GFloat Distance(const GVector3Int& point1, const GVector3Int& point2);
+			static GVector3Int Min(const GVector3Int& lhs, const GVector3Int& rhs);
+			static GVector3Int Max(const GVector3Int& lhs, const GVector3Int& rhs);
+			static GVector3Int Scale(const GVector3Int& lhs, const GVector3Int& rhs);
+
+		public:
+			inline GFloat Magnitude() const;
+			inline GFloat SqrtMagnitude() const;
+			GVector3 ConvertToGVector3();
+			bool Equal(const GVector3Int& vec) const;
+			void Set(int _x, int _y, int _z);
+			int& operator[](size_t idx);
+			GStl::GTString ToString();
+
+
+			GVector3Int operator*(const GVector3Int& vec) const;
+			void operator+=(const GVector3Int& vec);
+			void operator-=(const GVector3Int& vec);
+			GVector3Int operator+(const GVector3Int& vec) const;
+			GVector3Int operator-(const GVector3Int& vec) const;
+			void operator+=(int val);
+			void operator-=(int val);
+			void operator*=(int val);
+			void operator/=(int val);
+			GVector3Int operator+(int val) const;
+			GVector3Int operator-(int val) const;
+			GVector3Int operator*(int val) const;
+			GVector3Int operator/(int val) const;
+
+		public:
+			union
+			{
+				int m[3];
+				struct
+				{
+					int x, y, z;
+				};
+			};
+
+		public:
+			static GVector3Int Down;
+			static GVector3Int Left;
+			static GVector3Int One;
+			static GVector3Int Right;
+			static GVector3Int Up;
+			static GVector3Int Zero;
+		};
+
+		GVector3Int GEngine::GMath::GVector3Int::Down(0, -1, 0);
+		GVector3Int GEngine::GMath::GVector3Int::Left(-1, 0, 0);
+		GVector3Int GEngine::GMath::GVector3Int::One(1, 1, 1);
+		GVector3Int GEngine::GMath::GVector3Int::Right(1, 0, 0);
+		GVector3Int GEngine::GMath::GVector3Int::Up(0, 1, 0);
+		GVector3Int GEngine::GMath::GVector3Int::Zero(0, 0, 0);
 	}
 }
 

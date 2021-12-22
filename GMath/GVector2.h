@@ -1,7 +1,7 @@
 #ifndef GVECTOR2_H
 #define GVECTOR2_H
 #include "GMath.h"
-#include "GFastCaculateFunction.cpp"
+#include "GFastCaculateFunction.h"
 
 namespace GEngine {
 	namespace GMath {
@@ -35,6 +35,7 @@ namespace GEngine {
 			bool Equal(const GVector2& vec) const;
 			void Normalize();
 			void Set(GFloat _x, GFloat _y);
+			inline GStl::GTString ToString();
 
 			GFloat& operator[](int idx);
 			GVector2 operator*(const GVector2& vec) const;
@@ -103,6 +104,7 @@ namespace GEngine {
 			GVector2 ConvertToGVector2();
 			bool Equal(const GVector2& vec) const;
 			void Set(int _x, int _y);
+			inline GStl::GTString ToString();
 
 			int& operator[](int idx);
 			GVector2Int operator*(const GVector2Int& vec) const;

@@ -183,7 +183,7 @@ namespace GEngine {
 
 				char_pointer new_mem = this->New(current_capcity);
 				GASSERT(new_mem != nullptr);
-				GMemoryCpy(new_mem, current_capcity, m_first, current_len);//将原先内存的数据复制到新的内存中
+				GMemoryCpy(new_mem, current_capcity * sizeof(charT), m_first, current_len * sizeof(charT));//将原先内存的数据复制到新的内存中
 				this->Delete(m_first, old_capcity, old_capcity);
 
 				m_first = new_mem;

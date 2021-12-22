@@ -148,9 +148,11 @@
     <ClInclude Include="GMath.h" />
     <ClInclude Include="GVector2.h" />
     <ClInclude Include="GVector3.h" />
+    <ClInclude Include="GVector4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GVector3.cpp" />
+    <ClCompile Include="GVector4.cpp" />
     <CustomBuild Include="GFastCaculateFunction.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">clang-cl -c %(Filename).cpp --target=x86_64 -o $(OutputPath)%(Filename).obj</Command>

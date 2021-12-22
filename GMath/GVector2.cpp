@@ -135,6 +135,16 @@ void GEngine::GMath::GVector2::Set(GFloat _x, GFloat _y)
 	m[1] = y = _y;
 }
 
+inline GEngine::GStl::GTString GEngine::GMath::GVector2::ToString()
+{
+	GStl::GTString str(L"(");
+	str += GStl::to_tstring(x);
+	str += L",";
+	str += GStl::to_tstring(y);
+	str += L")";
+	return str;
+}
+
 GFloat& GEngine::GMath::GVector2::operator[](int idx)
 {
 	return m[idx];
@@ -298,6 +308,16 @@ void GEngine::GMath::GVector2Int::Set(int _x, int _y)
 {
 	m[0] = x = _x;
 	m[1] = y = _y;
+}
+
+inline GEngine::GStl::GTString GEngine::GMath::GVector2Int::ToString()
+{
+	GStl::GTString str(L"(");
+	str += GStl::to_tstring(x);
+	str += L",";
+	str += GStl::to_tstring(y);
+	str += L")";
+	return str;
 }
 
 int& GEngine::GMath::GVector2Int::operator[](int idx)

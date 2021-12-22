@@ -1,6 +1,6 @@
 #include "GStrings.h"
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
-typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::char_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__nil = '\0';
+typename GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::char_type GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::__nil = (charT)('\0');
 
 //¹¹Ôìº¯Êý
 //**********************************************************************************************************************************************
@@ -134,7 +134,7 @@ inline void GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::assign(const
 {
 	size_t cpy_len = cv.__caculate_current_string_size();
 	size_t current_capcity = __adjust_string_capcity(cpy_len);
-	GMemoryCpy(m_first, current_capcity, cv.m_first, cpy_len);
+	GMemoryCpy(m_first, current_capcity * sizeof(charT), cv.m_first, cpy_len * sizeof(charT));
 	m_last = m_first + cpy_len - 1;
 }
 
@@ -149,7 +149,7 @@ inline void GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::assign(const
 		char_pointer cpy_start = str.m_first + stridx;
 		size_t cpy_len = static_cast<size_t>(str.m_last - cpy_start + 1);
 		size_t current_capcity = __adjust_string_capcity(cpy_len);
-		GMemoryCpy(m_first, current_capcity, cpy_start, cpy_len);
+		GMemoryCpy(m_first, current_capcity * sizeof(charT), cpy_start, cpy_len * sizeof(charT));
 		m_last = m_first + cpy_len - 1;
 	}
 }
@@ -165,7 +165,7 @@ inline void GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::assign(const
 	size_t remainder = static_cast<size_t>(str.m_last - cpy_start);
 	size_t cpy_len = len <= remainder ? len : remainder;
 	size_t current_capcity = __adjust_string_capcity(cpy_len);
-	GMemoryCpy(m_first, current_capcity, cpy_start, cpy_len);
+	GMemoryCpy(m_first, current_capcity * sizeof(charT), cpy_start, cpy_len * sizeof(charT));
 	*(m_first + cpy_len) = __nil;
 	m_last = m_first + cpy_len;
 }
@@ -175,7 +175,7 @@ inline void GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::assign(char_
 {
 	size_t char_arr_len = __str_len_functor(chars);
 	size_t current_capcity = __adjust_string_capcity(char_arr_len);
-	GMemoryCpy(m_first, current_capcity, chars, char_arr_len);
+	GMemoryCpy(m_first, current_capcity * sizeof(charT), chars, char_arr_len * sizeof(charT));
 	m_first[char_arr_len] = __nil;
 	m_last = m_first + char_arr_len;
 }
@@ -186,7 +186,7 @@ inline void GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::assign(char_
 	size_t char_arr_len = __str_len_functor(chars);
 	charslen = charslen <= char_arr_len ? charslen : char_arr_len;
 	size_t current_capcity = __adjust_string_capcity(charslen);
-	GMemoryCpy(m_first, current_capcity, chars, charslen);
+	GMemoryCpy(m_first, current_capcity * sizeof(charT), chars, charslen * sizeof(charT));
 	*(m_first + charslen) = __nil;
 	m_last = m_first + charslen;
 }
@@ -209,7 +209,7 @@ inline void GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::assign(const
 	charslen = charslen <= char_arr_len ? charslen : char_arr_len;
 	size_t current_capcity = __adjust_string_capcity(charslen);
 	char_pointer cpy_start = const_cast<char_pointer>(chars);
-	GMemoryCpy(m_first, current_capcity, cpy_start, charslen);
+	GMemoryCpy(m_first, current_capcity * sizeof(charT), cpy_start, charslen * sizeof(charT));
 	*(m_first + charslen) = __nil;
 	m_last = m_first + charslen;
 }
@@ -238,7 +238,7 @@ inline void GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::operator+=(c
 	size_t current_capcity = __adjust_string_capcity(cpy_len + source_len);
 	size_t reminder_capcity = current_capcity - source_len;
 
-	GMemoryCpy(m_last, reminder_capcity, str.m_first, cpy_len);
+	GMemoryCpy(m_last, reminder_capcity * sizeof(charT), str.m_first, cpy_len * sizeof(charT));
 	m_last = m_last + cpy_len - 1;
 }
 

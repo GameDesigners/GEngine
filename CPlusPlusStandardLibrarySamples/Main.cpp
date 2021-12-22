@@ -235,12 +235,16 @@ int main()
 	cout << "min:" << GFLOAT_MIN << endl;
 	cout << "max:" << GFLOAT_NAX << endl;
 
+	wcout << GVector2::One.ToString().c_str() << endl;
+	wcout << GVector2Int::One.ToString().c_str() << endl;
 	wcout << GVector3::One.ToString().c_str() << endl;
+	wcout << GVector3Int::Right.ToString().c_str() << endl;
 
-	char c = 'a';
-	TCHAR tc = (TCHAR)c;
-	cout << c << ":" << sizeof(c) << endl;
-	cout << tc << ":" << sizeof(tc) << endl;
+
+	//char c = 'a';
+	//TCHAR tc = (TCHAR)c;
+	//cout << c << ":" << sizeof(c) << endl;
+	//cout << tc << ":" << sizeof(tc) << endl;
 
 	/*Render - Part*/
 	//UseDirect3DSample();
