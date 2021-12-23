@@ -197,7 +197,7 @@ inline void GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::assign(const
 	size_t char_arr_len = __str_len_functor(chars);
 	size_t current_capcity = __adjust_string_capcity(char_arr_len);
 	char_pointer cpy_start = const_cast<char_pointer>(chars);
-	GMemoryCpy(m_first, current_capcity, cpy_start, char_arr_len);
+	GMemoryCpy(m_first, current_capcity * sizeof(charT), cpy_start, char_arr_len * sizeof(charT));
 	m_first[char_arr_len] = __nil;
 	m_last = m_first + char_arr_len;
 } 

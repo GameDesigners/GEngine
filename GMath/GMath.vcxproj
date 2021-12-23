@@ -146,11 +146,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="GMath.h" />
+    <ClInclude Include="GMatrix2X2.h" />
+    <ClInclude Include="GMatrix3X3.h" />
     <ClInclude Include="GVector2.h" />
     <ClInclude Include="GVector3.h" />
     <ClInclude Include="GVector4.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GMatrix2X2.cpp" />
+    <ClCompile Include="GMatrix3X3.cpp" />
     <ClCompile Include="GVector3.cpp" />
     <ClCompile Include="GVector4.cpp" />
     <CustomBuild Include="GFastCaculateFunction.cpp">

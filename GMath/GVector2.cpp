@@ -104,6 +104,8 @@ inline GFloat GEngine::GMath::GVector2::Magnitude() const
 inline GVector2 GEngine::GMath::GVector2::Normalized() const
 {
 #ifdef SSE_ENABLE
+	GFloat length = GSqrt(GPow(x, 2) + GPow(y, 2));
+	return GVector2(x / length, y / length);
 #else
 	GFloat length = GSqrt(GPow(x, 2) + GPow(y, 2));
 	return GVector2(x / length, y / length);

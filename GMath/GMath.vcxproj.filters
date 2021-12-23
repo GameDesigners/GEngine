@@ -26,6 +26,12 @@
     <ClInclude Include="GVector4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GMatrix2X2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GMatrix3X3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GVector2.cpp">
@@ -35,6 +41,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GVector4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GMatrix2X2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GMatrix3X3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

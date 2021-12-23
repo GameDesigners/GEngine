@@ -89,7 +89,7 @@ namespace GEngine {
 }
 
 //是否启用加速数学库
-//#define SSE_ENABLE
+#define SSE_ENABLE
 #ifdef SSE_ENABLE
 #include <mmintrin.h>               //mmx
 #include <xmmintrin.h>              //sse

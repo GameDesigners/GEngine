@@ -123,6 +123,8 @@ inline GFloat GEngine::GMath::GVector3::Magnitude() const
 inline GVector3 GEngine::GMath::GVector3::Normalized() const
 {
 #ifdef SSE_ENABLE
+	GFloat length = GSqrt(GPow(x, 2) + GPow(y, 2) + GPow(z, 2));
+	return GVector3(x / length, y / length, z / length);
 #else
 	GFloat length = GSqrt(GPow(x, 2) + GPow(y, 2) + GPow(z, 2));
 	return GVector3(x / length, y / length, z / length);
