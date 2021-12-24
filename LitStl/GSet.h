@@ -357,8 +357,8 @@ namespace GEngine {
 
 		//虚函数重写
 		public:
-			virtual bool empty();
-			virtual size_t size();
+			virtual bool empty() const;
+			virtual size_t size() const;
 			virtual void clear();
 
 		//特殊的查找函数

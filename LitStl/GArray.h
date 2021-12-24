@@ -51,9 +51,9 @@ namespace GEngine {
 
 		//虚函数重写
 		public:
-			virtual bool empty();
-			virtual size_t size();
-			virtual size_t capcity();
+			virtual bool empty() const;
+			virtual size_t size() const;
+			virtual size_t capcity() const;
 			virtual void clear();
 
 		//运算符重载

@@ -743,13 +743,13 @@ void GList<T, MMFun>::resize(size_t _count, const T& val)
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-bool GList<T, MMFun>::empty()
+bool GList<T, MMFun>::empty() const
 {
 	return m_count == 0;
 }
 
 template<class T, GMemManagerFun MMFun>
-size_t GList<T, MMFun>::size()
+size_t GList<T, MMFun>::size() const
 {
 	return m_count;
 }

@@ -309,13 +309,13 @@ inline T& GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, Equ
 //*******************************************************************************************************************************************************************************************************************
 
 template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
-inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::empty()
+inline bool GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::empty() const
 {
 	return this->m_count == 0;
 }
 
 template<class T, class ExtractKey, class ConflictHandlingFun, class EqualKey, GMemManagerFun MMFun, bool IsMulti>
-inline size_t GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::size()
+inline size_t GEngine::GStl::__GUnorderedSet<T, ExtractKey, ConflictHandlingFun, EqualKey, MMFun, IsMulti>::size() const
 {
 	return this->m_count;
 }

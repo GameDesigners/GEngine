@@ -21,6 +21,9 @@
     <Filter Include="GMathSample">
       <UniqueIdentifier>{6db1ad03-1376-4eb2-8f87-8ab0d37d8db6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GObjectSystem">
+      <UniqueIdentifier>{4f468a26-6bcb-4db9-b0c8-089c90fb60c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -75,6 +78,9 @@
     </ClInclude>
     <ClInclude Include="GMathSample.h">
       <Filter>GMathSample</Filter>
+    </ClInclude>
+    <ClInclude Include="InitializeAndTerminalSystemSample.h">
+      <Filter>GObjectSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

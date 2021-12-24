@@ -537,7 +537,7 @@ inline bool GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::operator<=(c
 //**********************************************************************************************************************************************
 
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
-inline size_t GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::capcity()
+inline size_t GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::capcity() const
 {
 	if (m_first == nullptr && m_last == nullptr)
 		return 0;
@@ -546,7 +546,7 @@ inline size_t GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::capcity()
 }
 
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
-inline bool GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::empty()
+inline bool GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::empty() const
 {
 	if (m_first == nullptr || *m_first == __nil)
 		return true;
@@ -555,7 +555,7 @@ inline bool GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::empty()
 }
 
 template<typename charT, typename GStrLenFun, GMemManagerFun MMFun>
-inline size_t GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::size()
+inline size_t GEngine::GStl::__base_string<charT, GStrLenFun, MMFun>::size() const
 {
 	if (m_first == nullptr || *m_first == __nil)
 		return 0;

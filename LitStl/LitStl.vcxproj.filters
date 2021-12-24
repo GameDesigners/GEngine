@@ -30,6 +30,9 @@
     <Filter Include="Source Files\GDataStructure">
       <UniqueIdentifier>{ee7cc9e8-b5d3-4c75-8e46-69deb6b3c8b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Inl Files\GAlogtithms">
+      <UniqueIdentifier>{cfb3239c-32c2-4742-b27a-52328de0e41e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUtility.h">
@@ -39,9 +42,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GStlMicro.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GAlgorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GContainer.h">
@@ -93,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GDelegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GAlgorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -185,6 +188,9 @@
     </None>
     <None Include="GStrings.inl">
       <Filter>Inl Files\GContainers</Filter>
+    </None>
+    <None Include="GSort.inl">
+      <Filter>Inl Files\GAlogtithms</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -90,7 +90,23 @@ void GVectorSample()
 	std::cout << "***************************************" << std::endl;
 	for (auto p = vector9.crbegin(); p != vector9.crend(); p++)
 		p->to_string();
-	vector9.clear();
+	
+
+	GVector<SamplesElem> vector10;
+	for (int index = 10; index >=0; index--)
+		vector10.push_back(SamplesElem(index, index));
+
+	std::cout << "vector10 size:" << vector10.size() << " capcity:" << vector10.capcity() << std::endl;
+	for (auto p = vector10.begin(); p != vector10.end(); p++) p->to_string();
+	
+	sort(vector9.begin(), vector9.end());
+	cout << "After Sort:" << endl;
+	std::cout << "vector9 size:" << vector9.size() << " capcity:" << vector9.capcity() << std::endl;
+	for (auto p = vector9.begin(); p != vector9.end(); p++) p->to_string();
+
+
+
+	//vector9.clear();
 
 	//for (int index = 0; index < vector1.size(); index++)
 	//	vector1[index].to_string();

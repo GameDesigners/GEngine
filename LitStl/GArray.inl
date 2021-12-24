@@ -127,19 +127,19 @@ T& GArray<T, N>::back()
 //**********************************************************************************************************************************************
 
 template<class T, size_t N>
-bool GArray<T, N>::empty()
+bool GArray<T, N>::empty() const
 {
 	return false;
 }
 
 template<class T, size_t N>
-size_t GArray<T, N>::size()
+size_t GArray<T, N>::size() const
 {
 	return N;
 }
 
 template<class T, size_t N>
-size_t GArray<T, N>::capcity()
+size_t GArray<T, N>::capcity() const
 {
 	return N;
 }

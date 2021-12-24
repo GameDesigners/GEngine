@@ -35,9 +35,9 @@ namespace GEngine {
 
 		//虚函数重载
 		public:
-			virtual bool empty();
-			virtual size_t size();
-			virtual size_t capcity();
+			virtual bool empty() const;
+			virtual size_t size() const;
+			virtual size_t capcity() const;
 			virtual void clear();
 		private:
 			inline bool _vertify_iterator(_iterator_type& _iter)
@@ -170,11 +170,11 @@ namespace GEngine {
 
 		//虚函数重写
 		public:
-			virtual bool empty();
-			virtual size_t size();
+			virtual bool empty() const;
+			virtual size_t size() const;
 			virtual void clear();
 		private:
-			virtual size_t capcity() {  return 0; }  //不提供容量操作
+			virtual size_t capcity() const {  return 0; }  //不提供容量操作
 			
 		//非更易型操作
 		public:

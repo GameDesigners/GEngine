@@ -299,8 +299,8 @@ namespace GEngine {
 
 		//虚函数重写
 		public:
-			virtual bool empty();
-			virtual size_t size();
+			virtual bool empty() const;
+			virtual size_t size() const;
 			virtual void clear();
 
 		//运算符重写
@@ -320,7 +320,7 @@ namespace GEngine {
 			cr_iterator_type crend();
 
 		private:
-			virtual size_t capcity() { return 0; }
+			virtual size_t capcity() const { return 0; }
 
 		};
 

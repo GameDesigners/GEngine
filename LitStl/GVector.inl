@@ -445,19 +445,19 @@ void GVector<T, MMFun>::resize(size_t num, const T& val)
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-bool GVector<T, MMFun>::empty()
+bool GVector<T, MMFun>::empty() const
 {
 	return m_count == 0;
 }
 
 template<class T, GMemManagerFun MMFun>
-size_t GVector<T, MMFun>::size()
+size_t GVector<T, MMFun>::size() const
 {
 	return m_count;
 }
 
 template<class T, GMemManagerFun MMFun>
-size_t GVector<T, MMFun>::capcity()
+size_t GVector<T, MMFun>::capcity() const
 {
 	return m_capcity;
 }

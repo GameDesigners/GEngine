@@ -142,19 +142,19 @@ bool __deque_memory_buffer_block<T, MMFun>::full()
 }
 
 template<class T, GMemManagerFun MMFun>
-bool __deque_memory_buffer_block<T, MMFun>::empty()
+bool __deque_memory_buffer_block<T, MMFun>::empty() const
 {
 	return m_count == 0;
 }
 
 template<class T, GMemManagerFun MMFun>
-size_t __deque_memory_buffer_block<T, MMFun>::size()
+size_t __deque_memory_buffer_block<T, MMFun>::size() const
 {
 	return m_count;
 }
 
 template<class T, GMemManagerFun MMFun>
-size_t __deque_memory_buffer_block<T, MMFun>::capcity()
+size_t __deque_memory_buffer_block<T, MMFun>::capcity() const
 {
 	return m_capcity;
 }
@@ -414,7 +414,7 @@ void GDeque<T, MMFun>::push_back(const T& cv)
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-bool GDeque<T, MMFun>::empty()
+bool GDeque<T, MMFun>::empty() const
 {
 	if (m_map == nullptr)
 		return true;
@@ -425,7 +425,7 @@ bool GDeque<T, MMFun>::empty()
 }
 
 template<class T, GMemManagerFun MMFun>
-size_t GDeque<T, MMFun>::size()
+size_t GDeque<T, MMFun>::size() const
 {
 	if (m_map == nullptr)
 		return 0;

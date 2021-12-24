@@ -71,9 +71,9 @@ namespace GEngine{
 			void resize(size_t num, const T& val);
 	    //虚函数重写
 		public:
-			virtual bool empty();
-			virtual size_t size();
-			virtual size_t capcity();
+			virtual bool empty() const;
+			virtual size_t size() const;
+			virtual size_t capcity() const;
 			virtual void clear();
 
 		//非更易型操作

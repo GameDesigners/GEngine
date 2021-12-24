@@ -125,9 +125,9 @@ namespace GEngine {
 
 		//Ðéº¯ÊýÖØÐ´
 		public:
-			virtual size_t capcity();
-			virtual bool empty();
-			virtual size_t size();
+			virtual size_t capcity() const;
+			virtual bool empty() const;
+			virtual size_t size() const;
 			virtual void clear();
 
 			size_t length() const

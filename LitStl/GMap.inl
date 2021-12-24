@@ -218,13 +218,13 @@ void GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::earse(iterator_
 //**********************************************************************************************************************************************
 
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
-bool GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::empty()
+bool GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::empty() const
 {
 	return this->m_count == 0;
 }
 
 template<class Key, class Value, bool IsMulti, typename Compare, GMemManagerFun MMFun>
-size_t GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::size()
+size_t GEngine::GStl::__GMap<Key, Value, IsMulti, Compare, MMFun>::size() const
 {
 	return this->m_count;
 }

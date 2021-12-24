@@ -131,9 +131,9 @@ namespace GEngine {
 			typedef __set_hash_table_node<Key>* node_pointer;
 
 		protected:
-			virtual bool empty() { return false; }
-			virtual size_t size() { return 0; }
-			virtual size_t capcity() { return 0; }
+			virtual bool empty() const { return false; }
+			virtual size_t size() const { return 0; }
+			virtual size_t capcity() const { return 0; }
 			virtual void clear() {}
 
 		protected:

@@ -185,13 +185,13 @@ void __GSet<T, IsMulti, Compare, MMFun>::earse(iterator_type _begin, iterator_ty
 //**********************************************************************************************************************************************
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
-bool __GSet<T, IsMulti, Compare, MMFun>::empty()
+bool __GSet<T, IsMulti, Compare, MMFun>::empty() const
 {
 	return this->m_count == 0;
 }
 
 template<class T, bool IsMulti, typename Compare, GMemManagerFun MMFun>
-size_t __GSet<T, IsMulti, Compare, MMFun>::size()
+size_t __GSet<T, IsMulti, Compare, MMFun>::size() const
 {
 	return this->m_count;
 }

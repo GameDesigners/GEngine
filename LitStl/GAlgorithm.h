@@ -5,7 +5,6 @@
 #include "GIterator.h"
 namespace GEngine {
 	namespace GStl {
-
 		template<typename Iterator>
 		inline typename Iterator::value_type accumulate(Iterator begin, Iterator end, typename Iterator::value_type init)
 		{
@@ -53,6 +52,9 @@ namespace GEngine {
 				return val1 < val2;
 			}
 		};
+
+
+    #include "GSort.inl"
 	}
 }
 

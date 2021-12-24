@@ -83,18 +83,6 @@ namespace GEngine {
 			static GVector3 Zero;
 		};
 
-		GVector3 GEngine::GMath::GVector3::Back(0, 0, -1);
-		GVector3 GEngine::GMath::GVector3::Down(0, -1, 0);
-		GVector3 GEngine::GMath::GVector3::Forward(0, 0, 1);
-		GVector3 GEngine::GMath::GVector3::Left(-1, 0, 0);
-		GVector3 GEngine::GMath::GVector3::NegativeInfinity(-GFLOAT_NAX, -GFLOAT_NAX, -GFLOAT_NAX);
-		GVector3 GEngine::GMath::GVector3::One(1, 1, 1);
-		GVector3 GEngine::GMath::GVector3::PositiveInfinity(GFLOAT_NAX, GFLOAT_NAX, GFLOAT_NAX);
-		GVector3 GEngine::GMath::GVector3::Right(1, 0, 0);
-		GVector3 GEngine::GMath::GVector3::Up(0, 1, 0);
-		GVector3 GEngine::GMath::GVector3::Zero(0, 0, 0);
-
-
 		class GMATH_API GVector3Int
 		{
 		public:
@@ -154,13 +142,6 @@ namespace GEngine {
 			static GVector3Int Up;
 			static GVector3Int Zero;
 		};
-
-		GVector3Int GEngine::GMath::GVector3Int::Down(0, -1, 0);
-		GVector3Int GEngine::GMath::GVector3Int::Left(-1, 0, 0);
-		GVector3Int GEngine::GMath::GVector3Int::One(1, 1, 1);
-		GVector3Int GEngine::GMath::GVector3Int::Right(1, 0, 0);
-		GVector3Int GEngine::GMath::GVector3Int::Up(0, 1, 0);
-		GVector3Int GEngine::GMath::GVector3Int::Zero(0, 0, 0);
 	}
 }
 

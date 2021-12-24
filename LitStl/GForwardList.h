@@ -155,7 +155,7 @@ namespace GEngine {
 			
 		//虚函数重写
 		public:
-			virtual bool empty();
+			virtual bool empty() const;
 			virtual void clear();
 
 		//运算符重载
@@ -203,8 +203,8 @@ namespace GEngine {
 				}
 			};
 		private:
-			virtual size_t size() { return 0; };
-			virtual size_t capcity() { return 0; };
+			virtual size_t size() const { return 0; };
+			virtual size_t capcity() const { return 0; };
 
 			inline node_pointer __new_forwardlist_node(const T& val)
 			{

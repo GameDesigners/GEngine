@@ -835,7 +835,7 @@ void GForwardList<T, MMFun>::reverse()
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-bool GForwardList<T, MMFun>::empty()
+bool GForwardList<T, MMFun>::empty() const
 {
 	return m_head == nullptr;
 }

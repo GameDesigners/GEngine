@@ -208,13 +208,13 @@ int main()
 	//USE_CUSTOM_PAIR();
 	//USE_CUSTOM_TUPLE();
 	//USE_CUSTOM_SMART_POINT();
-	//USE_CUSTOM_TIMER();
+	//USE_CUSTOM_TIMER();	
 	//USE_CUSTOM_GFILE();
 
 	//USE_GSTL_GARRAY();
 
 	//GArraySample();
-	//GVectorSample();
+	GVectorSample();
     //GDeuqeSample();   
 	//GListSample();
 	//GForwardListSample();
@@ -227,7 +227,7 @@ int main()
 	//DelegateSample();
 	//AsmSample();
 	
-	GMathSample();
+	//GMathSample();
 
 
 	//char c = 'a';
