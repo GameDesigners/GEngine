@@ -1,6 +1,7 @@
 #ifndef GMEMMANAGER_H
 #define GMEMMANAGER_H
 #include <type_traits>  //าýำรมหstl
+#include <new>
 #include "GSystem.h"
 #include "GStackWalker.h"
 

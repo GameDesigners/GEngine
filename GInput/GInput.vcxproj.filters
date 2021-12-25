@@ -9,35 +9,15 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Marc Files">
-      <UniqueIdentifier>{03f6843a-da81-48c5-bd62-e7db251f18ac}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GGraphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GPriority.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GMain.h">
+    <ClInclude Include="GInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GGraphic.cpp">
+    <ClCompile Include="GInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GPriority.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="GMain.marc">
-      <Filter>Marc Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

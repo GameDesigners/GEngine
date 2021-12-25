@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="InitializeAndTerminalSystemSample.cpp">
+      <Filter>GMain Samples</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ASMs.h">
+      <Filter>ASM Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlusPlus_11_NewFeature.h">
+      <Filter>C++ Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseDelegateSample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGArraySample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGDequeSample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGForwardListSample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGListSample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGMapAndGMultiMapSample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGSetAndGMultiSetSample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGStringSample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGUnorderedSetAndGUnorderedMultiSetSample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="UseGVectorSample.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonData.h">
+      <Filter>LitStlSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="InitializeAndTerminalSystemSample.h">
+      <Filter>GMain Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="GMathSample.h">
+      <Filter>GMath Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="GDirect3DVectorSample.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonTool.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ASM Samples">
+      <UniqueIdentifier>{0df32a90-f2a3-4fb8-9669-d09841d3f601}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LitStlSamples">
+      <UniqueIdentifier>{48c797e5-e046-4b07-b9ea-e120a2659835}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Samples">
+      <UniqueIdentifier>{a6953c49-4b23-473a-80b9-053ca624d934}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GMain Samples">
+      <UniqueIdentifier>{646b545f-a264-4e4f-811e-5345cbef182c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GMath Samples">
+      <UniqueIdentifier>{8b2826ea-4b46-465a-a2bc-af67b3265cfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Others">
+      <UniqueIdentifier>{c93b328a-9667-45c8-88ba-706d12c3f2e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Add.asm">
+      <Filter>ASM Samples</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

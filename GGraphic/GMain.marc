@@ -1,0 +1,54 @@
+//类中初始化和销毁的函数签名
+//**********************************************************************************************************************************************
+#define INITIALIZE_DEFAULT_STATE InitializeDefaultState
+#define TERMINAL_DEFAULT_STATE   TerminalDefaultState
+
+//类内对初始化和销毁器的变量定义宏
+//**********************************************************************************************************************************************
+#define DECLARE_INITIALIZE_TERMINAL_CODE(CLASSNAME) \
+public:\
+	static bool RegistMainFactory();\
+	static bool ms_bRegistedFactory;\
+	static GEngine::GGraphic::GPriority ms_pPriority;\
+	static bool ms_bIsInitialSuc_##CLASSNAME;\
+private :\
+	static bool INITIALIZE_DEFAULT_STATE();\
+	static bool TERMINAL_DEFAULT_STATE();
+
+
+//类内对初始化和销毁器实现前部分代码
+//**********************************************************************************************************************************************
+#define IMPLEMENT_INITIALIZE_TERMINAL_BEGIN(CLASSNAME) \
+GEngine::GGraphic::GPriority CLASSNAME::ms_pPriority;\
+bool CLASSNAME::ms_bRegistedFactory = false;\
+bool CLASSNAME::ms_bIsInitialSuc_##CLASSNAME = CLASSNAME::RegistMainFactory();\
+bool CLASSNAME::RegistMainFactory()\
+{\
+	if (!ms_bRegistedFactory)\
+	{
+
+//类内对初始化和销毁器实现后部分代码
+//**********************************************************************************************************************************************
+#define IMPLEMENT_INITIALIZE_TERMINAL_END \
+		ms_bRegistedFactory = true;\
+	}\
+	return ms_bRegistedFactory;\
+}
+
+//初始化和销毁的一些操作
+//**********************************************************************************************************************************************
+
+//1.添加类依赖
+#define ADD_DEPENDENCY(CLASSNAME) \
+if (!ms_pPriority.AddPriorityThan(&CLASSNAME::ms_pPriority))\
+	return 0;
+
+//2.注册带有优先级的初始化和销毁命令
+#define REGIST_INITAILIZE_TERMINAL_COMMAND_WITH_PRIORITY(CLASSNAME) \
+GEngine::GGraphic::GMain::AddInitialFunction(&CLASSNAME::INITIALIZE_DEFAULT_STATE,&ms_pPriority);\
+GEngine::GGraphic::GMain::AddTerminalFuntion(*CLASSNAME::TERMINAL_DEFAULT_STATE,&ms_pPriority);
+
+//2.注册无优先级的初始化和销毁命令
+#define REGIST_INITAILIZE_TERMINAL_COMMAND(CLASSNAME) \
+GEngine::GGraphic::GMain::AddInitialFunction(&CLASSNAME::INITIALIZE_DEFAULT_STATE);\
+GEngine::GGraphic::GMain::AddTerminalFuntion(*CLASSNAME::TERMINAL_DEFAULT_STATE);

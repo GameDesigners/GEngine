@@ -50,8 +50,8 @@ namespace GEngine {
 			public:
 				bool operator()(const Element& elem1, const Element& elem2) const
 				{
-					unsigned int priority1 = elem1.__pPriority->GetPriorityNum();
-					unsigned int priority2 = elem1.__pPriority->GetPriorityNum();
+					unsigned int priority1 = elem1.__pPriority == nullptr ? 0 : elem1.__pPriority->GetPriorityNum();
+					unsigned int priority2 = elem2.__pPriority == nullptr ? 0 : elem2.__pPriority->GetPriorityNum();
 					return priority1 < priority2;
 				}
 			};
@@ -63,6 +63,8 @@ namespace GEngine {
 			static unsigned int ms_uiInitialObject;
 			static unsigned int ms_uiTerminalObject;
 		};
+
+#include "GMain.marc"
 	}
 }
 #endif // !GMAIN_H

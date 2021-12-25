@@ -36,9 +36,10 @@ namespace GEngine {
 				}
 				return false;
 			}
+
 			unsigned int __update_priority_num() 
 			{
-				if (m_uiPriorityNum == 0 || m_PriorityThanList.size() == 0)
+				if (m_uiPriorityNum != 0 || m_PriorityThanList.size() == 0)
 					return m_uiPriorityNum;
 				else
 				{

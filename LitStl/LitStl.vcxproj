@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../GSystem;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../GSystem</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,6 +159,7 @@
     <ClInclude Include="GSet.h" />
     <ClInclude Include="GStlMicro.h" />
     <ClInclude Include="GStrings.h" />
+    <ClInclude Include="GTypeTraits.h" />
     <ClInclude Include="GUnorderedMap.h" />
     <ClInclude Include="GUnorderedSet.h" />
     <ClInclude Include="GUtility.h" />

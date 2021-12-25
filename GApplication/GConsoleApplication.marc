@@ -1,0 +1,20 @@
+#define DECLARE_CONSOLE_APPLICATION(APPLICATION_NAME) DECLARE_INITIALIZE_TERMINAL_CODE(APPLICATION_NAME)
+
+//×¢²áConsoleApplicationµÄÐÅÏ¢
+//**********************************************************************************************************************************************
+#define REGIST_CONSOLE_APPLICATION(APPLICATION_NAME) \
+IMPLEMENT_INITIALIZE_TERMINAL_BEGIN(APPLICATION_NAME)\
+REGIST_INITAILIZE_TERMINAL_COMMAND(APPLICATION_NAME)\
+IMPLEMENT_INITIALIZE_TERMINAL_END \
+bool APPLICATION_NAME::InitializeDefaultState()\
+{\
+	GApplication*& app = APPLICATION_NAME::GetApplication();\
+	if (app == nullptr)\
+		app = GNEW APPLICATION_NAME();\
+	return app != nullptr;\
+}\
+bool APPLICATION_NAME::TerminalDefaultState()\
+{\
+	GSAFE_DELETE(APPLICATION_NAME::GetApplication());\
+	return true;\
+}

@@ -9,13 +9,27 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Marc Files">
+      <UniqueIdentifier>{d1babbd4-f913-4884-8008-6271b3af8dbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Def Files">
+      <UniqueIdentifier>{0fd74458-1025-4bca-bd48-69a4e668d3a9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GApplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GAppMacr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GWindowApplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GConsoleApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -23,5 +37,25 @@
     <ClCompile Include="GApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GWindowApplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GConsoleApplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GWindowApplication.marc">
+      <Filter>Marc Files</Filter>
+    </None>
+    <None Include="GApplication.def">
+      <Filter>Def Files</Filter>
+    </None>
+    <None Include="GConsoleApplication.marc">
+      <Filter>Marc Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

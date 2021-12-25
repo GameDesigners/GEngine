@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3f285690-a8a7-4ca9-9e55-8eccaefaead2}</ProjectGuid>
-    <RootNamespace>GMath</RootNamespace>
+    <ProjectGuid>{f0a90a30-36cc-4645-8c71-349db451e4b2}</ProjectGuid>
+    <RootNamespace>WIndowApplicationSample</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -117,12 +117,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\LitStl;..\GSystem</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GApplication\;..\LitStl\;..\GGraphic\;..\GSystem\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphic.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GApplication.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,26 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="GFastCaculateFunction.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="GMath.h" />
-    <ClInclude Include="GMatrix2X2.h" />
-    <ClInclude Include="GMatrix3X3.h" />
-    <ClInclude Include="GVector2.h" />
-    <ClInclude Include="GVector3.h" />
-    <ClInclude Include="GVector4.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="GMatrix2X2.cpp" />
-    <ClCompile Include="GMatrix3X3.cpp" />
-    <ClCompile Include="GVector3.cpp" />
-    <ClCompile Include="GVector4.cpp" />
-    <CustomBuild Include="GFastCaculateFunction.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">clang-cl -c %(Filename).cpp --target=x86_64 -o $(OutputPath)%(Filename).obj</Command>
-    </CustomBuild>
-    <ClCompile Include="GVector2.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

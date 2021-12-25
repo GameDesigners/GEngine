@@ -24,7 +24,7 @@
     <ProjectGuid>{e8d608e6-6d0c-47fb-b8ad-a0ca4fc237b1}</ProjectGuid>
     <RootNamespace>GGraphic</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>GGraphics</ProjectName>
+    <ProjectName>GGraphic</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\LitStl;..\GSystem;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LitStl;..\GSystem</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,6 +151,9 @@
     <ClCompile Include="GGraphic.cpp" />
     <ClCompile Include="GMain.cpp" />
     <ClCompile Include="GPriority.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GMain.marc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

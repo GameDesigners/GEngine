@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -117,12 +117,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\GSystem\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LitStl\;..\GGraphic\;..\GSystem\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphic.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>GApplication.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,9 +144,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GApplication.h" />
+    <ClInclude Include="GAppMacr.h" />
+    <ClInclude Include="GCommand.h" />
+    <ClInclude Include="GConsoleApplication.h" />
+    <ClInclude Include="GWindowApplication.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GApplication.cpp" />
+    <ClCompile Include="GCommand.cpp" />
+    <ClCompile Include="GConsoleApplication.cpp" />
+    <ClCompile Include="GWindowApplication.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GApplication.def" />
+    <None Include="GConsoleApplication.marc" />
+    <None Include="GWindowApplication.marc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

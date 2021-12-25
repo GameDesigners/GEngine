@@ -1,0 +1,26 @@
+#define DECLARE_WINDOW_APPLICATION(APPLICATION_NAME) DECLARE_INITIALIZE_TERMINAL_CODE(APPLICATION_NAME)
+
+//×¢²áWindowApplicationµÄÐÅÏ¢
+//**********************************************************************************************************************************************
+#define REGIST_WINDOW_APPLICATION(APPLICATION_NAME,WINDOWNAME) \
+IMPLEMENT_INITIALIZE_TERMINAL_BEGIN(APPLICATION_NAME)\
+REGIST_INITAILIZE_TERMINAL_COMMAND(APPLICATION_NAME)\
+IMPLEMENT_INITIALIZE_TERMINAL_END \
+bool APPLICATION_NAME::InitializeDefaultState()\
+{\
+	GApplication*& app = APPLICATION_NAME::GetApplication();\
+	if (app == nullptr)\
+		app = GNEW APPLICATION_NAME();\
+	if (app != nullptr) {\
+		app->m_WndClassName = L"BasicWndClassName";\
+		app->m_ApplicationTitle = WINDOWNAME;\
+		app->m_uiScreenWidth = 800;\
+		app->m_uiScreenHeight = 600;\
+	}\
+	return app != nullptr;\
+}\
+bool APPLICATION_NAME::TerminalDefaultState()\
+{\
+	GSAFE_DELETE(APPLICATION_NAME::GetApplication());\
+	return true;\
+}

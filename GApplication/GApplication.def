@@ -1,0 +1,4 @@
+LIBRARY GApplication
+EXPORTS
+    WinMain
+    main

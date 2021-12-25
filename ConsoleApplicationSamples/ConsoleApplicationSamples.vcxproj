@@ -24,6 +24,7 @@
     <ProjectGuid>{3bb82d6c-7965-4569-80a9-d9abcdec80d8}</ProjectGuid>
     <RootNamespace>CPlusPlusStandardLibrarySamples</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ConsoleApplicationSamples</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -118,13 +119,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../GGraphic;../GSystem;../GMath;../LitStl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../GApplication;../GGraphic;../GSystem;../GMath;../LitStl</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GMath.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphics.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GMath.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphic.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GApplication.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -166,6 +167,7 @@
     <ClInclude Include="UseGVectorSample.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="InitializeAndTerminalSystemSample.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>

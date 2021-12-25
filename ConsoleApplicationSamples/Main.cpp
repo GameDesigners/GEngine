@@ -37,6 +37,8 @@
 #include "ASMs.h"
 
 #include "GMathSample.h"
+
+#include "InitializeAndTerminalSystemSample.h"
 using namespace GEngine::GMath;
 
 using namespace GEngine::GStl;
@@ -197,10 +199,17 @@ void USE_GSTL_GARRAY()
 }
 
 
+#include <GConsoleApplication.h>
+using namespace GEngine::GApp;
 
+class CustomConsoleApplication : public GConsoleApplication
+{
+	DECLARE_CONSOLE_APPLICATION(CustomConsoleApplication)
+	virtual bool Run();
+};
+REGIST_CONSOLE_APPLICATION(CustomConsoleApplication)
 
-
-int main()
+bool CustomConsoleApplication::Run()
 {
 	//CPLUSPLUS_11_NEW_FEATURE_MAIN();
 	//COMMON_TOOL_MAIN();
@@ -215,18 +224,18 @@ int main()
 
 	//GArraySample();
 	GVectorSample();
-    //GDeuqeSample();   
+	//GDeuqeSample();   
 	//GListSample();
 	//GForwardListSample();
 	//GSetSample();
 	//GMapSample();
 	//GUnorderedSetSample();
-	
+
 
 	//GStringsSample();
 	//DelegateSample();
 	//AsmSample();
-	
+
 	//GMathSample();
 
 
@@ -237,5 +246,5 @@ int main()
 
 	/*Render - Part*/
 	//UseDirect3DSample();
-	return 0;
+	return true;
 }

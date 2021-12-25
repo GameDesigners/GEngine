@@ -1,0 +1,65 @@
+#ifndef INITIALIZE_AND_TERMINAL_SYSTEM_SAMPLE_H
+#define INITIALIZE_AND_TERMINAL_SYSTEM_SAMPLE_H
+#include "GMain.h"
+using namespace GEngine::GSystem;
+using namespace GEngine::GStl;
+using namespace GEngine::GGraphic;
+
+
+
+
+class CLASSOTHER
+{
+	DECLARE_INITIALIZE_TERMINAL_CODE(CLASSOTHER)
+
+public:
+	static int a;
+};
+int CLASSOTHER::a = 10;
+IMPLEMENT_INITIALIZE_TERMINAL_BEGIN(CLASSOTHER)
+REGIST_INITAILIZE_TERMINAL_COMMAND(CLASSOTHER)
+IMPLEMENT_INITIALIZE_TERMINAL_END
+
+
+inline bool CLASSOTHER::INITIALIZE_DEFAULT_STATE()
+{
+	a = 1;
+	cout << "初始化了CLASSOTHER的静态变量..." << endl;
+	return true;
+}
+
+inline bool CLASSOTHER::TERMINAL_DEFAULT_STATE()
+{
+	a = 0;
+	cout << "销毁了CLASSOTHER的静态变量..." << endl;
+	return true;
+}
+
+class CLASSNAME
+{
+	DECLARE_INITIALIZE_TERMINAL_CODE(CLASSNAME)
+
+	static int a;
+};
+int CLASSNAME::a = 10;
+
+IMPLEMENT_INITIALIZE_TERMINAL_BEGIN(CLASSNAME)
+ADD_DEPENDENCY(CLASSOTHER)
+REGIST_INITAILIZE_TERMINAL_COMMAND_WITH_PRIORITY(CLASSNAME)
+IMPLEMENT_INITIALIZE_TERMINAL_END
+
+inline bool CLASSNAME::INITIALIZE_DEFAULT_STATE()
+{
+	a = 1;
+	cout << "初始化了CLASSName的静态变量..." << endl;
+	return true;
+}
+
+inline bool CLASSNAME::TERMINAL_DEFAULT_STATE()
+{
+	a = 0;
+	cout << "销毁了CLASSName的静态变量..." << endl;
+	return true;
+}
+
+#endif // !INITIALIZE_AND_TERMINAL_SYSTEM_SAMPLE_H

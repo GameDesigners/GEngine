@@ -51,27 +51,33 @@ void GEngine::GGraphic::GMain::AddInitialFunction(Function Func, GPriority* pPri
 
 bool GEngine::GGraphic::GMain::Initialize()
 {
-	for (int index = 0; index < ms_pInitialPropertyVector->size(); index++)
+	if (ms_pInitialPropertyVector != nullptr)
 	{
-		if (!(*(*ms_pInitialPropertyVector)[index])(nullptr))
+		for (int index = 0; index < ms_pInitialPropertyVector->size(); index++)
 		{
-			GASSERT(0);
-			return false;
+			if (!(*(*ms_pInitialPropertyVector)[index])(nullptr))
+			{
+				GASSERT(0);
+				return false;
+			}
 		}
+		ms_pInitialPropertyVector->clear();
 	}
 
-	GStl::sort(ms_pInitialVector->begin(), ms_pInitialVector->end(), ElementLessThan());
-	for (int index = 0; index < ms_pInitialVector->size(); index++)
+	if (ms_pInitialVector != nullptr)
 	{
-		if (!(*ms_pInitialVector)[index].__fun())
+		GStl::sort(ms_pInitialVector->begin(), ms_pInitialVector->end(), ElementLessThan());
+		for (int index = 0; index < ms_pInitialVector->size(); index++)
 		{
-			GASSERT(0);
-			return false;
+			if (!(*ms_pInitialVector)[index].__fun())
+			{
+				GASSERT(0);
+				return false;
+			}
 		}
+		ms_pInitialVector->clear();
 	}
 
-	ms_pInitialPropertyVector->clear();
-	ms_pInitialVector->clear();
 	GSAFE_DELETE(ms_pInitialPropertyVector);
 	GSAFE_DELETE(ms_pInitialVector);
 	return true;
@@ -98,27 +104,33 @@ void GEngine::GGraphic::GMain::AddTerminalFuntion(Function Func, GPriority* pPri
 
 bool GEngine::GGraphic::GMain::Terminate()
 {
-	for (int index = ms_pTerminalPropertyVector->size(); index >= 0; index--)
+	if (ms_pTerminalPropertyVector!=nullptr)
 	{
-		if (!(*(*ms_pTerminalPropertyVector)[index])())
+		for (int index = ms_pTerminalPropertyVector->size() - 1; index >= 0; index--)
 		{
-			GASSERT(0);
-			return false;
+			if (!(*(*ms_pTerminalPropertyVector)[index])())
+			{
+				GASSERT(0);
+				return false;
+			}
 		}
+		ms_pTerminalPropertyVector->clear();
 	}
-
-	GStl::sort(ms_pTerminalVector->begin(), ms_pTerminalVector->end(), ElementLessThan());
-	for (int index = ms_pTerminalVector->size(); index >= 0; index--)
+	
+	if (ms_pTerminalVector != nullptr)
 	{
-		if (!(*ms_pTerminalVector)[index].__fun())
+		GStl::sort(ms_pTerminalVector->begin(), ms_pTerminalVector->end(), ElementLessThan());
+		for (int index = ms_pTerminalVector->size() - 1; index >= 0; index--)
 		{
-			GASSERT(0);
-			return false;
+			if (!(*ms_pTerminalVector)[index].__fun())
+			{
+				GASSERT(0);
+				return false;
+			}
 		}
+		ms_pTerminalVector->clear();
 	}
-
-	ms_pTerminalPropertyVector->clear();
-	ms_pTerminalVector->clear();
+	
 	GSAFE_DELETE(ms_pTerminalPropertyVector);
 	GSAFE_DELETE(ms_pTerminalVector);
 	return true;
