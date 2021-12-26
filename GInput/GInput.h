@@ -14,19 +14,28 @@
 
 namespace GEngine {
 	namespace GInput {
-		enum class InputDevices
+		enum class GInputDevices
 		{
 			ID_Keyboard,
 			ID_Mouse
 		};
 
-		enum class MouseButton
+		enum class GInputAction
 		{
+			Down,
+			Up,
+			DBClick,
+		};
+
+		enum class GMouseButton
+		{
+			None,
 			LButton,
 			MButton,
-			RButton
+			RButton,
+			Wheel
 		};
-		enum KeyCode : unsigned int
+		enum class KeyCode : unsigned int
 	    {
 		    NONE         = 0x00          ,
 		    Escape       = VK_ESCAPE     ,

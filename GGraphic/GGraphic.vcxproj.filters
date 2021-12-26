@@ -12,6 +12,9 @@
     <Filter Include="Marc Files">
       <UniqueIdentifier>{03f6843a-da81-48c5-bd62-e7db251f18ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Inl Files">
+      <UniqueIdentifier>{b9cd230b-f892-4c46-91bc-816b3fe59e09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GGraphics.h">
@@ -21,6 +24,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GReference.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GRtti.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -34,10 +46,25 @@
     <ClCompile Include="GMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GReference.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GRtti.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="GMain.marc">
       <Filter>Marc Files</Filter>
+    </None>
+    <None Include="GRtti.marc">
+      <Filter>Marc Files</Filter>
+    </None>
+    <None Include="GReference.inl">
+      <Filter>Inl Files</Filter>
     </None>
   </ItemGroup>
 </Project>

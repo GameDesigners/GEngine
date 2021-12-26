@@ -119,13 +119,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../GApplication;../GGraphic;../GSystem;../GMath;../LitStl</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../GInput;../GApplication;../GGraphic;../GSystem;../GMath;../LitStl</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GMath.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphic.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GApplication.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GMath.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphic.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GApplication.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GInput.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,6 +154,8 @@
     <ClInclude Include="CPlusPlus_11_NewFeature.h" />
     <ClInclude Include="GDirect3DVectorSample.h" />
     <ClInclude Include="GMathSample.h" />
+    <ClInclude Include="GObjectSmartPointerSamples.h" />
+    <ClInclude Include="GRttiSample.h" />
     <ClInclude Include="InitializeAndTerminalSystemSample.h" />
     <ClInclude Include="UseDelegateSample.h" />
     <ClInclude Include="UseGMapAndGMultiMapSample.h" />

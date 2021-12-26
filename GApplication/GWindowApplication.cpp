@@ -90,18 +90,44 @@ LRESULT GEngine::GApp::GWindowApplication::MsgProc(HWND hwnd, UINT msg, WPARAM w
 {
 	switch (msg)
 	{
-	case WM_LBUTTONDOWN:
-		MessageBox(0, L"Hello ,GEngine...", L"Hello", MB_OK);
+	case WM_CREATE:                    //应用程序创建一个窗口
 		return 0;
-	case WM_KEYDOWN:
-		if (wParam == VK_ESCAPE)
-			DestroyWindow(m_hwnd);
+	case WM_MOVE:                      //移动一个窗口
 		return 0;
-	case WM_DESTROY:
+	case WM_SIZE:                      //改变一个窗口的大小
+		return 0;
+	case WM_ACTIVATE:                  //一个窗口被激活或失去激活
+		return 0;
+	case WM_SETFOCUS:                  //窗口获得焦点
+		return 0;
+	case WM_KILLFOCUS:                 //窗口失去焦点
+		return 0;
+	case WM_ENABLE:                    //改变Enable状态
+		return 0;
+
+
+	//*Input System Msg Receive*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	case WM_KEYDOWN:      ms_pApplication->GEngineInputProc(GInputDevices::ID_Keyboard, (KeyCode)wParam, GMouseButton::None, GInputAction::Down, 0, 0, 0); return 0;
+	case WM_KEYUP:        ms_pApplication->GEngineInputProc(GInputDevices::ID_Keyboard, (KeyCode)wParam, GMouseButton::None, GInputAction::Up, 0, 0, 0); return 0;
+	case WM_MOUSEMOVE:    ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::None, GInputAction::Up, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_LBUTTONDOWN:  ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::LButton, GInputAction::Down, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_LBUTTONUP:    ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::LButton, GInputAction::Up, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_LBUTTONDBLCLK:ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::LButton, GInputAction::DBClick, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_MBUTTONDOWN:  ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::MButton, GInputAction::Down, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_MBUTTONUP:    ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::MButton, GInputAction::Up, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_MBUTTONDBLCLK:ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::MButton, GInputAction::DBClick, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_RBUTTONDOWN:  ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::RButton, GInputAction::Down, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_RBUTTONUP:    ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::RButton, GInputAction::Up, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_RBUTTONDBLCLK:ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::RButton, GInputAction::DBClick, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_MOUSEWHEEL:   ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::Wheel, GInputAction::Down, LOWORD(lParam), HIWORD(lParam), HIWORD(wParam)); return 0;
+	//*Input System Msg Receive*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+	case WM_DESTROY:                   //一个窗口被销毁
 		PostQuitMessage(0);
 		return 0;
 	}
-
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
@@ -169,4 +195,90 @@ bool GEngine::GApp::GWindowApplication::InitialWindow()
 bool GEngine::GApp::GWindowApplication::TerminalWindow()
 {
 	return UnregisterClass(L"BasicWndClassName", m_hInstance);
+}
+
+void GEngine::GApp::GWindowApplication::GEngineInputProc(GInputDevices dt, KeyCode key, GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet)
+{
+	//调用键盘事件函数
+	if (dt == GInputDevices::ID_Keyboard)
+	{
+		if (action == GInputAction::Down) 
+		{
+			OnKeyDown(key);
+			return;
+		}
+
+		if (action == GInputAction::Up) 
+		{
+			OnKeyUp(key);
+			return;
+		}
+	}
+
+	else if (dt == GInputDevices::ID_Mouse)
+	{
+		if (mb == GMouseButton::Wheel)
+		{
+			OnMouseWheel(xPos, yPos, zDet);
+			return;
+		}
+
+		if (action == GInputAction::Down) 
+		{
+			if (mb == GMouseButton::LButton) 
+			{
+				OnLButtonDown(xPos, yPos);
+				return;
+			}
+			if (mb == GMouseButton::MButton) 
+			{
+				OnMButtonDown(xPos, yPos);
+				return;
+			}
+			if (mb == GMouseButton::RButton) 
+			{
+				OnRButtonDown(xPos, yPos);
+				return;
+			}
+		}
+
+		if (action == GInputAction::Up)
+		{
+			if (mb == GMouseButton::LButton) 
+			{
+				OnLButtonUp(xPos, yPos);
+				return;
+			}
+			if (mb == GMouseButton::MButton) 
+			{
+				OnMButtonUp(xPos, yPos);
+				return;
+			}
+			if (mb == GMouseButton::RButton) 
+			{
+				OnRButtonUp(xPos, yPos);
+				return;
+			}
+		}
+
+		if (action == GInputAction::Up)
+		{
+			if (mb == GMouseButton::LButton)
+			{
+				OnLButtonUp(xPos, yPos);
+				return;
+			}
+			if (mb == GMouseButton::MButton) 
+			{
+				OnMButtonUp(xPos, yPos);
+				return;
+			}
+			if (mb == GMouseButton::RButton) 
+			{
+				OnRButtonUp(xPos, yPos);
+				return;
+			}
+		}
+	}
+
 }

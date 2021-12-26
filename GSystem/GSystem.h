@@ -382,6 +382,25 @@ namespace GEngine
 			    return NULL;
             #endif
 		}
+
+
+
+		FORCEINLINE void GLockedIncrement(long* pRefCount)
+		{
+            #ifdef WINDOWS
+			    _InterlockedIncrement(pRefCount);
+            #else
+			    return;
+            #endif
+		}
+		FORCEINLINE void GLockedDecrement(long* pRefCount)
+		{
+            #ifdef WINDOWS
+            	_InterlockedDecrement(pRefCount);
+            #else
+            	return;
+            #endif
+		}
 	}
 }
 

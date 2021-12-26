@@ -145,15 +145,23 @@
   <ItemGroup>
     <ClInclude Include="GGraphics.h" />
     <ClInclude Include="GMain.h" />
+    <ClInclude Include="GObject.h" />
     <ClInclude Include="GPriority.h" />
+    <ClInclude Include="GReference.h" />
+    <ClInclude Include="GRtti.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GGraphic.cpp" />
     <ClCompile Include="GMain.cpp" />
+    <ClCompile Include="GObject.cpp" />
     <ClCompile Include="GPriority.cpp" />
+    <ClCompile Include="GReference.cpp" />
+    <ClCompile Include="GRtti.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GMain.marc" />
+    <None Include="GReference.inl" />
+    <None Include="GRtti.marc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

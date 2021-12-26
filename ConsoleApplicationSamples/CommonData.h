@@ -1,10 +1,12 @@
 #include <GSystem.h>
 #include <iostream>
 #include <GHashFunction.h>
+#include <GReference.h>
 #ifndef COMMON_DATA_H
 #define COMMON_DATA_H
 using namespace GEngine::GStl;
-class SamplesElem
+using namespace GEngine::GGraphic;
+class SamplesElem : public GReference
 {
 public:
 	int* i;

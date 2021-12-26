@@ -6,6 +6,8 @@
 namespace GEngine{
 	namespace GStl {
 
+		//Shared Smart Pointer (不适用于GObjectSystem中的对象，那里会通过继承的方式实现一个嵌入类中的智能指针)
+        //**********************************************************************************************************************************************
 		template<typename T>
 		class GSTL_API GSharedPtr
 		{

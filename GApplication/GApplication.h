@@ -3,11 +3,13 @@
 #include <GTimer.h>
 #include <GMemManager.h>
 #include <GStrings.h>
+#include <GInput.h>
 #include "GCommand.h"
 
 namespace GEngine {
 	namespace GApp {
 		using namespace GEngine::GSystem;
+		using namespace GEngine::GInput;
 
 		class GAPPLICATION_API GApplication : public GMemObject
 		{
@@ -52,13 +54,15 @@ namespace GEngine {
 			virtual bool PostUpdate();
 			virtual bool OnDraw();
 
+			virtual void OnMove(int xPos, int yPos);
+			virtual void OnResizeWindow(int iWidth, int iHeight);
+
 			//鼠标键盘事件函数
 			//**********************************************************************************************************************************************
 			
-			virtual void OnMove(int xPos, int yPos);
-			virtual void OnResizeWindow(int iWidth, int iHeight);
-			virtual void OnKeyDown(unsigned int uiKey);
-			virtual void OnKeyUp(unsigned int uiKey);
+			virtual void GEngineInputProc(GInputDevices dt, KeyCode key,GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet);
+			virtual void OnKeyDown(KeyCode uiKey);
+			virtual void OnKeyUp(KeyCode uiKey);
 			virtual void OnLButtonDown(int xPos, int yPos);
 			virtual void OnLButtonUp(int xPos, int yPos);
 			virtual void OnRButtonDown(int xPos, int yPos);

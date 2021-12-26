@@ -83,9 +83,6 @@
     <ClInclude Include="GUnorderedSet.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
-    <ClInclude Include="GUnorderedMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GStrings.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
@@ -100,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="GTypeTraits.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUnorderedMap.h">
+      <Filter>Header Files\GContainers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

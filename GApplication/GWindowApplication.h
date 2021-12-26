@@ -18,6 +18,9 @@ namespace GEngine {
 		protected:
 			virtual bool InitialWindow();
 			virtual bool TerminalWindow();
+		
+		protected:
+			virtual void GEngineInputProc(GInputDevices dt, KeyCode key, GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet);
 
 			HWND m_hwnd;
 			HINSTANCE m_hInstance;

@@ -7,6 +7,8 @@
 #else 
 #define GGRAPHIC_API __declspec(dllimport) 
 #endif
+#include <GSystem.h>
+#include <GMemManager.h>
 
 namespace GEngine {
 	namespace GGraphic {

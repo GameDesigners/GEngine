@@ -20,10 +20,11 @@ bool GEngine::GApp::GApplication::PostUpdate() { return true; }
 bool GEngine::GApp::GApplication::OnDraw() { return true; }
 
 
+void GEngine::GApp::GApplication::GEngineInputProc(GInputDevices dt, KeyCode key, GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet) {}
 void GEngine::GApp::GApplication::OnMove(int xPos, int yPos) {}
 void GEngine::GApp::GApplication::OnResizeWindow(int iWidth, int iHeight) {}
-void GEngine::GApp::GApplication::OnKeyDown(unsigned int uiKey) {}
-void GEngine::GApp::GApplication::OnKeyUp(unsigned int uiKey) {}
+void GEngine::GApp::GApplication::OnKeyDown(KeyCode uiKey) {}
+void GEngine::GApp::GApplication::OnKeyUp(KeyCode uiKey) {}
 void GEngine::GApp::GApplication::OnLButtonDown(int xPos, int yPos) {}
 void GEngine::GApp::GApplication::OnLButtonUp(int xPos, int yPos) {}
 void GEngine::GApp::GApplication::OnRButtonDown(int xPos, int yPos) {}

@@ -20,7 +20,8 @@ template<typename T>
 GSharedPtr<T>::GSharedPtr(const GSharedPtr& ptr)
 {
 	p_reference_count = ptr.p_reference_count;
-	(*p_reference_count)++;
+	//(*p_reference_count)++;
+	GEngine::GSystem::GLockedIncrement((long*)p_reference_count);
 	val = ptr.val;
 }
 
@@ -38,7 +39,8 @@ GSharedPtr<T>::GSharedPtr(const GSharedPtr& ptr)
 template<typename T>
 GSharedPtr<T>::~GSharedPtr()
 {
-	(*p_reference_count)--;
+	//(*p_reference_count)--;
+	GEngine::GSystem::GLockedDecrement((long*)p_reference_count);
 	if (*p_reference_count == 0)
 	{
 		if (val != nullptr) {

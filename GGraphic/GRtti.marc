@@ -1,0 +1,43 @@
+//RTTI类内定义
+//**********************************************************************************************************************************************
+#define DECLARE_RTTI(CLASSNAME) \
+public: \
+	static GEngine::GGraphic::GRtti ms_rtti_##CLASSNAME; \
+	virtual const GEngine::GGraphic::GRtti& GetType() const; \
+	bool IsSampleType(const CLASSNAME* rhs) const; \
+	bool IsDerived(const CLASSNAME* rhs) const; \
+	bool IsSampleType(const GRtti& rhs) const; \
+	bool IsDerived(const GRtti& rhs) const;
+
+
+//RTTI类外实现
+//**********************************************************************************************************************************************
+#define IMPLEMENT_RTTI_NO_PARENT_NO_GENERATE_FUNC(CLASSNAME)           IMPLEMENT_RTTI(CLASSNAME,nullptr,nullptr)
+#define IMPLEMENT_RTTI_NO_GENERATE_FUNC(CLASSNAME,PARENT_CLASSNAME)    IMPLEMENT_RTTI(CLASSNAME,&PARENT_CLASSNAME::ms_rtti_##PARENT_CLASSNAME,nullptr)                 
+#define IMPLEMENT_RTTI_ALL(CLASSNAME,PARENT_CLASSNAME,GENERATE_FUNC)   IMPLEMENT_RTTI(CLASSNAME,&PARENT_CLASSNAME::ms_rtti_##PARENT_CLASSNAME,GENERATE_FUNC)                 
+
+
+#define IMPLEMENT_RTTI(CLASSNAME,PARENT_GRTTI,GENERATE_FUNC) \
+GEngine::GGraphic::GRtti CLASSNAME::ms_rtti_##CLASSNAME(_T(#CLASSNAME), PARENT_GRTTI, GENERATE_FUNC); \
+const GEngine::GGraphic::GRtti& CLASSNAME::GetType() const \
+{ \
+	return ms_rtti_##CLASSNAME; \
+} \
+inline bool CLASSNAME::IsSampleType(const CLASSNAME* rhs) const \
+{ \
+	if (rhs == nullptr) return false; \
+	return GetType().IsSampleType(rhs->GetType()); \
+} \
+inline bool CLASSNAME::IsDerived(const CLASSNAME* rhs) const \
+{ \
+	if (rhs == nullptr) return false; \
+	return GetType().IsDerived(rhs->GetType()); \
+} \
+inline bool CLASSNAME::IsSampleType(const GRtti& rhs) const \
+{ \
+	return GetType().IsSampleType(rhs); \
+} \
+inline bool CLASSNAME::IsDerived(const GRtti& rhs) const \
+{ \
+	return GetType().IsDerived(rhs); \
+}

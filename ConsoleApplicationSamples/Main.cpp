@@ -39,6 +39,8 @@
 #include "GMathSample.h"
 
 #include "InitializeAndTerminalSystemSample.h"
+#include "GObjectSmartPointerSamples.h"
+#include "GRttiSample.h"
 using namespace GEngine::GMath;
 
 using namespace GEngine::GStl;
@@ -223,7 +225,7 @@ bool CustomConsoleApplication::Run()
 	//USE_GSTL_GARRAY();
 
 	//GArraySample();
-	GVectorSample();
+	//GVectorSample();
 	//GDeuqeSample();   
 	//GListSample();
 	//GForwardListSample();
@@ -246,5 +248,7 @@ bool CustomConsoleApplication::Run()
 
 	/*Render - Part*/
 	//UseDirect3DSample();
+	//GObjectSmartPointerSample();
+	GRttiSample();
 	return true;
 }
