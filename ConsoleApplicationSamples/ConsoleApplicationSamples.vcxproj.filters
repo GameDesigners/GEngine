@@ -59,10 +59,13 @@
       <Filter>Others</Filter>
     </ClInclude>
     <ClInclude Include="GObjectSmartPointerSamples.h">
-      <Filter>GObjectStstemSamples</Filter>
+      <Filter>GObjectSystemSamples</Filter>
     </ClInclude>
     <ClInclude Include="GRttiSample.h">
-      <Filter>GObjectStstemSamples</Filter>
+      <Filter>GObjectSystemSamples</Filter>
+    </ClInclude>
+    <ClInclude Include="GObjectInitializeSample.h">
+      <Filter>GObjectSystemSamples</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -84,7 +87,7 @@
     <Filter Include="Others">
       <UniqueIdentifier>{c93b328a-9667-45c8-88ba-706d12c3f2e5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GObjectStstemSamples">
+    <Filter Include="GObjectSystemSamples">
       <UniqueIdentifier>{e1f00354-3b70-45d5-bbe5-d3d7f93fbcbe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

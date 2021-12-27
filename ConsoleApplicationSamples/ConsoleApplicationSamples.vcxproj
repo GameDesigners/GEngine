@@ -154,6 +154,7 @@
     <ClInclude Include="CPlusPlus_11_NewFeature.h" />
     <ClInclude Include="GDirect3DVectorSample.h" />
     <ClInclude Include="GMathSample.h" />
+    <ClInclude Include="GObjectInitializeSample.h" />
     <ClInclude Include="GObjectSmartPointerSamples.h" />
     <ClInclude Include="GRttiSample.h" />
     <ClInclude Include="InitializeAndTerminalSystemSample.h" />

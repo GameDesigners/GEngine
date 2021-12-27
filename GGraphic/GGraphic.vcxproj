@@ -147,6 +147,7 @@
     <ClInclude Include="GMain.h" />
     <ClInclude Include="GObject.h" />
     <ClInclude Include="GPriority.h" />
+    <ClInclude Include="GProperty.h" />
     <ClInclude Include="GReference.h" />
     <ClInclude Include="GRtti.h" />
   </ItemGroup>
@@ -155,11 +156,13 @@
     <ClCompile Include="GMain.cpp" />
     <ClCompile Include="GObject.cpp" />
     <ClCompile Include="GPriority.cpp" />
+    <ClCompile Include="GProperty.cpp" />
     <ClCompile Include="GReference.cpp" />
     <ClCompile Include="GRtti.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GMain.marc" />
+    <None Include="GObject.marc" />
     <None Include="GReference.inl" />
     <None Include="GRtti.marc" />
   </ItemGroup>

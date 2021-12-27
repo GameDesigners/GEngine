@@ -35,7 +35,7 @@ bool CLASSNAME::RegistMainFactory()\
 	return ms_bRegistedFactory;\
 }
 
-//初始化和销毁的一些操作
+//初始化和销毁的一些操作(只有引用上面的宏定义才可以执行的操作)
 //**********************************************************************************************************************************************
 
 //1.添加类依赖
@@ -48,7 +48,17 @@ if (!ms_pPriority.AddPriorityThan(&CLASSNAME::ms_pPriority))\
 GEngine::GGraphic::GMain::AddInitialFunction(&CLASSNAME::INITIALIZE_DEFAULT_STATE,&ms_pPriority);\
 GEngine::GGraphic::GMain::AddTerminalFuntion(*CLASSNAME::TERMINAL_DEFAULT_STATE,&ms_pPriority);
 
-//2.注册无优先级的初始化和销毁命令
+//3.注册无优先级的初始化和销毁命令
 #define REGIST_INITAILIZE_TERMINAL_COMMAND(CLASSNAME) \
 GEngine::GGraphic::GMain::AddInitialFunction(&CLASSNAME::INITIALIZE_DEFAULT_STATE);\
 GEngine::GGraphic::GMain::AddTerminalFuntion(*CLASSNAME::TERMINAL_DEFAULT_STATE);
+
+//4.初始化自定义类工厂命令(只能应用于含RTTI定义的类)
+#define ADD_DEFAULT_GENERATE_FUN_TO_CLASS_FACTORY(CLASSNAME) \
+CLASSNAME::Type.InitialGenerateFun((FactoryFunction*)&CLASSNAME::DEFAULT_GENERATE_FUNC); \
+ms_ClassFactory.insert(Type.Name(), DEFAULT_GENERATE_FUNC);
+
+//5.初始化自定义类工厂命令
+#define ADD_CUSTOM_GENERATE_FUN_TO_CLASS_FACTORY(FUNCTION_NAME) \
+CLASSNAME::Type.InitialGenerateFun((FactoryFunction*)&CLASSNAME::FUNCTION_NAME); \
+ms_ClassFactory.insert(Type.Name(), FUNCTION_NAME);

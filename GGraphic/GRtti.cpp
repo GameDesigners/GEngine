@@ -1,6 +1,6 @@
 #include "GRtti.h"
 
-GEngine::GGraphic::GRtti::GRtti(const TCHAR* _className, GRtti* _parent, CreateObjectFunc* cof)
+GEngine::GGraphic::GRtti::GRtti(const TCHAR* _className, GRtti* _parent, FactoryFunction* cof)
 {
 	m_className = _className;
 	m_pParent = _parent;
@@ -40,4 +40,9 @@ bool GEngine::GGraphic::GRtti::IsDerived(const GRtti& rhs) const
 const GEngine::GStl::GTString& GEngine::GGraphic::GRtti::Name() const
 {
 	return m_className;
+}
+
+void GEngine::GGraphic::GRtti::InitialGenerateFun(FactoryFunction* cof)
+{
+	__cof = cof;
 }

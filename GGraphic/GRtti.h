@@ -6,12 +6,12 @@ namespace GEngine {
 	namespace GGraphic {
 
 		class GObject;
-		typedef GObject* (*CreateObjectFunc)();
+		typedef GObject* (*FactoryFunction)();
 
 		class GGRAPHIC_API GRtti
 		{
 		public:
-			GRtti(const TCHAR* _className, GRtti* _parent, CreateObjectFunc* cof);
+			GRtti(const TCHAR* _className, GRtti* _parent, FactoryFunction* cof);
 			~GRtti();
 
 			bool operator==(const GRtti& rhs) const;
@@ -20,6 +20,7 @@ namespace GEngine {
 			bool IsDerived(const GRtti& rhs) const;
 			const GStl::GTString& Name() const;
 			
+			void InitialGenerateFun(FactoryFunction* cof);
 			inline GObject* Generate()
 			{
 				if (__cof != nullptr)
@@ -30,7 +31,7 @@ namespace GEngine {
 		private:
 			GStl::GTString m_className;
 			GRtti* m_pParent;
-			CreateObjectFunc* __cof;
+			FactoryFunction* __cof;
 		};
 
 #include "GRtti.marc"

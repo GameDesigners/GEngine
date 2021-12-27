@@ -35,6 +35,9 @@
     <ClInclude Include="GObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GProperty.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GGraphic.cpp">
@@ -55,6 +58,9 @@
     <ClCompile Include="GObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GProperty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="GMain.marc">
@@ -65,6 +71,9 @@
     </None>
     <None Include="GReference.inl">
       <Filter>Inl Files</Filter>
+    </None>
+    <None Include="GObject.marc">
+      <Filter>Marc Files</Filter>
     </None>
   </ItemGroup>
 </Project>

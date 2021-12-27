@@ -41,6 +41,7 @@
 #include "InitializeAndTerminalSystemSample.h"
 #include "GObjectSmartPointerSamples.h"
 #include "GRttiSample.h"
+#include "GObjectInitializeSample.h"
 using namespace GEngine::GMath;
 
 using namespace GEngine::GStl;
@@ -249,6 +250,7 @@ bool CustomConsoleApplication::Run()
 	/*Render - Part*/
 	//UseDirect3DSample();
 	//GObjectSmartPointerSample();
-	GRttiSample();
+	//GRttiSample();
+	GObjectIntializeSample();
 	return true;
 }
