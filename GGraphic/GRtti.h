@@ -6,6 +6,7 @@ namespace GEngine {
 	namespace GGraphic {
 
 		class GObject;
+		class GProperty;
 		typedef GObject* (*FactoryFunction)();
 
 		class GGRAPHIC_API GRtti
@@ -28,10 +29,19 @@ namespace GEngine {
 				return nullptr;
 			}
 
+			GProperty* GetProperty(unsigned int uiIndex) const;
+			unsigned int GetPropertyNum() const;
+			void AddProperty(GProperty* pProperty);
+			void AddProperty(GRtti& rtti);
+			void ClearProperty();
+
+
 		private:
 			GStl::GTString m_className;
 			GRtti* m_pParent;
 			FactoryFunction* __cof;
+
+			GStl::GVector<GProperty*> m_PropertyArray;
 		};
 
 #include "GRtti.marc"

@@ -75,5 +75,8 @@
     <None Include="GObject.marc">
       <Filter>Marc Files</Filter>
     </None>
+    <None Include="GProperty.inl">
+      <Filter>Inl Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

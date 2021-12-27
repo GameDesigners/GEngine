@@ -163,6 +163,7 @@
   <ItemGroup>
     <None Include="GMain.marc" />
     <None Include="GObject.marc" />
+    <None Include="GProperty.inl" />
     <None Include="GReference.inl" />
     <None Include="GRtti.marc" />
   </ItemGroup>
