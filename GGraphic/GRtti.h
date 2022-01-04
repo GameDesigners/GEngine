@@ -1,6 +1,7 @@
 #ifndef GRTTI_H
 #define GRTTI_H
 #include <GStrings.h>
+#include <GVector.h>
 #include "GGraphics.h"
 namespace GEngine {
 	namespace GGraphic {

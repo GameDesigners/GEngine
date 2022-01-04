@@ -47,3 +47,24 @@ inline GEngine::GGraphic::GProperty* GEngine::GGraphic::GEnumProperty<T>::GetIns
 	return GNEW GEnumProperty<T>();
 }
 
+
+template<typename T>
+GEngine::GGraphic::GDataProperty<T>::GDataProperty(GRtti& owner, const GUserdName& name, unsigned int uiElementOffset, unsigned int uiDataNum, bool bDynamicCreate)
+	: GProperty(owner, name, uiElementOffset, F_SAVE_LOAD_CLONE)
+{
+	m_bDynamicCreate = bDynamicCreate;
+	m_uiDataNum = uiDataNum;
+	m_uiElementOffset = uiElementOffset;
+}
+
+template<typename T>
+inline void GEngine::GGraphic::GDataProperty<T>::Clone(GProperty* p)
+{
+
+}
+
+template<typename T>
+inline GEngine::GGraphic::GProperty* GEngine::GGraphic::GDataProperty<T>::GetInstance()
+{
+	return nullptr;
+}

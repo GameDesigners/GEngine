@@ -11,3 +11,7 @@ void* GEngine::GGraphic::GProperty::GetValueAddress(void* pObj) const
 {
 	return (void*)(((unsigned char*)pObj) + m_uiElementOffset);
 }
+
+void GEngine::GGraphic::GProperty::Clone(GProperty* p)
+{
+}

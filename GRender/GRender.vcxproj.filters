@@ -5,18 +5,21 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Libs">
-      <UniqueIdentifier>{479dd5c0-1374-4197-8228-b2d1d86e4707}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{00aabdea-2ed0-4a1d-8944-5b3ac83d472c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Direct3D Libs">
+      <UniqueIdentifier>{479dd5c0-1374-4197-8228-b2d1d86e4707}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs\d3dx12.h">
-      <Filter>Libs</Filter>
+      <Filter>Direct3D Libs</Filter>
     </ClInclude>
     <ClInclude Include="GRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GDirect3DRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -24,5 +27,6 @@
     <ClCompile Include="GRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GDirect3DRender.cpp" />
   </ItemGroup>
 </Project>

@@ -7,6 +7,7 @@
 
 #include <GSystem.h>
 #include <GTimer.h>
+#include <GStrings.h>
 
 #include "libs/d3dx12.h"
 
@@ -23,85 +24,37 @@
 
 namespace GEngine {
 	namespace GRender {
-		using namespace Microsoft::WRL;
-		using namespace GEngine::GSystem;
-
 		class GRENDER_API GRender
 		{
 		public:
 			GRender(HINSTANCE hInstance);
-			~GRender();
+			virtual ~GRender();
 
 			GRender(const GRender& rhs) = delete;
 			void operator=(const GRender& rhs) = delete;
 
 		public:
 			static GRender* GetApp();
+			static GRender* m_pRender;
 
 			HINSTANCE AppInstance() const;
 			HWND MainWnd() const;
 			float AspectRatio() const;
-			bool Get4xMsaaState() const;
-			void Set4xMsaaState(bool value);
 
 			virtual bool Initialize();
-			virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-			virtual void CreateRtvAndDsvDescriptorHeaps();
 			virtual void OnResize();
 			virtual void Draw();
 
+
 		protected:
-			bool InitMainWindow();
-			bool InitDirect3D();
-			void CreateCommandObjects();
-			void CreateSwapChain();
-			void FlushCommandQueue();
+			HINSTANCE                     m_AppInstance;
+			HWND                          m_hMainWnd;
+			
 
-		private:
-			D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const {
-				return CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_curBackBuffer, m_rtvDescriptorSize);
-			}
-
-			D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const {
-				return m_dsvHeap->GetCPUDescriptorHandleForHeapStart();
-			}	
-
-		private:
-			static const int ms_SwapChainBufferCount = 2;
-
-			HINSTANCE m_AppInstance;
-			HWND      m_hMainWnd;
-
-			ComPtr<IDXGIFactory4> m_d3dGIFactory;
-			ComPtr<ID3D12Device>  m_d3dDevice;
-			ComPtr<ID3D12Fence>   m_d3dFence;
-			UINT m_currentFence = 0;
-
-			ComPtr<ID3D12CommandQueue> m_commandQueue;
-			ComPtr<ID3D12CommandAllocator> m_directCmdListAlloc;
-			ComPtr<ID3D12GraphicsCommandList> m_commandList;
-
-			ComPtr<IDXGISwapChain> m_swapChain;
-			ComPtr<ID3D12Resource> m_swapChainBuffer[ms_SwapChainBufferCount];
-
-			size_t m_rtvDescriptorSize = 0;
-			size_t m_dsvDescriptorSize = 0;
-			size_t m_cbvDescriptorSize = 0;
-			ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
-			ComPtr<ID3D12DescriptorHeap> m_dsvHeap;
-			ComPtr<ID3D12Resource>       m_depthStencilBuffer;
-			D3D12_RECT                   m_scissorRect;
-
-			DXGI_FORMAT m_backBufferFormat;
-			DXGI_FORMAT m_depthStencilFormat;
-			UINT        m_4xMsaaQuality;
-			UINT        m_clientWidth;
-			UINT        m_clientHeight;
-
-			bool        m_4xMsaaState = true;
-			int         m_curBackBuffer = 0;
-
-			GTimer&     m_timer;
+			UINT                          m_clientWidth;
+			UINT                          m_clientHeight;
+			bool                          m_bWindow = true;
+			GEngine::GSystem::GTimer*     m_pTimer;
 		};
 	}
 }

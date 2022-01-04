@@ -8,6 +8,7 @@ namespace GEngine {
 		typedef GStl::GTString GUserdName;
 		class GGRAPHIC_API GProperty
 		{
+		protected:
 			enum
 			{
 				F_SAVE_LOAD       = 0X01,
@@ -43,6 +44,22 @@ namespace GEngine {
 			virtual GProperty* GetInstance();
 
 			GUserdName m_EnumName;
+		};
+
+		template<typename T>
+		class GGRAPHIC_API GDataProperty : public GProperty
+		{
+			GDataProperty(GRtti& owner, const GUserdName& name, unsigned int uiElementOffset, unsigned int uiDataNum, bool bDynamicCreate);
+
+			virtual void Clone(GProperty* p);
+			virtual GProperty* GetInstance();
+
+		private:
+			bool m_bDynamicCreate;
+			unsigned int m_uiDataNum;
+			unsigned int m_uiElementOffset;
+
+			
 		};
 
 #include "GProperty.inl"
