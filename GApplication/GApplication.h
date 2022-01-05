@@ -10,6 +10,7 @@ namespace GEngine {
 	namespace GApp {
 		using namespace GEngine::GSystem;
 		using namespace GEngine::GInput;
+		using namespace GEngine::GRender;
 
 		class GAPPLICATION_API GApplication : public GMemObject
 		{
@@ -28,7 +29,7 @@ namespace GEngine {
 
 		public:
 			GCommand*     m_pCommand;
-			RenderAPIType m_renderApiType;
+			RenderAPIType m_renderApiType= RenderAPIType::Direct3D;
 			unsigned int  m_uiScreenWidth;
 			unsigned int  m_uiScreenHeight;
 			unsigned int  m_uiAnisotroty;    //ÒìÏò¹ýÂË

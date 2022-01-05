@@ -10,13 +10,10 @@
 
 #include<Windows.h>
 #include<GMain.h>
+#include<GDirect3DRender.h>
 
 namespace GEngine {
 	namespace GApp {
-		enum RenderAPIType : unsigned char {
-			Direct3D,
-			OpenGL
-		};
 	}
 }
 

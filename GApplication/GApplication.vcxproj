@@ -117,12 +117,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\GInput\;..\LitStl\;..\GGraphic\;..\GSystem\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GRender\;..\GInput\;..\LitStl\;..\GGraphic\;..\GSystem\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphic.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GInput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphic.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GInput.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GRender.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>GApplication.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>

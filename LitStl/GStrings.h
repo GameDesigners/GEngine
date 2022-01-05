@@ -263,6 +263,14 @@ namespace GEngine {
 			_itow_s(val, tmp, 10);
 			return GTString(tmp);
 		}
+
+		inline GTString to_tstring(unsigned int val)
+		{
+			TCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];
+			_itow_s(val, tmp, 10);
+			return GTString(tmp);
+		}
+
 		inline GTString to_tstring(long val)
 		{
 			TCHAR tmp[CONVERT_TO_WSTRING_BUFFER_LENGTH];

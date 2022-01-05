@@ -13,11 +13,17 @@ namespace GEngine {
 		public:
 			virtual bool Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, int nCmdShow);
 			virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-			virtual bool Run();
 
 		protected:
 			virtual bool InitialWindow();
 			virtual bool TerminalWindow();
+
+			virtual bool PreInitial();
+			virtual bool CreateGEngine();
+			virtual bool OnInitial();
+			virtual bool Run();
+			virtual bool OnTerminal();
+			virtual bool ReleaseGEngine();
 		
 		protected:
 			virtual void GEngineInputProc(GInputDevices dt, KeyCode key, GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet);

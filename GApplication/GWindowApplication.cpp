@@ -94,10 +94,36 @@ LRESULT GEngine::GApp::GWindowApplication::MsgProc(HWND hwnd, UINT msg, WPARAM w
 		return 0;
 	case WM_MOVE:                      //移动一个窗口
 		return 0;
-	case WM_SIZE:                      //改变一个窗口的大小
+
+	//*重新设定窗口大小*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	case WM_SIZE:
+		if (wParam == SIZE_MINIMIZED)
+		{
+
+		}
 		return 0;
-	case WM_ACTIVATE:                  //一个窗口被激活或失去激活
+	//*重新设定窗口大小*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+
+
+
+
+
+	//*一个窗口被激活或失去激活*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	case WM_ACTIVATE:
+		if (LOWORD(wParam) == WA_INACTIVE)
+		{
+			//Pause
+		}
+		else
+		{
+			//Resume
+		}
 		return 0;
+	//*一个窗口被激活或失去激活*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	
+	
 	case WM_SETFOCUS:                  //窗口获得焦点
 		return 0;
 	case WM_KILLFOCUS:                 //窗口失去焦点
@@ -131,13 +157,7 @@ LRESULT GEngine::GApp::GWindowApplication::MsgProc(HWND hwnd, UINT msg, WPARAM w
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-bool GEngine::GApp::GWindowApplication::Run()
-{
-	/*PreUpdate();
-	OnDraw();
-	PostUpdate();*/
-	return true;
-}
+
 
 bool GEngine::GApp::GWindowApplication::InitialWindow()
 {
@@ -195,6 +215,40 @@ bool GEngine::GApp::GWindowApplication::InitialWindow()
 bool GEngine::GApp::GWindowApplication::TerminalWindow()
 {
 	return UnregisterClass(L"BasicWndClassName", m_hInstance);
+}
+
+bool GEngine::GApp::GWindowApplication::PreInitial()
+{
+	return true;
+}
+
+bool GEngine::GApp::GWindowApplication::CreateGEngine()
+{
+	if (!GEngine::GRender::GRender::Initialize(m_renderApiType, m_hInstance, m_hwnd, m_uiScreenWidth, m_uiScreenHeight, true)) return false;
+	return true;
+}
+
+bool GEngine::GApp::GWindowApplication::OnInitial()
+{
+	return true;
+}
+
+bool GEngine::GApp::GWindowApplication::Run()
+{
+	/*PreUpdate();
+	OnDraw();
+	PostUpdate();*/
+	return true;
+}
+
+bool GEngine::GApp::GWindowApplication::OnTerminal()
+{
+	return true;
+}
+
+bool GEngine::GApp::GWindowApplication::ReleaseGEngine()
+{
+	return true;
 }
 
 void GEngine::GApp::GWindowApplication::GEngineInputProc(GInputDevices dt, KeyCode key, GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet)

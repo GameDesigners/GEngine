@@ -116,13 +116,13 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>..\LitStl\;..\GSystem\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\bin\GSystem.lib;..\bin\LitStl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,11 +143,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GDirect3DRender.h" />
+    <ClInclude Include="GOpenGLRender.h" />
     <ClInclude Include="GRender.h" />
     <ClInclude Include="libs\d3dx12.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GDirect3DRender.cpp" />
+    <ClCompile Include="GOpenGLRender.cpp" />
     <ClCompile Include="GRender.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

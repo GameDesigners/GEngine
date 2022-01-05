@@ -1,5 +1,8 @@
 #ifndef GDIRECT3D_RENDER_H
 #define GDIRECT3D_RENDER_H
+#include <GSystem.h>
+#include <GVector.h>
+#include <GStrings.h>
 #include "GRender.h"
 namespace GEngine {
 	namespace GRender{
@@ -51,23 +54,40 @@ namespace GEngine {
 
 		class GRENDER_API GDirect3DRender : public GRender
 		{
+		public:
+			GDirect3DRender(HINSTANCE hInstance, HWND hwnd, UINT width = DEFAULT_SCREEN_WIDTH, UINT height = DEFAULT_SCREEN_HEIGHT, bool bWindow = true);
+			virtual ~GDirect3DRender();
 		protected:
 			bool Get4xMsaaState() const;
 			void Set4xMsaaState(bool value);
 
-			virtual bool Initialize();
-			virtual void CreateRtvAndDsvDescriptorHeaps();
-			virtual void OnResize();
-			virtual void Draw();
+			virtual bool RenderAPIInitialze();
+			void CreateRtvAndDsvDescriptorHeaps();
+			void CreateSwapChain();
+			void CreateCommandObjects();
+			void OnResize();
+			void Draw();
+			void FlushCommandQueue();
+			void LogAdapters();
+			void LogdAdapterOutputs(IDXGIAdapter* adapter);
+			void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
+
 
 		private:
-			D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const {
+			inline D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const {
 				return CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_curBackBuffer, m_rtvDescriptorSize);
 			}
 
-			D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const {
+			inline D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const {
 				return m_dsvHeap->GetCPUDescriptorHandleForHeapStart();
 			}
+
+			inline ID3D12Resource* CurrentBackBuffer()const
+			{
+				return m_swapChainBuffer[m_curBackBuffer].Get();
+			}
+
+
 
 		private:
 			static const int ms_SwapChainBufferCount = 2;
@@ -95,6 +115,8 @@ namespace GEngine {
 			DXGI_FORMAT m_backBufferFormat;
 			DXGI_FORMAT m_depthStencilFormat;
 			UINT        m_4xMsaaQuality;
+
+			D3D12_VIEWPORT m_viewport;
 
 			bool        m_4xMsaaState = true;
 			int         m_curBackBuffer = 0;

@@ -22,11 +22,15 @@
     <ClInclude Include="GDirect3DRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GOpenGLRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GDirect3DRender.cpp" />
+    <ClCompile Include="GOpenGLRender.cpp" />
   </ItemGroup>
 </Project>
