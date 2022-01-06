@@ -111,7 +111,8 @@ namespace GEngine {
 		};
 
 
-
+		//创建默认缓冲区（位于默认堆）
+		//*******************************************************************************************************
 		inline Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultBuffer(
 			ID3D12Device* device,
 			ID3D12GraphicsCommandList* cmdList,
@@ -149,6 +150,34 @@ namespace GEngine {
 			cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
 
 			return defaultBuffer;
+		}
+
+
+
+		//计算常量缓冲堆需要的大小（因为常量缓冲区大小要求为256B的整倍数）
+		//*******************************************************************************************************
+		inline unsigned int CaculateConstantBufferByteSize(unsigned int byteSize)
+		{
+			return (byteSize + 255) & ~255;
+		}
+
+		//创建常量缓冲区
+		//*******************************************************************************************************
+		inline Microsoft::WRL::ComPtr<ID3D12Resource> CreateConstantBuffer(
+			ID3D12Device* device, 
+			unsigned int elementByteSize,
+			unsigned int bufferCount)
+		{
+			elementByteSize = CaculateConstantBufferByteSize(elementByteSize);
+			ComPtr<ID3D12Resource> uploadBuffer;
+			device->CreateCommittedResource(
+				&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+				D3D12_HEAP_FLAG_NONE,
+				&CD3DX12_RESOURCE_DESC::Buffer(elementByteSize * bufferCount),
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr, IID_PPV_ARGS(&uploadBuffer)
+			);
+			return uploadBuffer;
 		}
 	}
 }
