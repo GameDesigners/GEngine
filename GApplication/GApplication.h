@@ -4,6 +4,7 @@
 #include <GMemManager.h>
 #include <GStrings.h>
 #include <GInput.h>
+#include <GDirect3DRender.h>
 #include "GCommand.h"
 
 namespace GEngine {
@@ -52,8 +53,9 @@ namespace GEngine {
             //**********************************************************************************************************************************************
 
 			virtual bool PreUpdate();
-			virtual bool PostUpdate();
+			virtual bool Update();
 			virtual bool OnDraw();
+			virtual bool PostUpdate();
 
 			virtual void OnMove(int xPos, int yPos);
 			virtual void OnResizeWindow(int iWidth, int iHeight);

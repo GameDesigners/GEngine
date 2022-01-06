@@ -44,6 +44,7 @@ namespace GEngine {
 			T&  at(int idx);
 			T&  front();
 			T&  back();
+			T* data();
 
 		//Ðéº¯ÊýÖØÐ´
 		public:

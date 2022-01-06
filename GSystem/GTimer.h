@@ -10,7 +10,7 @@ namespace GEngine
 		public:
 			static GTimer& GetTimer();
 
-			void UpdateFps();
+			void Tick();
 			void Reset();
 			void Start();
 			void Pause();

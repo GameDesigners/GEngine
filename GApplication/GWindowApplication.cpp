@@ -1,5 +1,6 @@
 #include "GWindowApplication.h"
 using namespace GEngine::GApp;
+using namespace GEngine::GRender;
 
 //应用程序入口
 //**********************************************************************************************************************************************
@@ -46,6 +47,7 @@ bool GEngine::GApp::GWindowApplication::Main(HINSTANCE hInstance, HINSTANCE hPre
 
 	m_pGlobalTimer = &GTimer::GetTimer();
 	GASSERT(m_pGlobalTimer != nullptr);
+	m_pGlobalTimer->Start();
 
 	//*引擎初始化工作*-------------------------
 	if (!PreInitial())       return false;
@@ -58,21 +60,25 @@ bool GEngine::GApp::GWindowApplication::Main(HINSTANCE hInstance, HINSTANCE hPre
 	bool bError = false;
 	while (msg.message!=WM_QUIT)
 	{
-		while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		if(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		if (m_bIsActive)//窗口处于焦点
+		else 
 		{
-			if (!Run())
+			ShowFrameStats();
+			if (m_bIsActive)//窗口处于焦点
 			{
-				m_bIsRunning = false;
-				bError = true;
-			}
-			else
-			{
-				//处理其他需要更新的内容
+				if (!Run())
+				{
+					m_bIsRunning = false;
+					bError = true;
+				}
+				else
+				{
+					//处理其他需要更新的内容
+				}
 			}
 		}
 	}
@@ -81,7 +87,7 @@ bool GEngine::GApp::GWindowApplication::Main(HINSTANCE hInstance, HINSTANCE hPre
 	if (!OnTerminal())       bError = true;
 	if (!ReleaseGEngine())   bError = true;
 	if (!TerminalWindow())   bError = true;
-
+	m_pGlobalTimer->Pause();
 	GSAFE_DELETE(m_pCommand);
 	return !bError;
 }
@@ -97,9 +103,49 @@ LRESULT GEngine::GApp::GWindowApplication::MsgProc(HWND hwnd, UINT msg, WPARAM w
 
 	//*重新设定窗口大小*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	case WM_SIZE:
+		if (GRenderSystem::GetRenderSystem() != nullptr)
+			GRenderSystem::GetRenderSystem()->SetRenderClientSize(LOWORD(lParam), HIWORD(lParam));
 		if (wParam == SIZE_MINIMIZED)
 		{
+			if (GRenderSystem::GetRenderSystem() != nullptr)
+				GRenderSystem::GetRenderSystem()->MinimizeScreen();
+		}
+		else if (wParam == SIZE_MAXIMIZED)
+		{
+			if (GRenderSystem::GetRenderSystem() != nullptr)
+				GRenderSystem::GetRenderSystem()->MaximizeScreen();
+		}
+		else if (wParam == SIZE_RESTORED)
+		{
+			if (GRenderSystem::GetRenderSystem() != nullptr) 
+			{
+				if (GRenderSystem::GetRenderSystem()->IsMinimizeScreenState())
+					GRenderSystem::GetRenderSystem()->FinishResize();
+				else if (GRenderSystem::GetRenderSystem()->IsMaximizeScreenState())
+					GRenderSystem::GetRenderSystem()->FinishResize();
+				else if (GRenderSystem::GetRenderSystem()->IsResizing())
+				{
+					//TO-DO
+				}
+				else
+				{
+					GRenderSystem::GetRenderSystem()->FinishResize();
+				}
+			}
+		}
+		return 0;
 
+	case WM_ENTERSIZEMOVE:
+		if (GRenderSystem::GetRenderSystem() != nullptr)
+		{
+			GRenderSystem::GetRenderSystem()->StartResize();
+		}
+		return 0;
+
+	case WM_EXITSIZEMOVE:
+		if (GRenderSystem::GetRenderSystem() != nullptr)
+		{
+			GRenderSystem::GetRenderSystem()->FinishResize();
 		}
 		return 0;
 	//*重新设定窗口大小*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -114,10 +160,16 @@ LRESULT GEngine::GApp::GWindowApplication::MsgProc(HWND hwnd, UINT msg, WPARAM w
 		if (LOWORD(wParam) == WA_INACTIVE)
 		{
 			//Pause
+			m_bIsActive = false;
+			if (GRenderSystem::GetRenderSystem() != nullptr)
+				GRenderSystem::GetRenderSystem()->PauseRenderSystem();
 		}
 		else
 		{
 			//Resume
+			m_bIsActive = true;
+			if (GRenderSystem::GetRenderSystem() != nullptr)
+				GRenderSystem::GetRenderSystem()->ResumeRenderSystem();
 		}
 		return 0;
 	//*一个窗口被激活或失去激活*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -224,7 +276,7 @@ bool GEngine::GApp::GWindowApplication::PreInitial()
 
 bool GEngine::GApp::GWindowApplication::CreateGEngine()
 {
-	if (!GEngine::GRender::GRender::Initialize(m_renderApiType, m_hInstance, m_hwnd, m_uiScreenWidth, m_uiScreenHeight, true)) return false;
+	if (!GRenderSystem::Initialize(m_renderApiType, m_hInstance, m_hwnd, m_uiScreenWidth, m_uiScreenHeight, true)) return false;
 	return true;
 }
 
@@ -235,9 +287,13 @@ bool GEngine::GApp::GWindowApplication::OnInitial()
 
 bool GEngine::GApp::GWindowApplication::Run()
 {
-	/*PreUpdate();
+	//显示帧率
+	//ShowFrameStats();
+	PreUpdate();
+	Update();
 	OnDraw();
-	PostUpdate();*/
+	PostUpdate();
+	GRenderSystem::GetRenderSystem()->Draw();
 	return true;
 }
 
@@ -248,7 +304,21 @@ bool GEngine::GApp::GWindowApplication::OnTerminal()
 
 bool GEngine::GApp::GWindowApplication::ReleaseGEngine()
 {
+	/*GRenderSystem* p = GRenderSystem::GetRenderSystem();
+	GSAFE_DELETE(p);*/
 	return true;
+}
+
+void GEngine::GApp::GWindowApplication::ShowFrameStats()
+{
+	m_pGlobalTimer->Tick();
+	float currentFps = m_pGlobalTimer->GetFPS();
+	GStl::GTString FrameStatsLogText = m_ApplicationTitle;
+	FrameStatsLogText += L"  FPS: ";
+	FrameStatsLogText += GStl::to_tstring(currentFps);
+	FrameStatsLogText += L"    MSPF: ";
+	FrameStatsLogText += GStl::to_tstring(1000.0f / currentFps);
+	SetWindowTextW(m_hwnd, FrameStatsLogText.c_str());
 }
 
 void GEngine::GApp::GWindowApplication::GEngineInputProc(GInputDevices dt, KeyCode key, GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet)

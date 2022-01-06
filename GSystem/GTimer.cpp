@@ -45,7 +45,7 @@ void GTimer::InitGameTimer()
 	}
 }
 
-void GTimer::UpdateFps()
+void GTimer::Tick()
 {
 	if (!m_bIsStop)
 	{

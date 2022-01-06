@@ -4,15 +4,17 @@
 #include <wrl.h>
 #include <direct.h>
 #include <dxgi1_4.h>
+#include <d3dcompiler.h>
 
 #include <GSystem.h>
 #include <GTimer.h>
 #include <GStrings.h>
+#include <GMap.h>
 
 #include "libs/d3dx12.h"
 
 #define GRENDER_EXPORTS
-#ifdef GRENDER_EXPORTS
+#ifdef  GRENDER_EXPORTS
 #define GRENDER_API __declspec(dllexport) 
 #else 
 #define GRENDER_API __declspec(dllimport) 
@@ -33,7 +35,7 @@ namespace GEngine {
 		class GDirect3DRender;
 		class GOpenGLRender;
 
-		class GRENDER_API GRender
+		class GRENDER_API GRenderSystem
 		{
 		protected:
 			enum : UINT
@@ -43,15 +45,15 @@ namespace GEngine {
 			};
 
 		public:
-			GRender(HINSTANCE hInstance, HWND hwnd, UINT width = DEFAULT_SCREEN_WIDTH, UINT height = DEFAULT_SCREEN_HEIGHT, bool bWindow = true);
-			virtual ~GRender();
+			GRenderSystem(HINSTANCE hInstance, HWND hwnd, UINT width = DEFAULT_SCREEN_WIDTH, UINT height = DEFAULT_SCREEN_HEIGHT, bool bWindow = true);
+			virtual ~GRenderSystem();
 
-			GRender(const GRender& rhs) = delete;
-			void operator=(const GRender& rhs) = delete;
+			GRenderSystem(const GRenderSystem& rhs) = delete;
+			void operator=(const GRenderSystem& rhs) = delete;
 
 		public:
-			static GRender* m_pRender;
-			static GRender* GetRenderSystem();
+			static GRenderSystem* m_pRender;
+			static GRenderSystem* GetRenderSystem();
 			static bool Initialize(RenderAPIType type, HINSTANCE hInstance, HWND hwnd, UINT width = DEFAULT_SCREEN_WIDTH, UINT height = DEFAULT_SCREEN_HEIGHT, bool bWindow = true);
 
 			HINSTANCE AppInstance() const;
@@ -65,9 +67,14 @@ namespace GEngine {
 			void PauseRenderSystem();
 			void ResumeRenderSystem();
 			void StartResize();
-			void FinishResize(UINT newWidth, UINT newHeight);
+			void FinishResize();
 			void MaximizeScreen();
 			void MinimizeScreen();
+			void SetRenderClientSize(UINT width, UINT height);
+
+			bool IsMaximizeScreenState();
+			bool IsMinimizeScreenState();
+			bool IsResizing();
 
 		protected:
 			HINSTANCE m_AppInstance;

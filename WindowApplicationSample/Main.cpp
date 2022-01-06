@@ -1,10 +1,15 @@
 #include <GWindowApplication.h>
+#include <DirectXMath.h>
 using namespace GEngine::GApp;
+using namespace DirectX;
+
+
 
 class CustomWindowApplication : public GWindowApplication
 {
 	DECLARE_WINDOW_APPLICATION(CustomWindowApplication)
 
+	virtual bool OnDraw();
 	virtual void OnKeyDown(KeyCode uiKey);
 	/*virtual void OnKeyUp(KeyCode uiKey);
 	virtual void OnLButtonDown(int xPos, int yPos);
@@ -18,6 +23,11 @@ class CustomWindowApplication : public GWindowApplication
 };
 
 REGIST_WINDOW_APPLICATION(CustomWindowApplication, L"GENGINE")
+
+bool CustomWindowApplication::OnDraw()
+{
+	return false;
+}
 
 void CustomWindowApplication::OnKeyDown(KeyCode uiKey)
 {

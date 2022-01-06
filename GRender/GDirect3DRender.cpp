@@ -1,16 +1,19 @@
 #include "GDirect3DRender.h"
 using namespace GEngine::GSystem;
 using namespace GEngine::GRender;
+using namespace DirectX;
 
 const int GDirect3DRender::ms_SwapChainBufferCount;
 
 GEngine::GRender::GDirect3DRender::GDirect3DRender(HINSTANCE hInstance, HWND hwnd, UINT width, UINT height, bool bWindow)
-	: GRender(hInstance, hwnd, width, height, bWindow) {}
+	: GRenderSystem(hInstance, hwnd, width, height, bWindow) {}
 
 GEngine::GRender::GDirect3DRender::~GDirect3DRender()
 {
 	if (m_d3dDevice != nullptr)
 		FlushCommandQueue();
+
+	GSAFE_DELETE(m_pRender);
 }
 
 bool GEngine::GRender::GDirect3DRender::Get4xMsaaState() const { return m_4xMsaaState; }
@@ -71,12 +74,20 @@ bool GDirect3DRender::RenderAPIInitialze()
 
 	//4.
 	CreateCommandObjects();
-
-	//5.
 	CreateSwapChain();
+	CreateRtvAndDsvDescriptorHeaps();
 
+	//--------------------------------------------D3D12初始化过程----------------------------------------------
+	OnResize();
+#ifdef _DEBUG
+	LogAdapters();
+#endif
 
-	//6.
+	return true;
+}
+
+void GEngine::GRender::GDirect3DRender::CreateRtvAndDsvDescriptorHeaps()
+{
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
 	rtvHeapDesc.NumDescriptors = ms_SwapChainBufferCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
@@ -90,106 +101,6 @@ bool GDirect3DRender::RenderAPIInitialze()
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	dsvHeapDesc.NodeMask = 0;
 	D3D_THROW_IF_FAILED(m_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(m_dsvHeap.GetAddressOf())));
-
-	//7,8
-	CreateRtvAndDsvDescriptorHeaps();
-
-	//9
-	m_viewport.TopLeftX = 0.0f;
-	m_viewport.TopLeftY = 0.0f;
-	m_viewport.Width = static_cast<float>(m_clientWidth);
-	m_viewport.Height = static_cast<float>(m_clientHeight);
-	m_viewport.MinDepth = 0.0f;
-	m_viewport.MaxDepth = 1.0f;
-
-	m_commandList->RSSetViewports(1, &m_viewport);
-
-	//10.
-	m_scissorRect = { 0,0,static_cast<long>(m_clientWidth) / 2,static_cast<long>(m_clientHeight) / 2 };
-	m_commandList->RSSetScissorRects(1, &m_scissorRect);
-	//--------------------------------------------D3D12初始化过程----------------------------------------------
-
-#ifdef _DEBUG
-	LogAdapters();
-#endif
-
-	return true;
-
-}
-
-void GEngine::GRender::GDirect3DRender::CreateRtvAndDsvDescriptorHeaps()
-{
-	//7.
-	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHepHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
-	for (UINT i = 0; i < ms_SwapChainBufferCount; i++)
-	{
-		//获得交换链内的第i个缓冲区
-		D3D_THROW_IF_FAILED(m_swapChain->GetBuffer(i, IID_PPV_ARGS(&m_swapChainBuffer[i])));
-		m_d3dDevice->CreateRenderTargetView(m_swapChainBuffer[i].Get(), nullptr, rtvHepHandle);
-		rtvHepHandle.Offset(1, m_rtvDescriptorSize);
-	}
-
-	//8.
-	D3D12_RESOURCE_DESC depthStencilDesc;
-	depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	depthStencilDesc.Alignment = 0;
-	depthStencilDesc.Width = m_clientWidth;
-	depthStencilDesc.Height = m_clientHeight;
-	depthStencilDesc.DepthOrArraySize = 1;
-	depthStencilDesc.MipLevels = 1;
-	depthStencilDesc.Format = m_depthStencilFormat;
-	depthStencilDesc.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
-	depthStencilDesc.SampleDesc.Quality = m_4xMsaaState ? m_4xMsaaQuality - 1 : 0;
-	depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-
-	D3D12_CLEAR_VALUE optClear;
-	optClear.Format = m_depthStencilFormat;
-	optClear.DepthStencil.Depth = 1.0f;
-	optClear.DepthStencil.Stencil = 0;
-
-	D3D_THROW_IF_FAILED(m_d3dDevice->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-		D3D12_HEAP_FLAG_NONE,
-		&depthStencilDesc,
-		D3D12_RESOURCE_STATE_COMMON,
-		&optClear,
-		IID_PPV_ARGS(m_depthStencilBuffer.GetAddressOf())
-	));
-
-	m_d3dDevice->CreateDepthStencilView(  //为整个资源的第0 mip层创建描述符
-		m_depthStencilBuffer.Get(),
-		nullptr,
-		DepthStencilView()
-	);
-
-	m_commandList->ResourceBarrier(
-		1,
-		&CD3DX12_RESOURCE_BARRIER::Transition(
-			m_depthStencilBuffer.Get(),
-			D3D12_RESOURCE_STATE_COMMON,
-			D3D12_RESOURCE_STATE_DEPTH_WRITE)
-	);
-}
-
-void GEngine::GRender::GDirect3DRender::CreateSwapChain()
-{
-	m_swapChain.Reset();
-	DXGI_SWAP_CHAIN_DESC sd = {};
-	sd.BufferDesc.Width = m_clientWidth;
-	sd.BufferDesc.Height = m_clientHeight;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
-	sd.BufferDesc.Format = m_backBufferFormat;
-	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	sd.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
-	sd.SampleDesc.Quality = m_4xMsaaState ? m_4xMsaaQuality - 1 : 0;
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow = m_hMainWnd;
-	sd.Windowed = m_bWindow;
-	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-	D3D_THROW_IF_FAILED(m_d3dGIFactory->CreateSwapChain(m_commandQueue.Get(), &sd, m_swapChain.GetAddressOf()));
 }
 
 void GEngine::GRender::GDirect3DRender::CreateCommandObjects()
@@ -201,6 +112,30 @@ void GEngine::GRender::GDirect3DRender::CreateCommandObjects()
 	D3D_THROW_IF_FAILED(m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_directCmdListAlloc.GetAddressOf())));
 	D3D_THROW_IF_FAILED(m_d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_directCmdListAlloc.Get(), nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf())));
 	m_commandList->Close();
+}
+
+void GEngine::GRender::GDirect3DRender::CreateSwapChain()
+{
+	m_swapChain.Reset();
+
+	DXGI_SWAP_CHAIN_DESC sd;
+	sd.BufferDesc.Width = m_clientWidth;
+	sd.BufferDesc.Height = m_clientHeight;
+	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferDesc.Format = m_backBufferFormat;
+	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	sd.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
+	sd.SampleDesc.Quality = m_4xMsaaState ? m_4xMsaaQuality - 1 : 0;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.BufferCount = ms_SwapChainBufferCount;
+	sd.OutputWindow = m_hMainWnd;
+	sd.Windowed = m_bWindow;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+	D3D_THROW_IF_FAILED(m_d3dGIFactory->CreateSwapChain(m_commandQueue.Get(), &sd, m_swapChain.GetAddressOf()));
 }
 
 void GEngine::GRender::GDirect3DRender::OnResize()
@@ -291,7 +226,26 @@ void GEngine::GRender::GDirect3DRender::OnResize()
 	m_scissorRect = { 0, 0, static_cast<long>(m_clientWidth), static_cast<long>(m_clientHeight) };
 }
 
-void GEngine::GRender::GDirect3DRender::Draw() {}
+void GEngine::GRender::GDirect3DRender::Draw()
+{
+	D3D_THROW_IF_FAILED(m_directCmdListAlloc->Reset());
+	D3D_THROW_IF_FAILED(m_commandList->Reset(m_directCmdListAlloc.Get(), nullptr));
+
+	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+	m_commandList->RSSetViewports(1, &m_viewport);
+	m_commandList->RSSetScissorRects(1, &m_scissorRect);
+	m_commandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::Black, 0, nullptr);
+	m_commandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+	m_commandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+	D3D_THROW_IF_FAILED(m_commandList->Close());
+
+	ID3D12CommandList* cmdsLists[] = { m_commandList.Get() };
+	m_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+	D3D_THROW_IF_FAILED(m_swapChain->Present(0, 0));
+	m_curBackBuffer = (m_curBackBuffer + 1) % ms_SwapChainBufferCount;
+	FlushCommandQueue();
+}
 
 void GEngine::GRender::GDirect3DRender::FlushCommandQueue()
 {
@@ -306,6 +260,9 @@ void GEngine::GRender::GDirect3DRender::FlushCommandQueue()
 	}
 }
 
+
+//Adapters Debug信息代码
+//************************************************************************************************************************************************
 void GEngine::GRender::GDirect3DRender::LogAdapters()
 {
 	UINT index = 0;

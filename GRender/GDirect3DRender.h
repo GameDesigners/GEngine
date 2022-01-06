@@ -4,73 +4,38 @@
 #include <GVector.h>
 #include <GStrings.h>
 #include "GRender.h"
+#include "GDirect3DUtil.h"
+
 namespace GEngine {
 	namespace GRender{
 		using namespace Microsoft::WRL;
 		using namespace GEngine::GSystem;
 
-		class GRENDER_API DxException
-		{
-		public:
-			DxException() = default;
-			DxException(HRESULT hr, const GStl::GTString& functionName, const GStl::GTString& filename, int lineNumber)
-				: ErrorCode(hr), FunctionName(functionName), FileName(filename), LineNumber(lineNumber) {}
-			
-			GStl::GTString ToString() const
-			{
-				GStl::GTString str = FunctionName;
-				str += L"\nFail In:";
-				str += FileName;
-				str += L"LineNumber:";
-				str += GStl::to_tstring(LineNumber);
-				return str;
-			}
 
-			HRESULT        ErrorCode = S_OK;
-			GStl::GTString FunctionName;
-			GStl::GTString FileName;
-			int            LineNumber;
-		};
-
-		inline GStl::GTString AnsiToTString(const char* str)
-		{
-			TCHAR buffer[512];
-			GPConstChar_To_PTCHAR(str, buffer, 512);
-			return GStl::GTString(buffer);
-		}
-
-		//Debugºê
-        #ifndef D3D_THROW_IF_FAILED
-        #define D3D_THROW_IF_FAILED(x) \
-        { \
-            HRESULT hr__=(x); \
-            GStl::GTString wfn=AnsiToTString(__FILE__); \
-            if(FAILED(hr__)) \
-		        throw DxException(hr__,L#x,wfn,__LINE__); \
-		}
-        #endif // !D3D_THROW_IF_FAILED
-
-
-
-		class GRENDER_API GDirect3DRender : public GRender
+		class GRENDER_API GDirect3DRender : public GRenderSystem
 		{
 		public:
 			GDirect3DRender(HINSTANCE hInstance, HWND hwnd, UINT width = DEFAULT_SCREEN_WIDTH, UINT height = DEFAULT_SCREEN_HEIGHT, bool bWindow = true);
 			virtual ~GDirect3DRender();
+		public:
+			virtual void Draw();
 		protected:
 			bool Get4xMsaaState() const;
 			void Set4xMsaaState(bool value);
 
 			virtual bool RenderAPIInitialze();
+
 			void CreateRtvAndDsvDescriptorHeaps();
 			void CreateSwapChain();
 			void CreateCommandObjects();
 			void OnResize();
-			void Draw();
 			void FlushCommandQueue();
 			void LogAdapters();
 			void LogdAdapterOutputs(IDXGIAdapter* adapter);
 			void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
+
+
+
 
 
 		private:
@@ -89,7 +54,7 @@ namespace GEngine {
 
 
 
-		private:
+		public:
 			static const int ms_SwapChainBufferCount = 2;
 
 			ComPtr<IDXGIFactory4> m_d3dGIFactory;
@@ -112,13 +77,13 @@ namespace GEngine {
 			ComPtr<ID3D12Resource>       m_depthStencilBuffer;
 			D3D12_RECT                   m_scissorRect;
 
-			DXGI_FORMAT m_backBufferFormat;
-			DXGI_FORMAT m_depthStencilFormat;
+			DXGI_FORMAT m_backBufferFormat= DXGI_FORMAT_R8G8B8A8_UNORM;
+			DXGI_FORMAT m_depthStencilFormat= DXGI_FORMAT_D24_UNORM_S8_UINT;
 			UINT        m_4xMsaaQuality;
 
 			D3D12_VIEWPORT m_viewport;
 
-			bool        m_4xMsaaState = true;
+			bool        m_4xMsaaState = false;
 			int         m_curBackBuffer = 0;
 		};
 	}

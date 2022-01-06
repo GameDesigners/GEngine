@@ -3,7 +3,7 @@
 #include "GOpenGLRender.h"
 using namespace GEngine::GRender;
 
-GEngine::GRender::GRender::GRender(HINSTANCE hInstance, HWND hwnd, UINT width, UINT height, bool bWindow)
+GEngine::GRender::GRenderSystem::GRenderSystem(HINSTANCE hInstance, HWND hwnd, UINT width, UINT height, bool bWindow)
 {
 	m_AppInstance = hInstance;
 	m_hMainWnd = hwnd;
@@ -12,12 +12,12 @@ GEngine::GRender::GRender::GRender(HINSTANCE hInstance, HWND hwnd, UINT width, U
 	m_bWindow = bWindow;
 	m_pTimer = &GEngine::GSystem::GTimer::GetTimer();
 }
-GEngine::GRender::GRender::~GRender() {}
+GEngine::GRender::GRenderSystem::~GRenderSystem() {}
 
-GRender*  GEngine::GRender::GRender::m_pRender = nullptr;
-GRender*  GEngine::GRender::GRender::GetRenderSystem() { return m_pRender; }
+GRenderSystem*  GEngine::GRender::GRenderSystem::m_pRender = nullptr;
+GRenderSystem*  GEngine::GRender::GRenderSystem::GetRenderSystem() { return m_pRender; }
 
-bool GEngine::GRender::GRender::Initialize(RenderAPIType type, HINSTANCE hInstance, HWND hwnd, UINT width, UINT height, bool bWindow)
+bool GEngine::GRender::GRenderSystem::Initialize(RenderAPIType type, HINSTANCE hInstance, HWND hwnd, UINT width, UINT height, bool bWindow)
 {
 	switch (type)
 	{
@@ -43,50 +43,69 @@ bool GEngine::GRender::GRender::Initialize(RenderAPIType type, HINSTANCE hInstan
 	}
 }
 
-HINSTANCE GEngine::GRender::GRender::AppInstance() const { return m_AppInstance; }
-HWND      GEngine::GRender::GRender::MainWnd() const { return m_hMainWnd; }
-float     GEngine::GRender::GRender::AspectRatio() const { return static_cast<float>(m_clientWidth) / m_clientHeight; }
-bool      GEngine::GRender::GRender::RenderAPIInitialze() { return true; }
-void      GEngine::GRender::GRender::OnResize() {}
-void      GEngine::GRender::GRender::Draw(){}
+HINSTANCE GEngine::GRender::GRenderSystem::AppInstance() const { return m_AppInstance; }
+HWND      GEngine::GRender::GRenderSystem::MainWnd() const { return m_hMainWnd; }
+float     GEngine::GRender::GRenderSystem::AspectRatio() const { return static_cast<float>(m_clientWidth) / m_clientHeight; }
+bool      GEngine::GRender::GRenderSystem::RenderAPIInitialze() { return true; }
+void      GEngine::GRender::GRenderSystem::OnResize() {}
+void      GEngine::GRender::GRenderSystem::Draw() {}
 
-void GEngine::GRender::GRender::PauseRenderSystem()
+void GEngine::GRender::GRenderSystem::PauseRenderSystem()
 {
 	m_AppPaused = true;
 	m_pTimer->Pause();
 }
 
-void GEngine::GRender::GRender::ResumeRenderSystem()
+void GEngine::GRender::GRenderSystem::ResumeRenderSystem()
 {
 	m_AppPaused = true;
 	m_pTimer->Start();
 }
 
-void GEngine::GRender::GRender::StartResize()
+void GEngine::GRender::GRenderSystem::StartResize()
 {
 	PauseRenderSystem();
 	m_Resizing = true;
 }
 
-void GEngine::GRender::GRender::FinishResize(UINT newWidth,UINT newHeight)
+void GEngine::GRender::GRenderSystem::FinishResize()
 {
 	ResumeRenderSystem();
-	m_clientWidth = newWidth;
-	m_clientHeight = newHeight;
 	m_Resizing = false;
 	OnResize();
 }
 
-void GEngine::GRender::GRender::MaximizeScreen()
+void GEngine::GRender::GRenderSystem::MaximizeScreen()
 {
 	PauseRenderSystem();
 	m_Minimized = true;
 	m_Maximized = false;
 }
 
-void GEngine::GRender::GRender::MinimizeScreen()
+void GEngine::GRender::GRenderSystem::MinimizeScreen()
 {
 	ResumeRenderSystem();
 	m_Minimized = true;
 	m_Maximized = false;
+}
+
+void GEngine::GRender::GRenderSystem::SetRenderClientSize(UINT width, UINT height)
+{
+	m_clientWidth = width;
+	m_clientHeight = height;
+}
+
+bool GEngine::GRender::GRenderSystem::IsMaximizeScreenState()
+{
+	return m_Maximized;
+}
+
+bool GEngine::GRender::GRenderSystem::IsMinimizeScreenState()
+{
+	return m_Minimized;
+}
+
+bool GEngine::GRender::GRenderSystem::IsResizing()
+{
+	return m_Resizing;
 }

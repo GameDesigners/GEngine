@@ -8,21 +8,24 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{00aabdea-2ed0-4a1d-8944-5b3ac83d472c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Direct3D Libs">
+    <Filter Include="Direct3D">
       <UniqueIdentifier>{479dd5c0-1374-4197-8228-b2d1d86e4707}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs\d3dx12.h">
-      <Filter>Direct3D Libs</Filter>
+      <Filter>Direct3D</Filter>
     </ClInclude>
     <ClInclude Include="GRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GOpenGLRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GDirect3DRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GOpenGLRender.h">
+    <ClInclude Include="GDirect3DUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -30,7 +33,14 @@
     <ClCompile Include="GRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GDirect3DRender.cpp" />
-    <ClCompile Include="GOpenGLRender.cpp" />
+    <ClCompile Include="GOpenGLRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GDirect3DRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GDirect3DUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

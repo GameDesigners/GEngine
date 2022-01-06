@@ -3,7 +3,7 @@
 #include "GRender.h"
 namespace GEngine {
 	namespace GRender {
-		class GRENDER_API GOpenGLRender : public GRender
+		class GRENDER_API GOpenGLRender : public GRenderSystem
 		{
 		public:
 			GOpenGLRender(HINSTANCE hInstance, HWND hwnd, UINT width = DEFAULT_SCREEN_WIDTH, UINT height = DEFAULT_SCREEN_HEIGHT, bool bWindow = true);

@@ -24,6 +24,8 @@ namespace GEngine {
 			virtual bool Run();
 			virtual bool OnTerminal();
 			virtual bool ReleaseGEngine();
+
+			void ShowFrameStats();
 		
 		protected:
 			virtual void GEngineInputProc(GInputDevices dt, KeyCode key, GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet);

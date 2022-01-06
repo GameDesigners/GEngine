@@ -16,6 +16,7 @@ bool GEngine::GApp::GApplication::Run() { return true; }
 bool GEngine::GApp::GApplication::OnTerminal() { return true; }
 bool GEngine::GApp::GApplication::ReleaseGEngine() { return true; }
 bool GEngine::GApp::GApplication::PreUpdate() { return true; }
+bool GEngine::GApp::GApplication::Update() { return true; }
 bool GEngine::GApp::GApplication::PostUpdate() { return true; }
 bool GEngine::GApp::GApplication::OnDraw() { return true; }
 
