@@ -43,6 +43,28 @@ bool GEngine::GRender::GRenderSystem::Initialize(RenderAPIType type, HINSTANCE h
 	}
 }
 
+bool GEngine::GRender::GRenderSystem::Terminal(RenderAPIType type)
+{
+	if (type == RenderAPIType::Direct3D)
+	{
+		GDirect3DRender* p = static_cast<GDirect3DRender*>(m_pRender);
+		if (p->m_d3dDevice != nullptr)
+			p->FlushCommandQueue();
+
+		GSAFE_DELETE(m_pRender);
+		return true;
+	}
+	else if (type == RenderAPIType::OpenGL)
+	{
+		GOpenGLRender* p = static_cast<GOpenGLRender*>(m_pRender);
+		GSAFE_DELETE(p);
+		return true;
+	}
+	else
+		return false;
+
+}
+
 HINSTANCE GEngine::GRender::GRenderSystem::AppInstance() const { return m_AppInstance; }
 HWND      GEngine::GRender::GRenderSystem::MainWnd() const { return m_hMainWnd; }
 float     GEngine::GRender::GRenderSystem::AspectRatio() const { return static_cast<float>(m_clientWidth) / m_clientHeight; }

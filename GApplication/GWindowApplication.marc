@@ -21,6 +21,7 @@ bool APPLICATION_NAME::InitializeDefaultState()\
 }\
 bool APPLICATION_NAME::TerminalDefaultState()\
 {\
-	GSAFE_DELETE(APPLICATION_NAME::GetApplication());\
+    APPLICATION_NAME* app=static_cast<APPLICATION_NAME*>(APPLICATION_NAME::GetApplication()); \
+	GSAFE_DELETE(app);\
 	return true;\
 }

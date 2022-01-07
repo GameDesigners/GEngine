@@ -16,14 +16,14 @@ namespace GEngine{
 			using value_pointer = T*;
 			using value_reference = T&;
 			
-			GSharedPtr(value_pointer pVal);
+			GSharedPtr(value_pointer pVal = nullptr);
 			GSharedPtr(const GSharedPtr& ptr);
 			//GSharedPtr(GSharedPtr&& ptr) noexcept;
 			~GSharedPtr();
 
 			size_t use_count();
 
-			value_reference operator=(const GSharedPtr& rhs);
+			GSharedPtr<T> operator=(const GSharedPtr& rhs);
 			value_reference operator*();
 			value_pointer operator->();
 		
@@ -34,23 +34,14 @@ namespace GEngine{
 			value_pointer val;
 		};
 
-		template<typename T>
-		class GSTL_API GWeakPtr
-		{
 
-		};
+		//Generate Shared Smart Pointer with no params
+		//**********************************************************************************************************************************************
+		template<typename T> GSharedPtr<T> g_make_shared() { return GSharedPtr<T>(new T()); }
 
-		template<typename T>
-		GSharedPtr<T> g_make_shared()
-		{
-			return GSharedPtr<T>(new T());
-		}
-
-		template<typename T,typename... Params>
-		GSharedPtr<T> g_make_shared(Params... args)
-		{
-			return GSharedPtr<T>(new T(args...));
-		}
+		//Generate Shared Smart Pointer with params
+		//**********************************************************************************************************************************************
+		template<typename T,typename... Params> GSharedPtr<T> g_make_shared(Params... args) { return GSharedPtr<T>(new T(args...)); }
 
 #include "GMemory.inl"
 	}

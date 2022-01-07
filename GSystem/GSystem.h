@@ -325,6 +325,17 @@ namespace GEngine
 			OutputDebugStringA(GSystem::GetLogBufferA());
 		}
 
+		/// <summary>
+		/// 格式化输出某个字符串
+		/// </summary>
+		/// <param name="pcString"></param>
+		/// <param name=""></param>
+		template<typename ...Args>
+		FORCEINLINE VOID GWSprintf(const TCHAR* pcString,const TCHAR* pFormat, Args ...args)
+		{
+			wprintf_s(pcString, pFormat, args);
+		}
+
 
 		//内存操作函数
 		//**********************************************************************************************************************************************

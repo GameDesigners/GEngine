@@ -187,7 +187,7 @@ LRESULT GEngine::GApp::GWindowApplication::MsgProc(HWND hwnd, UINT msg, WPARAM w
 	//*Input System Msg Receive*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	case WM_KEYDOWN:      ms_pApplication->GEngineInputProc(GInputDevices::ID_Keyboard, (KeyCode)wParam, GMouseButton::None, GInputAction::Down, 0, 0, 0); return 0;
 	case WM_KEYUP:        ms_pApplication->GEngineInputProc(GInputDevices::ID_Keyboard, (KeyCode)wParam, GMouseButton::None, GInputAction::Up, 0, 0, 0); return 0;
-	case WM_MOUSEMOVE:    ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::None, GInputAction::Up, LOWORD(lParam), HIWORD(lParam), 0); return 0;
+	case WM_MOUSEMOVE:    OnMouseMove(wParam,LOWORD(lParam), HIWORD(lParam)); ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::None, GInputAction::Up, LOWORD(lParam), HIWORD(lParam), 0); return 0;
 	case WM_LBUTTONDOWN:  ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::LButton, GInputAction::Down, LOWORD(lParam), HIWORD(lParam), 0); return 0;
 	case WM_LBUTTONUP:    ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::LButton, GInputAction::Up, LOWORD(lParam), HIWORD(lParam), 0); return 0;
 	case WM_LBUTTONDBLCLK:ms_pApplication->GEngineInputProc(GInputDevices::ID_Mouse, KeyCode::NONE, GMouseButton::LButton, GInputAction::DBClick, LOWORD(lParam), HIWORD(lParam), 0); return 0;
@@ -293,7 +293,6 @@ bool GEngine::GApp::GWindowApplication::Run()
 	Update();
 	OnDraw();
 	PostUpdate();
-	GRenderSystem::GetRenderSystem()->Draw();
 	return true;
 }
 
@@ -304,8 +303,7 @@ bool GEngine::GApp::GWindowApplication::OnTerminal()
 
 bool GEngine::GApp::GWindowApplication::ReleaseGEngine()
 {
-	/*GRenderSystem* p = GRenderSystem::GetRenderSystem();
-	GSAFE_DELETE(p);*/
+	if (!GRenderSystem::Terminal(m_renderApiType)) return false;
 	return true;
 }
 
@@ -313,13 +311,15 @@ void GEngine::GApp::GWindowApplication::ShowFrameStats()
 {
 	m_pGlobalTimer->Tick();
 	float currentFps = m_pGlobalTimer->GetFPS();
-	GStl::GTString FrameStatsLogText = m_ApplicationTitle;
-	FrameStatsLogText += L"  FPS: ";
-	FrameStatsLogText += GStl::to_tstring(currentFps);
-	FrameStatsLogText += L"    MSPF: ";
-	FrameStatsLogText += GStl::to_tstring(1000.0f / currentFps);
-	SetWindowTextW(m_hwnd, FrameStatsLogText.c_str());
+	GWSprintf(FrameCountDebugString.data(), L"%ws  FPS: %f  MSPF: %f", m_ApplicationTitle.c_str(), currentFps, 1000 / currentFps);
+	SetWindowTextW(m_hwnd, FrameCountDebugString.c_str());
 }
+
+void GEngine::GApp::GWindowApplication::ChangeScreenSize(unsigned int uiWidth, unsigned int uiHeight, bool bWindow, bool isMaxScreen)
+{
+
+}
+
 
 void GEngine::GApp::GWindowApplication::GEngineInputProc(GInputDevices dt, KeyCode key, GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet)
 {

@@ -9,7 +9,7 @@ cbuffer cbPerObject : register(b0)
 //---------------------Shader Êý¾Ý---------------------
 struct VertexIn
 {
-	float PosL   : POSITION;
+	float3 PosL   : POSITION;
 	float4 Color : COLOR;
 };
 

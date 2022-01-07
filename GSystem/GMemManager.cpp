@@ -159,14 +159,14 @@ bool GDebugMem::RemoveBlock(Block* pBlock)
 void GDebugMem::PrintMemCallAndReleaseLog()
 {
 	//打印内存分配器统计的数据信息
-	GOutputDebugStringW(TEXT("****************************************MEM MANAGER****************************************\n"));
+	GOutputDebugStringW(TEXT("\n\nMEM MANAGER********************\n"));
 	GOutputDebugStringW(TEXT("NEW(分配)调用的次数:%u\n"),m_uiNumNewCalls);
 	GOutputDebugStringW(TEXT("DEL(释放)调用的次数:%u\n"), m_uiNumDeleteCalls);
 	GOutputDebugStringW(TEXT("管理器剩余内存块数量:%u\n"), m_uiNumCurrentBlocks);
 	GOutputDebugStringW(TEXT("当前管理内存【字节】:%u\n"), m_uiNumBytes);
 	GOutputDebugStringW(TEXT("内存块大小峰值【字节】:%u\n"), m_uiMaxNumBytesInRecord);
 	GOutputDebugStringW(TEXT("内存块数量的峰值【块】:%u\n"), m_uiMaxNumBlocksInRecord);
-	GOutputDebugStringW(TEXT("\n\n"));
+	GOutputDebugStringW(TEXT("MEM MANAGER********************\n\n"));
 
 
 	if (m_pHeadBlock != nullptr)
@@ -180,7 +180,7 @@ void GDebugMem::PrintMemCallAndReleaseLog()
 			while (current != nullptr)
 			{
 				GOutputDebugStringW(TEXT("内存泄漏[%d]\n"), index);
-				GOutputDebugStringW(TEXT("----------------------------------------------------------------------------------------------------------------------------------------\n"));
+				GOutputDebugStringW(TEXT("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n"));
 				m_sw.PrintCallStackFramesLog(current->pCallStackRecords);
 				current = current->m_pNext;
 				index++;

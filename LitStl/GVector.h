@@ -53,6 +53,10 @@ namespace GEngine{
 			T& at(size_t idx);
 			T& front();
 			T& back();
+			T* data() const
+			{
+				return m_data;
+			}
 
 	    //°²²åºÍÒÆ³ý
 		public:
@@ -137,6 +141,7 @@ namespace GEngine{
 				else
 				{
 					*(m_data + index) = cv;
+					m_constructed++;
 				}
 			}
 			inline void _construct_addr(T* addr, const T& cv)

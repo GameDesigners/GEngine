@@ -32,7 +32,9 @@ namespace GEngine {
 
 //C/C++常用数学函数
 #define GSin       sin
+#define GSinf      sinf
 #define GCos       cos
+#define GCosf      cosf
 #define GTan       tan
 #define GASin      asin
 #define GACos      acos

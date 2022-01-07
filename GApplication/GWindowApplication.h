@@ -8,7 +8,7 @@ namespace GEngine {
 		class GAPPLICATION_API GWindowApplication : public GApplication
 		{
 		public:
-			GWindowApplication() {}
+			GWindowApplication() { FrameCountDebugString = m_ApplicationTitle; FrameCountDebugString += L"%ws  FPS: %f  MSPF: %f"; }
 			~GWindowApplication() {}
 		public:
 			virtual bool Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, int nCmdShow);
@@ -26,7 +26,7 @@ namespace GEngine {
 			virtual bool ReleaseGEngine();
 
 			void ShowFrameStats();
-		
+			virtual void ChangeScreenSize(unsigned int uiWidth, unsigned int uiHeight, bool bWindow, bool isMaxScreen = false);
 		protected:
 			virtual void GEngineInputProc(GInputDevices dt, KeyCode key, GMouseButton mb, GInputAction action, int xPos, int yPos, int zDet);
 
@@ -34,6 +34,8 @@ namespace GEngine {
 			HINSTANCE m_hInstance;
 			HINSTANCE m_hPreInstance;
 			int m_cmdShow;
+
+			GStl::GTString FrameCountDebugString;
 		};
 
 #endif // WINDOWS

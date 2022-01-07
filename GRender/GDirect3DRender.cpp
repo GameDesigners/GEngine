@@ -10,10 +10,6 @@ GEngine::GRender::GDirect3DRender::GDirect3DRender(HINSTANCE hInstance, HWND hwn
 
 GEngine::GRender::GDirect3DRender::~GDirect3DRender()
 {
-	if (m_d3dDevice != nullptr)
-		FlushCommandQueue();
-
-	GSAFE_DELETE(m_pRender);
 }
 
 bool GEngine::GRender::GDirect3DRender::Get4xMsaaState() const { return m_4xMsaaState; }
@@ -228,23 +224,6 @@ void GEngine::GRender::GDirect3DRender::OnResize()
 
 void GEngine::GRender::GDirect3DRender::Draw()
 {
-	D3D_THROW_IF_FAILED(m_directCmdListAlloc->Reset());
-	D3D_THROW_IF_FAILED(m_commandList->Reset(m_directCmdListAlloc.Get(), nullptr));
-
-	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
-	m_commandList->RSSetViewports(1, &m_viewport);
-	m_commandList->RSSetScissorRects(1, &m_scissorRect);
-	m_commandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::Black, 0, nullptr);
-	m_commandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
-	m_commandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
-	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
-	D3D_THROW_IF_FAILED(m_commandList->Close());
-
-	ID3D12CommandList* cmdsLists[] = { m_commandList.Get() };
-	m_commandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-	D3D_THROW_IF_FAILED(m_swapChain->Present(0, 0));
-	m_curBackBuffer = (m_curBackBuffer + 1) % ms_SwapChainBufferCount;
-	FlushCommandQueue();
 }
 
 void GEngine::GRender::GDirect3DRender::FlushCommandQueue()

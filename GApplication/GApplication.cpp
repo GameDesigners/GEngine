@@ -32,6 +32,6 @@ void GEngine::GApp::GApplication::OnRButtonDown(int xPos, int yPos) {}
 void GEngine::GApp::GApplication::OnRButtonUp(int xPos, int yPos) {}
 void GEngine::GApp::GApplication::OnMButtonDown(int xPos, int yPos) {}
 void GEngine::GApp::GApplication::OnMButtonUp(int xPos, int yPos) {}
-void GEngine::GApp::GApplication::OnMouseMove(int xPos, int yPos) {}
+void GEngine::GApp::GApplication::OnMouseMove(WPARAM btnState, int xPos, int yPos) {}
 void GEngine::GApp::GApplication::OnMouseWheel(int xPos, int yPos, int zDet) {}
 void GEngine::GApp::GApplication::ChangeScreenSize(unsigned int uiWidth, unsigned int uiHeight, bool bWindow, bool isMaxScreen) {}

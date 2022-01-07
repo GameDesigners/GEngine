@@ -72,7 +72,7 @@ namespace GEngine {
 			virtual void OnRButtonUp(int xPos, int yPos);
 			virtual void OnMButtonDown(int xPos, int yPos);
 			virtual void OnMButtonUp(int xPos, int yPos);
-			virtual void OnMouseMove(int xPos, int yPos);
+			virtual void OnMouseMove(WPARAM btnState, int xPos, int yPos);
 			virtual void OnMouseWheel(int xPos, int yPos, int zDet);
 
 			//更改分辨率

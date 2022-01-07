@@ -5,6 +5,7 @@
 #include <direct.h>
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>
+#include <d3dcommon.h>
 
 #include <GSystem.h>
 #include <GTimer.h>
@@ -55,6 +56,7 @@ namespace GEngine {
 			static GRenderSystem* m_pRender;
 			static GRenderSystem* GetRenderSystem();
 			static bool Initialize(RenderAPIType type, HINSTANCE hInstance, HWND hwnd, UINT width = DEFAULT_SCREEN_WIDTH, UINT height = DEFAULT_SCREEN_HEIGHT, bool bWindow = true);
+			static bool Terminal(RenderAPIType type);
 
 			HINSTANCE AppInstance() const;
 			HWND MainWnd() const;

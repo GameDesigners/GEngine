@@ -6,13 +6,38 @@
 #include "GRender.h"
 namespace GEngine {
 	namespace GRender {
-
+		using namespace GEngine::GSystem;
 		using namespace DirectX;
+		
+		//临时结构
+		//*******************************************************************************************************
+		class MathHelper
+		{
+		public:
+			static DirectX::XMFLOAT4X4 Identity4x4()
+			{
+				static DirectX::XMFLOAT4X4 I(
+					1.0f, 0.0f, 0.0f, 0.0f,
+					0.0f, 1.0f, 0.0f, 0.0f,
+					0.0f, 0.0f, 1.0f, 0.0f,
+					0.0f, 0.0f, 0.0f, 1.0f);
+				return I;
+			}
+		};
+		
 		struct GVertex
 		{
 			XMFLOAT3 Pos;
 			XMFLOAT4 Color;
 		};
+
+		struct ObjectConstants
+		{
+			XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
+		};
+
+		//*******************************************************************************************************
+
 
 		class GRENDER_API DxException
 		{
@@ -49,7 +74,7 @@ namespace GEngine {
 #define D3D_THROW_IF_FAILED(x) \
         { \
             HRESULT hr__=(x); \
-            GStl::GTString wfn=AnsiToTString(__FILE__); \
+            GEngine::GStl::GTString wfn=AnsiToTString(__FILE__); \
             if(FAILED(hr__)) \
 		        throw DxException(hr__,L#x,wfn,__LINE__); \
 		}
@@ -161,23 +186,74 @@ namespace GEngine {
 			return (byteSize + 255) & ~255;
 		}
 
-		//创建常量缓冲区
-		//*******************************************************************************************************
-		inline Microsoft::WRL::ComPtr<ID3D12Resource> CreateConstantBuffer(
-			ID3D12Device* device, 
-			unsigned int elementByteSize,
-			unsigned int bufferCount)
+		template<class T>
+		class GUploadBuffer
 		{
-			elementByteSize = CaculateConstantBufferByteSize(elementByteSize);
-			ComPtr<ID3D12Resource> uploadBuffer;
-			device->CreateCommittedResource(
-				&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-				D3D12_HEAP_FLAG_NONE,
-				&CD3DX12_RESOURCE_DESC::Buffer(elementByteSize * bufferCount),
-				D3D12_RESOURCE_STATE_GENERIC_READ,
-				nullptr, IID_PPV_ARGS(&uploadBuffer)
-			);
-			return uploadBuffer;
+		public:
+			GUploadBuffer(ID3D12Device* device, unsigned int elementCount, bool isConstantBuffer)
+			{
+				m_isConstantBuffer = isConstantBuffer;
+				m_elementByteSize = sizeof(T);
+				if (isConstantBuffer)
+					m_elementByteSize = CaculateConstantBufferByteSize(m_elementByteSize);
+
+				D3D_THROW_IF_FAILED(
+					device->CreateCommittedResource(
+						&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+						D3D12_HEAP_FLAG_NONE,
+						&CD3DX12_RESOURCE_DESC::Buffer(m_elementByteSize * elementCount),
+						D3D12_RESOURCE_STATE_GENERIC_READ,
+						nullptr, IID_PPV_ARGS(&m_uploadBuffer)
+					));
+
+				D3D_THROW_IF_FAILED(m_uploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_pMappedData)));
+			}
+
+			GUploadBuffer(const GUploadBuffer& rhs) = delete;
+			GUploadBuffer& operator=(const GUploadBuffer& rhs) = delete;
+			~GUploadBuffer()
+			{
+				if (m_uploadBuffer != nullptr)
+					m_uploadBuffer->Unmap(0, nullptr);
+				m_pMappedData = nullptr;
+			}
+
+			ID3D12Resource* Resource() const
+			{
+				return m_uploadBuffer.Get();
+			}
+
+			void CopyData(int elementIdx, const T& data)
+			{
+				GMemoryCpy(&m_pMappedData[elementIdx * m_elementByteSize], sizeof(T), const_cast<T*>(&data), sizeof(T));
+			}
+
+		private:
+			Microsoft::WRL::ComPtr<ID3D12Resource> m_uploadBuffer;
+			BYTE*        m_pMappedData = nullptr;
+			unsigned int m_elementByteSize = 0;
+			bool         m_isConstantBuffer = false;
+		};
+
+		//编译着色器
+		//*******************************************************************************************************
+		inline Microsoft::WRL::ComPtr<ID3DBlob> CompileShader(const GStl::GTString& fileName, const D3D_SHADER_MACRO* defines, const GStl::GString& entryPoint, const GStl::GString& target)
+		{
+			unsigned int compileFlags = 0;
+            #if defined(DEBUG) || defined(_DEBUG)
+			compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+            #endif
+
+			HRESULT hr = S_OK;
+			Microsoft::WRL::ComPtr<ID3DBlob> byteCode = nullptr;
+			Microsoft::WRL::ComPtr<ID3DBlob> errors = nullptr;
+			hr = D3DCompileFromFile(fileName.c_str(), defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, (LPCSTR)entryPoint.c_str(), (LPCSTR)target.c_str(), compileFlags, 0, &byteCode, &errors);
+
+			if (errors != nullptr)
+				GOutputDebugStringA((char*)errors->GetBufferPointer());
+
+			D3D_THROW_IF_FAILED(hr);
+			return byteCode;
 		}
 	}
 }

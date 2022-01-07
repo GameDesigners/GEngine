@@ -19,7 +19,7 @@ namespace GEngine {
 			virtual ~GDirect3DRender();
 		public:
 			virtual void Draw();
-		protected:
+		public:
 			bool Get4xMsaaState() const;
 			void Set4xMsaaState(bool value);
 
@@ -38,7 +38,7 @@ namespace GEngine {
 
 
 
-		private:
+		public:
 			inline D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const {
 				return CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_curBackBuffer, m_rtvDescriptorSize);
 			}
