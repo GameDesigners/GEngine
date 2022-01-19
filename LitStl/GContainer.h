@@ -9,7 +9,7 @@ namespace GEngine{
         
 		/*
 		 *   序列式容器,实现方式为：数组、链表：
-		 *   GArray        -->   |   GArray.h        |   GArray.inl        |   GArray.cpp         |   code review :
+		 *   GArray        -->   |   GArray.h        |   GArray.inl        |   GArray.cpp         |   code review :2022.01.19
 		 *   GVector       -->   |   GVector.h       |   GVector.inl       |   GVector.cpp		  |	  code review :
 		 *   GDeque        -->   |   GDeque.h        |   GDeque.inl        |   GDeque.cpp		  |	  code review :no finish
 		 *   GList         -->   |   GList.h         |   GList.inl         |   GList.cpp		  |	  code review :2021.10.12
@@ -82,14 +82,12 @@ namespace GEngine{
 		};
 
 		//placement 构造函数[placement new, 调用T1::T1(value);不能被重载的new方法！！]
-		template<class T1, class T2>
-		inline void construct(T1* p, const T2& value)
+		template<class T1, class T2> inline void construct(T1* p, const T2& value)
 		{
 			GNEW(p)T1(value);
 		}
 
-		template<class T>
-		inline void construct(T* p)
+		template<class T> inline void construct(T* p)
 		{
 			GNEW(p)T();
 		}

@@ -8,12 +8,13 @@ namespace GEngine{
 		class GSTL_API GVector : public GContainer<T, MMFun>
 		{
 		public:
-			typedef size_t                         size_type;
 			typedef T                              value_type;
-			typedef T&                             reference_type;
-			typedef const T&                       const_reference_type;
-			typedef T*                             pointer;
-
+			typedef size_t                         size_type;
+			typedef ptrdiff_t                      difference_type;
+			typedef value_type&                    reference;
+			typedef const value_type&              const_reference;
+			typedef value_type*                    pointer;
+			typedef const value_type*              const_pointer;
 			typedef _SingleMemUnit_Iterator<T>     iterator_type;
 			typedef _SingleMemUnit_CIterator<T>    c_iterator_type;
 			typedef _SingleMemUnit_RIterator<T>    r_iterator_type;
@@ -106,10 +107,10 @@ namespace GEngine{
 			cr_iterator_type crend();
 
 		private:
-			T*         m_data;
-			size_t     m_count;
-			size_t     m_capcity;
-			size_t     m_constructed;
+			value_type* m_data;
+			size_type   m_count;
+			size_type   m_capcity;
+			size_type   m_constructed;
 
 			inline size_t _caculate_increased_capcity(size_t target_count,size_t _old_capcity=DefaultCapcity)
 			{

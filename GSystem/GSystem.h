@@ -333,7 +333,7 @@ namespace GEngine
 		template<typename ...Args>
 		FORCEINLINE VOID GWSprintf(const TCHAR* pcString,const TCHAR* pFormat, Args ...args)
 		{
-			wprintf_s(pcString, pFormat, args);
+			wprintf_s(pcString, pFormat, args...);
 		}
 
 

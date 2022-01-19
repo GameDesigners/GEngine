@@ -118,14 +118,14 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../GInput;../GApplication;../GGraphic;../GSystem;../GMath;../LitStl</AdditionalIncludeDirectories>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>../GRender;../GInput;../GApplication;../GGraphic;../GSystem;../GMath;../LitStl</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GMath.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphic.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GApplication.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GInput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\bin\GSystem.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\LitStl.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GMath.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GGraphic.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GApplication.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GInput.lib;$(SolutionDir)$(Platform)\$(Configuration)\bin\GRender.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
