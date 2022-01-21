@@ -1,8 +1,9 @@
+#include "GVector.h"
 //构造函数 
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector()
+constexpr GEngine::GStl::GVector<T, MMFun>::GVector()
 {
 	m_data = this->New(DefaultCapcity);
 	GASSERT(m_data != nullptr);
@@ -12,19 +13,19 @@ GVector<T, MMFun>::GVector()
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(const GVector& cv)
+constexpr GEngine::GStl::GVector<T, MMFun>::GVector(const GVector& cv)
 {
 	m_data = this->New(cv.m_capcity);
 	GASSERT(m_data != nullptr);
 	m_count = cv.m_count;
 	m_capcity = cv.m_capcity;
 
-	for (int index = 0; index < m_count; index++) 
-		_construct_elem(index, *(cv.m_data + index));
+	for (size_type index = 0; index < m_count; ++index) 
+		__construct_element_idx(index, *(cv.m_data + index));
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(GVector&& rv)
+constexpr GEngine::GStl::GVector<T, MMFun>::GVector(GVector&& rv) noexcept
 {
 	GASSERT(rv.m_data != nullptr);
 	m_data = rv.m_data;
@@ -40,50 +41,50 @@ GVector<T, MMFun>::GVector(GVector&& rv)
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(size_t _count)
+GEngine::GStl::GVector<T, MMFun>::GVector(size_type count)
 {
-	m_capcity = _caculate_increased_capcity(_count);
+	m_capcity = __caculate_increased_capcity(count);
 	m_data = this->New(m_capcity);
 	GASSERT(m_data != nullptr);
-	m_count = _count;
-	for (int index = 0; index < m_count; index++)
-		_construct_elem_no_cv(index);
+	m_count = count;
+	for (int index = 0; index < m_count; ++index)
+		__construct_elem_to_default_value(index);
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(size_t _count, const T& val)
+constexpr GEngine::GStl::GVector<T, MMFun>::GVector(size_type count, const_reference val)
 {
-	m_count = _count;
-	m_capcity = _caculate_increased_capcity(_count);
+	m_count = count;
+	m_capcity = __caculate_increased_capcity(count);
 	m_constructed = 0;
 
 	m_data = this->New(m_capcity);
 	GASSERT(m_data != nullptr);
 
-	for (int index = 0; index < m_count; index++) 
-		_construct_elem(index, val);
+	for (int index = 0; index < m_count; ++index) 
+		__construct_element_idx(index, val);
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(iterator_type _begin, iterator_type _end)
+constexpr GEngine::GStl::GVector<T, MMFun>::GVector(iterator_type first, iterator_type last)
 { 
-	m_count = _end - _begin;
+	m_count = last - first;
 	GASSERT(m_count >= 0);  //迭代器异常断言
-	m_capcity = _caculate_increased_capcity(m_count);
+	m_capcity = __caculate_increased_capcity(m_count);
 	m_constructed = 0;
 
 	m_data = this->New(m_capcity);
 	GASSERT(m_data != nullptr);
 
-	for (int index = 0; index < m_count; index++)
-		_construct_elem(index, *(_begin + index));
+	for (int index = 0; index < m_count; ++index)
+		__construct_element_idx(index, *(first + index));
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::GVector(std::initializer_list<T> values)
+constexpr GEngine::GStl::GVector<T, MMFun>::GVector(std::initializer_list<T> values)
 {
 	m_count = values.size();
-	m_capcity = _caculate_increased_capcity(m_count);
+	m_capcity = __caculate_increased_capcity(m_count);
 	m_constructed = 0;
 
 	m_data = this->New(m_capcity);
@@ -91,11 +92,11 @@ GVector<T, MMFun>::GVector(std::initializer_list<T> values)
 
 	int idx = 0;
 	 for (T* p = (T*)values.begin(); p != values.end(); p++, idx++)
-		 _construct_elem(idx, *p);
+		 __construct_element_idx(idx, *p);
 }
 
 template<class T, GMemManagerFun MMFun>
-GVector<T, MMFun>::~GVector()
+GEngine::GStl::GVector<T, MMFun>::~GVector()
 {
 	if (m_data != nullptr)
 		this->Delete(m_data, m_capcity, m_constructed);
@@ -111,19 +112,21 @@ GVector<T, MMFun>::~GVector()
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::operator=(const GVector& cv)
+constexpr GEngine::GStl::GVector<T,MMFun>& GEngine::GStl::GVector<T, MMFun>::operator=(const GVector& clone)
 {
-	size_t temp = _caculate_increased_capcity(cv.m_count, m_capcity);
+	size_t temp = __caculate_increased_capcity(clone.m_count, m_capcity);
 
 	if (temp != m_capcity)
-		_new_data_memory_addr(temp, false);
-	m_count = cv.m_count;
-	for (int idx = 0; idx < m_count; idx++)
-		_construct_elem(idx, *(cv.m_data + idx));
+		__rellocate_memory_block(temp, false);
+
+	m_count = clone.m_count;
+	for (int index = 0; index < m_count; ++index)
+		__construct_element_idx(index, *(clone.m_data + index));
+	return *this;
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::operator=(GVector&& rv)
+constexpr GEngine::GStl::GVector<T,MMFun>& GEngine::GStl::GVector<T, MMFun>::operator=(GVector&& rv)
 {
 	GASSERT(rv.m_data != nullptr);
 	this->Delete(m_data, m_capcity, m_constructed);  //删除本容器的数据
@@ -137,60 +140,64 @@ void GVector<T, MMFun>::operator=(GVector&& rv)
 	rv.m_count = 0;
 	rv.m_capcity = 0;
 	m_constructed = 0;
+
+	return *this;
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::operator=(std::initializer_list<T> values)
+constexpr GEngine::GStl::GVector<T, MMFun>& GEngine::GStl::GVector<T, MMFun>::operator=(std::initializer_list<T> values)
 {
 	size_t elem_num = values.size();
-	size_t temp = _caculate_increased_capcity(elem_num, m_capcity);
+	size_t temp = __caculate_increased_capcity(elem_num, m_capcity);
 	if (temp != m_capcity)
-		_new_data_memory_addr(temp, false);
+		__rellocate_memory_block(temp, false);
 
 	int idx = 0;
 	for (T* p = (T*)values.begin(); p != values.end(); p++, idx++)
-		_construct_elem(idx, *p);
+		__construct_element_idx(idx, *p);
 	m_count = elem_num;
+
+	return *this;
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::assign(int _count, const T& val)
+constexpr void GEngine::GStl::GVector<T, MMFun>::assign(int count, const_reference value)
 {
-	size_t temp = _caculate_increased_capcity(_count, m_capcity);
+	size_t temp = __caculate_increased_capcity(count, m_capcity);
 	if (temp != m_capcity)
-		_new_data_memory_addr(temp, false);
+		__rellocate_memory_block(temp, false);
 
-	for (int index = 0; index < _count; index++)
-		_construct_elem(index, val);
-	m_count = _count;
+	for (int index = 0; index < count; ++index)
+		__construct_element_idx(index, value);
+	m_count = count;
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::assign(iterator_type begin, iterator_type end)
+constexpr void GEngine::GStl::GVector<T, MMFun>::assign(iterator_type first, iterator_type last)
 {
-	size_t _count = end - begin;
-	GASSERT(_count >= 0);  //迭代器异常断言
-	size_t temp = _caculate_increased_capcity(_count,m_capcity);
+	size_t count = last - first;
+	GASSERT(count >= 0);  //迭代器异常断言
+	size_t temp = __caculate_increased_capcity(count, m_capcity);
 	
 	if (temp != m_capcity)
-		_new_data_memory_addr(temp, false);
+		__rellocate_memory_block(temp, false);
 
-	for (int index = 0; index < _count; index++)
-		_construct_elem(index, *(begin + index));
-	m_count = _count;
+	for (int index = 0; index < count; ++index)
+		__construct_element_idx(index, *(first + index));
+	m_count = count;
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::assign(std::initializer_list<T> values)
+constexpr void GEngine::GStl::GVector<T, MMFun>::assign(std::initializer_list<T> values)
 {
 	size_t elem_num = values.size();
-	size_t temp = _caculate_increased_capcity(m_capcity);
+	size_t temp = __caculate_increased_capcity(m_capcity);
 	if (temp != m_capcity)
-		_new_data_memory_addr(temp, false);
+		__rellocate_memory_block(temp, false);
 
 	int idx = 0;
 	for (T* p = (T*)values.begin(); p != values.end(); p++, idx++)
-		_construct_elem(idx, *p);
+		__construct_element_idx(idx, *p);
 	m_count = elem_num;
 }
 
@@ -219,161 +226,221 @@ void GVector<T, MMFun>::swap(GVector& v)
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-T& GVector<T, MMFun>::operator[](size_t idx)
+constexpr typename GEngine::GStl::GVector<T, MMFun>::reference GEngine::GStl::GVector<T, MMFun>::operator[](size_type idx)
 {
 	return m_data[idx];
 }
 
 template<class T, GMemManagerFun MMFun>
-T& GVector<T, MMFun>::at(size_t idx)
+constexpr typename GEngine::GStl::GVector<T,MMFun>::reference GEngine::GStl::GVector<T, MMFun>::at(size_type idx)
 {
 	GASSERT(idx < m_count);
 	return m_data[idx];
 }
 
 template<class T, GMemManagerFun MMFun>
-T& GVector<T, MMFun>::front()
+constexpr typename GEngine::GStl::GVector<T, MMFun>::reference GEngine::GStl::GVector<T, MMFun>::front()
 {
 	GASSERT(m_count != 0);
 	return m_data[0];
 }
 
 template<class T, GMemManagerFun MMFun>
-T& GVector<T, MMFun>::back()
+constexpr typename GEngine::GStl::GVector<T, MMFun>::reference GEngine::GStl::GVector<T, MMFun>::back()
 {
 	GASSERT(m_count != 0);
 	return m_data[m_count - 1];
+}
+
+template<class T, GMemManagerFun MMFun>
+constexpr typename GEngine::GStl::GVector<T, MMFun>::pointer GEngine::GStl::GVector<T, MMFun>::data() noexcept
+{
+	return m_data;
+}
+
+template<class T, GMemManagerFun MMFun>
+constexpr typename GEngine::GStl::GVector<T, MMFun>::const_reference GEngine::GStl::GVector<T, MMFun>::operator[](size_type idx) const
+{
+	return m_data[idx];
+}
+
+template<class T, GMemManagerFun MMFun>
+constexpr typename GEngine::GStl::GVector<T, MMFun>::const_reference GEngine::GStl::GVector<T, MMFun>::at(size_type idx) const
+{
+	GASSERT(idx < m_count);
+	return m_data[idx];
+}
+
+template<class T, GMemManagerFun MMFun>
+constexpr typename GEngine::GStl::GVector<T, MMFun>::const_reference GEngine::GStl::GVector<T, MMFun>::front() const
+{
+	GASSERT(m_count != 0);
+	return m_data[0];
+}
+
+template<class T, GMemManagerFun MMFun>
+constexpr typename GEngine::GStl::GVector<T, MMFun>::const_reference GEngine::GStl::GVector<T, MMFun>::back() const
+{
+	GASSERT(m_count != 0);
+	return m_data[m_count - 1];
+}
+
+template<class T, GMemManagerFun MMFun>
+constexpr typename GEngine::GStl::GVector<T, MMFun>::const_pointer GEngine::GStl::GVector<T, MMFun>::data() const
+{
+	return m_data;
 }
 
 //安插和移除
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::push_back(const T& cv)
+constexpr void GEngine::GStl::GVector<T, MMFun>::push_back(const_reference cr)
 {
 	if (m_count == m_capcity)
-		_new_data_memory_addr(m_capcity + IncreaseCapcityStep, true);
+		__rellocate_memory_block(m_capcity + IncreaseCapcityStep, true);
 
-	_construct_addr(m_data + m_count, cv);
+	__construct_element_addr(m_data + m_count, cr);
 	m_count++;
 } 
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::push_back(T&& rv)
+constexpr void GEngine::GStl::GVector<T, MMFun>::push_back(T&& rv)
 {
 	if (m_count == m_capcity)
-		_new_data_memory_addr(m_capcity + IncreaseCapcityStep, true);
-	_construct_elem_no_cv(m_count);
-	m_data[m_count] = g_move(rv);
+		__rellocate_memory_block(m_capcity + IncreaseCapcityStep, true);
+	__construct_elem_to_default_value(m_count);
+	m_data[m_count] = GMove(rv);
 	m_count++;
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::pop_back()
+constexpr void GEngine::GStl::GVector<T, MMFun>::pop_back()
 {
 	if (m_count == 0)
 		return;
 
-	_destruct_elem(m_count - 1);
+	__destruct_elem_idx(m_count - 1);
 	m_count--;
 }
 
 template<class T, GMemManagerFun MMFun>
-typename GVector<T, MMFun>::iterator_type  GVector<T, MMFun>::insert(iterator_type pos, const T& val)
+constexpr typename GEngine::GStl::GVector<T, MMFun>::iterator_type  GEngine::GStl::GVector<T, MMFun>::insert(iterator_type pos, const_reference value)
 {
-	iterator_type p = end();
-	if (p - pos < 0)
+	iterator_type iterator = end();
+	if (iterator - pos < 0)
 		return pos;
 
 	if (m_count == m_capcity)
-		_new_data_memory_addr(m_capcity + IncreaseCapcityStep, true);
+		__rellocate_memory_block(m_capcity + IncreaseCapcityStep, true);
 
-	for (p; p != pos; p--)
-		_construct_iterator(p, *(p - 1));
-	_construct_iterator(p, val);
+	for (iterator; iterator != pos; iterator--)
+		__construct_element_iterator(iterator, *(iterator - 1));
+	__construct_element_iterator(iterator, value);
 	m_count++;
-	return p;
+	return iterator;
 }
 
 template<class T, GMemManagerFun MMFun>
-typename GVector<T, MMFun>::iterator_type  GVector<T, MMFun>::insert(iterator_type pos, size_t num, const T& val)
+constexpr typename GEngine::GStl::GVector<T, MMFun>::iterator_type GEngine::GStl::GVector<T, MMFun>::insert(iterator_type pos, T&& rv)
 {
-	if (num == 0)
+	iterator_type iterator = end();
+	if (iterator - pos < 0)
 		return pos;
 
-	iterator_type p = end();
-	GASSERT(p - pos >= 0);  //传入迭代器是否合法断言
+	if (m_count == m_capcity)
+		__rellocate_memory_block(m_capcity + IncreaseCapcityStep, true);
 
-	size_t temp = _caculate_increased_capcity(num + m_count, m_capcity);
+	for (iterator; iterator != pos; iterator--)
+		__construct_element_iterator(iterator, *(iterator - 1));
+	
+	*iterator = GMove(rv);
+
+	m_count++;
+	return iterator;
+}
+
+template<class T, GMemManagerFun MMFun>
+constexpr typename GEngine::GStl::GVector<T, MMFun>::iterator_type GEngine::GStl::GVector<T, MMFun>::insert(iterator_type pos, size_type count, const_reference value)
+{
+	if (count == 0)
+		return pos;
+
+	iterator_type iterator = end();
+	GASSERT(iterator - pos >= 0);  //传入迭代器是否合法断言
+
+	size_t temp = __caculate_increased_capcity(count + m_count, m_capcity);
 	if (temp != m_capcity)
-		_new_data_memory_addr(temp, true);
-	for (int index = 0; index < num; index++)
-		_construct_elem_no_cv(m_count + index);
+		__rellocate_memory_block(temp, true);
+	for (int index = 0; index < count; ++index)
+		__construct_elem_to_default_value(m_count + index);
 
 	//元素挪动
-	for (p; p != pos; p--)
-		_construct_iterator(p + num - 1, *(p - 1));
+	for (iterator; iterator != pos; iterator--)
+		__construct_element_iterator(iterator + count - 1, *(iterator - 1));
 
 	//插入新值
-	for (int index = 0; index < num; index++, pos++)
-		_construct_iterator(pos, val);
-	m_count += num;
-	return p;
+	for (int index = 0; index < count; ++index, pos++)
+		__construct_element_iterator(pos, value);
+	m_count += count;
+	return iterator;
 }
 
 template<class T, GMemManagerFun MMFun>
-typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::insert(iterator_type pos, iterator_type _begin, iterator_type _end)
+constexpr typename GEngine::GStl::GVector<T, MMFun>::iterator_type GEngine::GStl::GVector<T, MMFun>::insert(iterator_type pos, iterator_type first, iterator_type last)
 {
-	size_t _count = _end - _begin;
-	iterator_type p = end();
-	if (_count < 0 || p - pos <= 0)
+	size_t count = last - first;
+	iterator_type iterator = end();
+
+	if (count < 0 || iterator - pos <= 0)
 		return pos;//迭代器开始和结束顺序不对
 
-	size_t temp = _caculate_increased_capcity(_count, m_capcity);
+	size_t temp = __caculate_increased_capcity(count, m_capcity);
 	if (temp != m_capcity)
-		_new_data_memory_addr(temp, true);
-	for (int index = 0; index < _count; index++)
-		_construct_elem_no_cv(m_count + index);
+		__rellocate_memory_block(temp, true);
+	for (int index = 0; index < count; ++index)
+		__construct_elem_to_default_value(m_count + index);
 
 	//向后挪动
-	for (p; p != pos; p--)
-		_construct_iterator(p + _count - 1, *(p - 1));
+	for (iterator; iterator != pos; iterator--)
+		__construct_element_iterator(iterator + count - 1, *(iterator - 1));
 
-	for (auto q = _begin; q != _end; q++, pos++)
-		_construct_iterator(pos, *q);
-	m_count += _count;
-	return p;
+	for (auto q = first; q != last; q++, pos++)
+		__construct_element_iterator(pos, *q);
+	m_count += count;
+	return iterator;
 }
 
 template<class T, GMemManagerFun MMFun>
-typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::insert(iterator_type pos, std::initializer_list<T> values)
+constexpr typename GEngine::GStl::GVector<T, MMFun>::iterator_type GEngine::GStl::GVector<T, MMFun>::insert(iterator_type pos, std::initializer_list<T> values)
 {
-	size_t _count = values.size();
-	iterator_type p = end();
-	if (_count < 0 || p - pos < 0)
+	size_t count = values.size();
+	iterator_type iterator = end();
+	if (count < 0 || iterator - pos < 0)
 		return pos;//迭代器开始和结束顺序不对
 
-	size_t temp = _caculate_increased_capcity(m_count + _count, m_capcity);
+	size_t temp = __caculate_increased_capcity(m_count + count, m_capcity);
 	if (temp != m_capcity)
-		_new_data_memory_addr(temp, true);
-	for (int index = 0; index < _count; index++)
-		_construct_elem_no_cv(m_count + index);
+		__rellocate_memory_block(temp, true);
+
+	for (int index = 0; index < count; index++)
+		__construct_elem_to_default_value(m_count + index);
 
 	//向后挪动
-	for (p; p != pos; p--)
-		_construct_iterator(p + _count - 1, *(p - 1));
+	for (iterator; iterator != pos; iterator--)
+		__construct_element_iterator(iterator + count - 1, *(iterator - 1));
 
 
 	for (T* q = (T*)values.begin(); q != values.end(); q++, pos++)
-		_construct_iterator(pos, *q);
-	m_count += _count;
-	return p;
+		__construct_element_iterator(pos, *q);
+	m_count += count;
+	return iterator;
 }
 
 
 template<class T, GMemManagerFun MMFun>
 template<class ...Args>
-typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::emplace(iterator_type pos, Args&&... args)
+typename GEngine::GStl::GVector<T, MMFun>::iterator_type GEngine::GStl::GVector<T, MMFun>::emplace(iterator_type pos, Args&&... args)
 {
 	T temp(args...);
 	return insert(pos, temp);
@@ -381,61 +448,60 @@ typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::emplace(iterator_ty
 
 template<class T, GMemManagerFun MMFun>
 template<class ...Args>
-typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::emplace_back(Args&&... args)
+typename GEngine::GStl::GVector<T, MMFun>::iterator_type GEngine::GStl::GVector<T, MMFun>::emplace_back(Args&&... args)
 {
 	T temp(args...);
 	push_back(temp);
-	return _SingleMemUnit_Iterator<T>(m_data + m_count - 1);
+	return iterator_type(m_data + m_count - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
-typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::erase(iterator_type pos)
+constexpr typename GEngine::GStl::GVector<T, MMFun>::iterator_type GEngine::GStl::GVector<T, MMFun>::erase(iterator_type pos)
 {
 	int idx = pos - begin();
 	for (auto p = pos; p + 1 != end(); p++)
-		_construct_iterator(p, *(p + 1));
-	_destruct_elem(m_count-1);
+		__construct_element_iterator(p, *(p + 1));
+	__destruct_elem_idx(m_count-1);
 	m_count--;		
-	return _SingleMemUnit_Iterator<T>(m_data + idx);
+	return iterator_type(m_data + idx);
 }
 
 template<class T, GMemManagerFun MMFun>
-typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::erase(iterator_type _begin, iterator_type _end)
+constexpr typename GEngine::GStl::GVector<T, MMFun>::iterator_type GEngine::GStl::GVector<T, MMFun>::erase(iterator_type first, iterator_type last)
 {
-	int _delete_count = _end - _begin;
-	if (_delete_count <= 0)
-		return _begin;
+	int delete_count = last - first;
+	if (delete_count <= 0)
+		return first;
 
-	int next_idx = end() - _end;
-	for (auto p = _begin, q = _end; q != end(); p++, q++)
-		_construct_iterator(p, *q);
+	int next_idx = end() - last;
+	for (auto p = first, q = last; q != end(); p++, q++)
+		__construct_element_iterator(p, *q);
 
-	for (int i = 0; i < _delete_count; i++)
-		_destruct_elem(m_count - i-1);
-	m_count -= _delete_count;
-	return _SingleMemUnit_Iterator<T>(m_data + m_count - next_idx);
+	for (int index = 0; index < delete_count; ++index)
+		__destruct_elem_idx(m_count - index - 1);
+	m_count -= delete_count;
+	return iterator_type(m_data + m_count - next_idx);
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::resize(size_t num)
+constexpr void GEngine::GStl::GVector<T, MMFun>::resize(size_type count)
 {
-	T val;
-	resize(num, val);
+	resize(count, T());
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::resize(size_t num, const T& val)
+constexpr void GEngine::GStl::GVector<T, MMFun>::resize(size_type count, const_reference value)
 {
-	if (m_count == num)
+	if (m_count == count)
 		return;
 
-	size_t temp = _caculate_increased_capcity(num, m_capcity);
+	size_t temp = __caculate_increased_capcity(count, m_capcity);
 	if (temp != m_capcity)
-		_new_data_memory_addr(temp, true);
+		__rellocate_memory_block(temp, true);
 
-	int delta = num - m_count;
+	int delta = count - m_count;
 	if (delta > 0)
-		insert(end(), delta, val);
+		insert(end(), delta, value);
 	else
 		erase(end() + delta, end());
 }
@@ -445,19 +511,19 @@ void GVector<T, MMFun>::resize(size_t num, const T& val)
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-bool GVector<T, MMFun>::empty() const
+constexpr bool GEngine::GStl::GVector<T, MMFun>::empty() const
 {
 	return m_count == 0;
 }
 
 template<class T, GMemManagerFun MMFun>
-size_t GVector<T, MMFun>::size() const
+constexpr size_t GEngine::GStl::GVector<T, MMFun>::size() const
 {
 	return m_count;
 }
 
 template<class T, GMemManagerFun MMFun>
-size_t GVector<T, MMFun>::capcity() const
+constexpr size_t GEngine::GStl::GVector<T, MMFun>::capcity() const
 {
 	return m_capcity;
 }
@@ -467,7 +533,7 @@ void GVector<T, MMFun>::clear()
 {
 	if (ValueBase<T>::NeedsDestructor)
 		while (m_constructed > 0)
-			_destruct_elem(m_constructed - 1);
+			__destruct_elem_idx(m_constructed - 1);
 
 	m_count = 0;
 }
@@ -477,20 +543,20 @@ void GVector<T, MMFun>::clear()
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::reserve(size_t _capcity)
+constexpr void GEngine::GStl::GVector<T, MMFun>::reserve(size_type new_cap)
 {
-	if (m_capcity >= _capcity)
+	if (m_capcity >= new_cap)
 		return;
 
-	_new_data_memory_addr(_capcity, true);
+	__rellocate_memory_block(new_cap, true);
 }
 
 template<class T, GMemManagerFun MMFun>
-void GVector<T, MMFun>::shrink_to_fit()
+constexpr void GEngine::GStl::GVector<T, MMFun>::shrink_to_fit()
 {
 	if (m_capcity == m_count)
 		return;
-	_new_data_memory_addr(m_count, true);
+	__rellocate_memory_block(m_count, true);
 }
 
 
@@ -498,12 +564,12 @@ void GVector<T, MMFun>::shrink_to_fit()
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-bool GVector<T, MMFun>::operator==(const GVector& rhs)
+bool GEngine::GStl::GVector<T, MMFun>::operator==(const GVector& rhs) const
 {
 	if (m_count != rhs.m_count)
 		return false;
 
-	for (int index = 0; index < m_count; index++)
+	for (int index = 0; index < m_count; ++index)
 	{
 		if (*(m_data + index) != *(rhs.m_data + index))
 			return false;
@@ -512,12 +578,12 @@ bool GVector<T, MMFun>::operator==(const GVector& rhs)
 }
 
 template<class T, GMemManagerFun MMFun>
-bool GVector<T, MMFun>::operator!=(const GVector& rhs)
+bool GEngine::GStl::GVector<T, MMFun>::operator!=(const GVector& rhs) const
 {
 	if (m_count != rhs.m_count)
 		return true;
 
-	for (int index = 0; index < m_count; index++)
+	for (int index = 0; index < m_count; ++index)
 	{
 		if (*(m_data + index) != *(rhs.m_data + index))
 			return true;
@@ -526,10 +592,10 @@ bool GVector<T, MMFun>::operator!=(const GVector& rhs)
 }
 
 template<class T, GMemManagerFun MMFun>
-bool GVector<T, MMFun>::operator<(const GVector& rhs)
+bool GEngine::GStl::GVector<T, MMFun>::operator<(const GVector& rhs) const
 {
 	size_t min_count = m_count < rhs.m_count ? m_count : rhs.m_count;
-	for (int index = 0; index < min_count; index++)
+	for (int index = 0; index < min_count; ++index)
 	{
 		if (*(m_data + index) < *(rhs.m_data + index))
 			return true;
@@ -538,10 +604,10 @@ bool GVector<T, MMFun>::operator<(const GVector& rhs)
 }
 
 template<class T, GMemManagerFun MMFun>
-bool GVector<T, MMFun>::operator>(const GVector& rhs)
+bool GEngine::GStl::GVector<T, MMFun>::operator>(const GVector& rhs) const
 {
 	size_t min_count = m_count < rhs.m_count ? m_count : rhs.m_count;
-	for (int index = 0; index < min_count; index++)
+	for (int index = 0; index < min_count; ++index)
 	{
 		if (*(m_data + index) > *(rhs.m_data + index))
 			return true;
@@ -550,72 +616,72 @@ bool GVector<T, MMFun>::operator>(const GVector& rhs)
 }
 
 template<class T, GMemManagerFun MMFun>
-bool GVector<T, MMFun>::operator>=(const GVector& rhs)
+bool GEngine::GStl::GVector<T, MMFun>::operator>=(const GVector& rhs) const
 {
-	return *this == rhs || *this > rhs;
+	return !(*this < rhs);
 }
 
 template<class T, GMemManagerFun MMFun>
-bool GVector<T, MMFun>::operator<=(const GVector& rhs)
+bool GEngine::GStl::GVector<T, MMFun>::operator<=(const GVector& rhs) const
 {
-	return *this == rhs || *this < rhs;
+	return !(*this > rhs);
 }
 
 //迭代器
 //**********************************************************************************************************************************************
 
 template<class T, GMemManagerFun MMFun>
-typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::begin()
+typename GEngine::GStl::GVector<T, MMFun>::iterator_type GEngine::GStl::GVector<T, MMFun>::begin()
 {
 	typedef GVector<T, MMFun>::iterator_type category;
-	return category(m_data);
+	return iterator_type(m_data);
 }
 
 template<class T, GMemManagerFun MMFun>
 typename GVector<T, MMFun>::iterator_type GVector<T, MMFun>::end()
 {
 	typedef GVector<T, MMFun>::iterator_type category;
-	return category(m_data + m_count);
+	return iterator_type(m_data + m_count);
 }
 
 template<class T, GMemManagerFun MMFun>
 typename GVector<T, MMFun>::c_iterator_type GVector<T, MMFun>::cbegin()
 {
 	typedef GVector<T, MMFun>::c_iterator_type category;
-	return category(m_data);
+	return c_iterator_type(m_data);
 }
 
 template<class T, GMemManagerFun MMFun>
 typename GVector<T, MMFun>::c_iterator_type GVector<T, MMFun>::cend()
 {
 	typedef GVector<T, MMFun>::c_iterator_type category;
-	return category(m_data + m_count);
+	return c_iterator_type(m_data + m_count);
 }
 
 template<class T, GMemManagerFun MMFun>
 typename GVector<T, MMFun>::r_iterator_type GVector<T, MMFun>::rbegin()
 {
 	typedef GVector<T, MMFun>::r_iterator_type category;
-	return category(m_data + m_count - 1);
+	return r_iterator_type(m_data + m_count - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
 typename GVector<T, MMFun>::r_iterator_type GVector<T, MMFun>::rend()
 {
 	typedef GVector<T, MMFun>::r_iterator_type category;
-	return category(m_data - 1);
+	return r_iterator_type(m_data - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
 typename GVector<T, MMFun>::cr_iterator_type GVector<T, MMFun>::crbegin()
 {
 	typedef GVector<T, MMFun>::cr_iterator_type category;
-	return category(m_data + m_count - 1);
+	return cr_iterator_type(m_data + m_count - 1);
 }
 
 template<class T, GMemManagerFun MMFun>
 typename GVector<T, MMFun>::cr_iterator_type GVector<T, MMFun>::crend()
 {
 	typedef GVector<T, MMFun>::cr_iterator_type category;
-	return category(m_data - 1);
+	return cr_iterator_type(m_data - 1);
 }

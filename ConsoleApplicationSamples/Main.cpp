@@ -226,10 +226,10 @@ bool CustomConsoleApplication::Run()
 	//USE_GSTL_GARRAY();
 
 	//GArraySample();
-	GVectorSample();
-	//GDeuqeSample();   
+	//GVectorSample();
+	GDeuqeSample();   
 	//GListSample();
-	//GForwardListSample();
+	GForwardListSample();
 	//GSetSample();
 	//GMapSample();
 	//GUnorderedSetSample();

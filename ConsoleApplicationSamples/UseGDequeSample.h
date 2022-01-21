@@ -1,17 +1,17 @@
 #ifndef USE_GDEQUE_SAMPLE_H
 #define USE_GDEQUE_SAMPLE_H
-#include "GDeque.h"
+//#include "GDeque.h"
 using namespace GEngine::GSystem;
 using namespace GEngine::GStl;
 
-ostream& operator<<(ostream& os, const GDeque<SamplesElem>& deque)
-{
-	return os;
-}
+//ostream& operator<<(ostream& os, const GDeque<SamplesElem>& deque)
+//{
+//	return os;
+//}
 
 void GDeuqeSample()
 {
-	GDeque<SamplesElem> deque1;
+	/*GDeque<SamplesElem> deque1;
 	GDeque<SamplesElem> deque2(28);
 	GDeque<SamplesElem> deque3(24, SamplesElem(12, 25.3));
 	GDeque<SamplesElem> deque4({
@@ -41,7 +41,7 @@ void GDeuqeSample()
 	std::cout << "deque6 size:" << deque6.size() << " is_empty:" << deque6.empty() << std::endl;
 	std::cout << "deque7 size:" << deque7.size() << " is_empty:" << deque7.empty() << std::endl;
 
-	std::cout << std::endl;
+	std::cout << std::endl;*/
 	//__deque_memory_buffer_block<SamplesElem>* map= G 
 }
 #endif // !USE_GDEQUE_SAMPLE_H

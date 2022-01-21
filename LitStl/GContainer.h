@@ -57,15 +57,15 @@ namespace GEngine{
 				GASSERT(newAddr != nullptr);
 				return newAddr;
 			}
-			inline void Delete(T* pAddr,int Num,int ConstructsNum)
+			inline void Delete(T* pAddr,int Num,int NeedDestructsNum)
 			{
 				if (pAddr != nullptr)
 				{
-					if (ConstructsNum > 0)
+					if (NeedDestructsNum > 0)
 					{
 						if (ValueBase<T>::NeedsDestructor)
 						{
-							for (int i = 0; i < ConstructsNum; i++)
+							for (int i = 0; i < NeedDestructsNum; i++)
 								(pAddr + i)->~T();
 						}
 					}
