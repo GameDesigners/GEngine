@@ -53,9 +53,6 @@
     <ClInclude Include="GArray.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
-    <ClInclude Include="GDeque.h">
-      <Filter>Header Files\GContainers</Filter>
-    </ClInclude>
     <ClInclude Include="GIterator.h">
       <Filter>Header Files\GContainers</Filter>
     </ClInclude>
@@ -109,9 +106,6 @@
     <ClCompile Include="GMemory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GDeque.cpp">
-      <Filter>Source Files\GContainers</Filter>
-    </ClCompile>
     <ClCompile Include="GArray.cpp">
       <Filter>Source Files\GContainers</Filter>
     </ClCompile>
@@ -161,9 +155,6 @@
     </None>
     <None Include="GUtility.inl">
       <Filter>Inl Files</Filter>
-    </None>
-    <None Include="GDeque.inl">
-      <Filter>Inl Files\GContainers</Filter>
     </None>
     <None Include="GList.inl">
       <Filter>Inl Files\GContainers</Filter>

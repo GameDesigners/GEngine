@@ -10,7 +10,8 @@
 #define GSTL_API __declspec(dllimport) 
 #endif
 
-
+#define GMove g_move
+#define GSwap g_swap
 
 template<typename T> T&& g_move(T& val)
 {

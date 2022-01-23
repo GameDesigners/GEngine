@@ -144,7 +144,7 @@ void USE_CUSTOM_TIMER()
 {
 	while (true)
 	{
-		GTimer::GetTimer().UpdateFps();
+		GTimer::GetTimer().Tick();
 		printf("[DelatTime:%f]  [FPS:%f]  [RuningTime:%f]  [TotalTime:%f]",
 			GTimer::GetTimer().GetDeltaTime(),
 			GTimer::GetTimer().GetFPS(),
@@ -227,9 +227,9 @@ bool CustomConsoleApplication::Run()
 
 	//GArraySample();
 	//GVectorSample();
-	//GDeuqeSample();   
+	GDeuqeSample();   
 	//GListSample();
-	//GForwardListSample();
+	GForwardListSample();
 	//GSetSample();
 	//GMapSample();
 	//GUnorderedSetSample();

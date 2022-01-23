@@ -334,6 +334,7 @@ namespace GEngine
 		FORCEINLINE VOID GWSprintf(TCHAR* pcString,size_t maxLen,TCHAR* pFormat, Args ...args)
 		{
 			swprintf_s(pcString, maxLen, pFormat, args...);
+			wprintf_s(pcString, pFormat, args...);
 		}
 
 

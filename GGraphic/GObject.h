@@ -28,8 +28,8 @@ namespace GEngine {
 		private:
 			unsigned int AddObject(GObject* p);
 			void DeleteObject(GObject* p);
-			bool IsClear();
-			void PrepareForGC();
+			bool IsClear() { return true; }
+			void PrepareForGC() {}
 			unsigned int GetObjectNum();
 
 

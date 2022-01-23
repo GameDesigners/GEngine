@@ -1,96 +1,87 @@
+#include "GArray.h"
 //构造函数 
 //**********************************************************************************************************************************************
 
 template<class T, size_t N>
-GArray<T, N>::GArray() 
-{
-
-}
+GEngine::GStl::GArray<T, N>::GArray() {}
 
 
 template<class T, size_t N>
-GArray<T, N>::GArray(const GArray& cv)
+GEngine::GStl::GArray<T, N>::GArray(const GArray& clone)
 {
 	for (int index = 0; index < N; ++index)
-		m_data[index] = cv.m_data[index];
+		m_data[index] = clone.m_data[index];
 }
 
 template<class T, size_t N>
-GArray<T, N>::GArray(GArray&& rv)
+GEngine::GStl::GArray<T, N>::GArray(GArray&& rv)
 {
 	for (int index = 0; index < N; ++index)
-		m_data[index] = g_move(rv[index]);
+		m_data[index] = GMove(rv[index]);
 }
 
 template<class T, size_t N>
-GArray<T, N>::GArray(iterator_type _begin, iterator_type _end)
+GEngine::GStl::GArray<T, N>::GArray(iterator_type begin_iterator, iterator_type end_iterator)
 {
-	iterator_type p = _begin;
-	int idx = 0;
-	for (p; p != _end; p++, idx++)
-		m_data[idx] = *p;
+	iterator_type iterator = begin_iterator;
+	int index = 0;
+	for (iterator; iterator != end_iterator; iterator++, index++)
+		m_data[index] = *iterator;
 }
 
 template<class T, size_t N>
-GArray<T, N>::GArray(std::initializer_list<T> values)
+GEngine::GStl::GArray<T, N>::GArray(std::initializer_list<T> values)
 {
-	T* p = (T*)values.begin();
-	int idx = 0;
-	for (p; p != values.end(); p++, idx++)
-		*(m_data + idx) = *p;
+	T* intialize_iterator = (T*)values.begin();
+	int index = 0;
+	for (intialize_iterator; intialize_iterator != values.end(); intialize_iterator++, index++)
+		m_data[index] = *intialize_iterator;
 }
 
 template<class T, size_t N>
-GArray<T, N>::~GArray() 
-{
-	if (ValueBase<T>::NeedsDestructor)
-	{
-		for (int index = 0; index < N; index++)
-			m_data[index].~T();
-	}
-}
+GEngine::GStl::GArray<T, N>::~GArray() {}
 
 
 //赋值函数 
 //**********************************************************************************************************************************************
 
 template<class T, size_t N>
-void GArray<T, N>::operator=(const GArray& cv)
-{
-	for (int index = 0; index < N; index++)
-		m_data[index] = cv.m_data[index];
-}
-
-template<class T, size_t N>
-void GArray<T, N>::operator=(GArray&& rv)
-{
-	for (int index = 0; index < N; index++)
-		m_data[index] = g_move(rv[index]);
-}
-template<class T, size_t N>
-void GArray<T, N>::operator=(std::initializer_list<T> values)
-{
-	T* p = (T*)values.begin();
-	T* pm_data = &m_data[0];
-	for (p; p != values.end(); p++, pm_data++)
-		*pm_data = *p;
-}
-
-template<class T, size_t N>
-void GArray<T, N>::fill(const T& val)
+void GEngine::GStl::GArray<T, N>::operator=(const GArray& clone)
 {
 	for (int index = 0; index < N; ++index)
-		m_data[index] = val;
+		m_data[index] = clone.m_data[index];
 }
 
 template<class T, size_t N>
-void GArray<T, N>::swap(GArray& v)
+void GEngine::GStl::GArray<T, N>::operator=(GArray&& rv)
+{
+	for (int index = 0; index < N; ++index)
+		m_data[index] = GMove(rv[index]);
+}
+template<class T, size_t N>
+void GEngine::GStl::GArray<T, N>::operator=(std::initializer_list<T> values)
+{
+	T* p = (T*)values.begin();
+	int index = 0;
+	for (p; p != values.end(); p++, ++index)
+		m_data[index] = *p;
+}
+
+template<class T, size_t N>
+void GEngine::GStl::GArray<T, N>::fill(const T& value)
+{
+	for (int index = 0; index < N; ++index)
+		m_data[index] = value;
+}
+
+template<class T, size_t N>
+void GEngine::GStl::GArray<T, N>::swap(GArray& array)
 {
 	for (int index = 0; index < N; ++index)
 	{
 		T tmp = m_data[index];
-		m_data[index] = v[index];
-		v[index] = tmp;
+		m_data[index] = array[index];
+		array[index] = tmp;
 	}
 }
 
@@ -98,32 +89,64 @@ void GArray<T, N>::swap(GArray& v)
 //**********************************************************************************************************************************************
 
 template<class T, size_t N>
-T& GArray<T, N>::operator[](int idx)
+constexpr typename GEngine::GStl::GArray<T,N>::reference GEngine::GStl::GArray<T, N>::operator[](size_type idx)
 {
 	return m_data[idx];
 }
 
 template<class T, size_t N>
-T& GArray<T, N>::at(int idx)
+constexpr typename GEngine::GStl::GArray<T, N>::reference GEngine::GStl::GArray<T, N>::at(size_type idx)
 {
 	GASSERT(idx < N);
 	return m_data[idx];
 }
 
 template<class T, size_t N>
-T& GArray<T, N>::front()
+constexpr typename GEngine::GStl::GArray<T, N>::reference  GArray<T, N>::front()
 {
 	return m_data[0];
 }
 
 template<class T, size_t N>
-T& GArray<T, N>::back()
+constexpr typename GEngine::GStl::GArray<T, N>::reference GArray<T, N>::back()
 {
 	return m_data[N - 1];
 }
 
 template<class T, size_t N>
-T* GArray<T, N>::data()
+constexpr typename GEngine::GStl::GArray<T, N>::const_reference GEngine::GStl::GArray<T, N>::operator[](size_type idx) const
+{
+	return m_data[idx];
+}
+
+template<class T, size_t N>
+constexpr typename GEngine::GStl::GArray<T, N>::const_reference GEngine::GStl::GArray<T, N>::at(size_type idx) const
+{
+	GASSERT(idx < N);
+	return m_data[idx];
+}
+
+template<class T, size_t N>
+constexpr typename GEngine::GStl::GArray<T, N>::const_reference  GArray<T, N>::front() const
+{
+	return m_data[0];
+}
+
+template<class T, size_t N>
+constexpr typename GEngine::GStl::GArray<T, N>::const_reference GArray<T, N>::back() const
+{
+	return m_data[N - 1];
+}
+
+
+template<class T, size_t N>
+constexpr typename GEngine::GStl::GArray<T, N>::pointer GArray<T, N>::data() noexcept
+{
+	return m_data;
+}
+
+template<class T, size_t N>
+constexpr typename GEngine::GStl::GArray<T, N>::const_pointer GEngine::GStl::GArray<T, N>::data() const noexcept
 {
 	return m_data;
 }
@@ -133,19 +156,19 @@ T* GArray<T, N>::data()
 //**********************************************************************************************************************************************
 
 template<class T, size_t N>
-bool GArray<T, N>::empty() const
+constexpr bool GArray<T, N>::empty() const
 {
-	return false;
+	return N == 0;
 }
 
 template<class T, size_t N>
-size_t GArray<T, N>::size() const
+constexpr size_t GArray<T, N>::size() const
 {
 	return N;
 }
 
 template<class T, size_t N>
-size_t GArray<T, N>::capcity() const
+constexpr size_t GArray<T, N>::capcity() const
 {
 	return N;
 }
@@ -158,7 +181,7 @@ void GArray<T, N>::clear() {}
 //**********************************************************************************************************************************************
 
 template<class T, size_t N>
-bool GArray<T, N>::operator==(const GArray& rhs)
+bool GArray<T, N>::operator==(const GArray& rhs) const
 {
 	for (int index = 0; index < N; ++index)
 	{
@@ -169,7 +192,7 @@ bool GArray<T, N>::operator==(const GArray& rhs)
 }
 
 template<class T, size_t N>
-bool GArray<T, N>::operator!=(const GArray& rhs)
+bool GArray<T, N>::operator!=(const GArray& rhs) const
 {
 	for (int index = 0; index < N; ++index)
 	{
@@ -180,7 +203,7 @@ bool GArray<T, N>::operator!=(const GArray& rhs)
 }
 
 template<class T, size_t N>
-bool GArray<T, N>::operator<(const GArray& rhs)
+bool GArray<T, N>::operator<(const GArray& rhs) const
 {
 	for (int index = 0; index < N; ++index)
 	{
@@ -193,7 +216,7 @@ bool GArray<T, N>::operator<(const GArray& rhs)
 }
 
 template<class T, size_t N>
-bool GArray<T, N>::operator>(const GArray& rhs)
+bool GArray<T, N>::operator>(const GArray& rhs) const
 {
 	for (int index = 0; index < N; ++index)
 	{
@@ -206,64 +229,64 @@ bool GArray<T, N>::operator>(const GArray& rhs)
 }
 
 template<class T, size_t N>
-bool GArray<T, N>::operator>=(const GArray& rhs)
+bool GArray<T, N>::operator>=(const GArray& rhs) const
 {
-	return *this > rhs || *this == rhs;
+	return !(*this < rhs);
 }
 
 template<class T, size_t N>
-bool GArray<T, N>::operator<=(const GArray& rhs)
+bool GArray<T, N>::operator<=(const GArray& rhs) const
 {
-	return *this < rhs || *this == rhs;
+	return !(*this > rhs);
 }
 
 
 //迭代器
 //**********************************************************************************************************************************************
 template<class T, size_t N>
-typename GArray<T, N>::iterator_type GArray<T, N>::begin()
+constexpr typename GEngine::GStl::GArray<T, N>::iterator_type GEngine::GStl::GArray<T, N>::begin()
 {
-	return _SingleMemUnit_Iterator<T>(m_data);
+	return iterator_type(m_data);
 }
 
 template<class T, size_t N>
-typename GArray<T, N>::iterator_type GArray<T, N>::end()
+constexpr typename GEngine::GStl::GArray<T, N>::iterator_type GEngine::GStl::GArray<T, N>::end()
 {
-	return _SingleMemUnit_Iterator<T>(m_data + N);
+	return iterator_type(m_data + N);
 }
 
 template<class T,size_t N>
-typename GArray<T, N>::c_iterator_type GArray<T, N>::cbegin()
+constexpr typename GEngine::GStl::GArray<T, N>::c_iterator_type GEngine::GStl::GArray<T, N>::cbegin()
 {
-	return _SingleMemUnit_CIterator<T>(m_data);
+	return c_iterator_type(m_data);
 }
 
 template<class T, size_t N>
-typename GArray<T, N>::c_iterator_type GArray<T, N>::cend()
+constexpr typename GEngine::GStl::GArray<T, N>::c_iterator_type GEngine::GStl::GArray<T, N>::cend()
 {
-	return _SingleMemUnit_CIterator<T>(m_data + N);
+	return c_iterator_type(m_data + N);
 }
 
 template<class T, size_t N>
-typename GArray<T, N>::r_iterator_type GArray<T, N>::rbegin()
+constexpr typename GEngine::GStl::GArray<T, N>::r_iterator_type GEngine::GStl::GArray<T, N>::rbegin()
 {
-	return _SingleMemUnit_RIterator<T>(m_data + N - 1);
+	return r_iterator_type(m_data + N - 1);
 }
 
 template<class T, size_t N>
-typename GArray<T, N>::r_iterator_type GArray<T, N>::rend()
+constexpr typename GEngine::GStl::GArray<T, N>::r_iterator_type GEngine::GStl::GArray<T, N>::rend()
 {
-	return _SingleMemUnit_RIterator<T>(m_data - 1);
+	return r_iterator_type(m_data - 1);
 }
 
 template<class T, size_t N>
-typename GArray<T, N>::cr_iterator_type GArray<T, N>::crbegin()
+constexpr typename GEngine::GStl::GArray<T, N>::cr_iterator_type GEngine::GStl::GArray<T, N>::crbegin()
 {
-	return _SingleMemUnit_CRIterator<T>(m_data + N - 1);
+	return cr_iterator_type(m_data + N - 1);
 }
 
 template<class T, size_t N>
-typename GArray<T, N>::cr_iterator_type GArray<T, N>::crend()
+constexpr typename GEngine::GStl::GArray<T, N>::cr_iterator_type GEngine::GStl::GArray<T, N>::crend()
 {
-	return _SingleMemUnit_CRIterator<T>(m_data - 1);
+	return cr_iterator_type(m_data - 1);
 }

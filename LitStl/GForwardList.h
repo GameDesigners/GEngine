@@ -85,11 +85,13 @@ namespace GEngine {
 		class GSTL_API GForwardList : public GContainer<__forward_list_node<T>,MMFun>
 		{
 		public:
-			typedef size_t                             size_type;
-			typedef T                                  value_type;
-			typedef T&                                 reference_type;
-			typedef const T&                           const_reference_type;
-			typedef T*                                 pointer;
+			typedef T                              value_type;
+			typedef size_t                         size_type;
+			typedef ptrdiff_t                      difference_type;
+			typedef value_type&                    reference;
+			typedef const value_type&              const_reference;
+			typedef value_type*                    pointer;
+			typedef const value_type*              const_pointer;
 												       
 			typedef __forward_list_node<T>*            node_pointer;
 
