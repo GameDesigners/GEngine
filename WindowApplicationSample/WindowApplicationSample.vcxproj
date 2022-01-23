@@ -116,7 +116,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>..\GInput\;..\GApplication\;..\LitStl\;..\GGraphic\;..\GSystem\;..\GRender\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

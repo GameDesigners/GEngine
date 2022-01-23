@@ -28,12 +28,12 @@ namespace GEngine {
 			void CreateRtvAndDsvDescriptorHeaps();
 			void CreateSwapChain();
 			void CreateCommandObjects();
+			void BuildFrameResources();
 			void OnResize();
 			void FlushCommandQueue();
 			void LogAdapters();
 			void LogdAdapterOutputs(IDXGIAdapter* adapter);
 			void LogOutputDisplayModes(IDXGIOutput* output, DXGI_FORMAT format);
-
 
 
 
@@ -85,6 +85,13 @@ namespace GEngine {
 
 			bool        m_4xMsaaState = false;
 			int         m_curBackBuffer = 0;
+
+			const int gNumFrameResourceCount = GDirect3DSetting::gNumFrameResources;
+			GStl::GVector<GStl::GSharedPtr<FrameResource>> mFrameResources;
+			FrameResource* currentFrameResource = nullptr;
+
+			GStl::GVector<GStl::GSharedPtr<GRenderItem>> mAllRitems;
+			GStl::GVector<GRenderItem*> mOpaqueRitems;
 		};
 	}
 }

@@ -72,6 +72,7 @@ bool GDirect3DRender::RenderAPIInitialze()
 	CreateCommandObjects();
 	CreateSwapChain();
 	CreateRtvAndDsvDescriptorHeaps();
+	BuildFrameResources();
 
 	//--------------------------------------------D3D12初始化过程----------------------------------------------
 	OnResize();
@@ -108,6 +109,12 @@ void GEngine::GRender::GDirect3DRender::CreateCommandObjects()
 	D3D_THROW_IF_FAILED(m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_directCmdListAlloc.GetAddressOf())));
 	D3D_THROW_IF_FAILED(m_d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_directCmdListAlloc.Get(), nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf())));
 	m_commandList->Close();
+}
+
+void GEngine::GRender::GDirect3DRender::BuildFrameResources()
+{
+	for (int index = 0; index < gNumFrameResourceCount; index++)
+		mFrameResources.push_back(GStl::g_make_shared<FrameResource>(m_d3dDevice.Get(), 1, 1));
 }
 
 void GEngine::GRender::GDirect3DRender::CreateSwapChain()
@@ -229,7 +236,13 @@ void GEngine::GRender::GDirect3DRender::Draw()
 void GEngine::GRender::GDirect3DRender::FlushCommandQueue()
 {
 	m_currentFence++;
-	D3D_THROW_IF_FAILED(m_commandQueue->Signal(m_d3dFence.Get(), m_currentFence));
+	try {
+		D3D_THROW_IF_FAILED(m_commandQueue->Signal(m_d3dFence.Get(), m_currentFence));
+	}
+	catch (DxException ex)
+	{
+		GOutputDebugStringW(ex.ToString().c_str());
+	}
 	if (m_d3dFence->GetCompletedValue() < m_currentFence)
 	{
 		HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);

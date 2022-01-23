@@ -330,10 +330,10 @@ namespace GEngine
 		/// </summary>
 		/// <param name="pcString"></param>
 		/// <param name=""></param>
-		template<typename ...Args>
-		FORCEINLINE VOID GWSprintf(const TCHAR* pcString,const TCHAR* pFormat, Args ...args)
+		template<class ...Args>
+		FORCEINLINE VOID GWSprintf(TCHAR* pcString,size_t maxLen,TCHAR* pFormat, Args ...args)
 		{
-			wprintf_s(pcString, pFormat, args);
+			swprintf_s(pcString, maxLen, pFormat, args...);
 		}
 
 

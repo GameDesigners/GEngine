@@ -8,7 +8,7 @@ namespace GEngine {
 		class GAPPLICATION_API GWindowApplication : public GApplication
 		{
 		public:
-			GWindowApplication() { FrameCountDebugString = m_ApplicationTitle; FrameCountDebugString += L"%ws  FPS: %f  MSPF: %f"; }
+			GWindowApplication() { }
 			~GWindowApplication() {}
 		public:
 			virtual bool Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, int nCmdShow);
@@ -35,7 +35,7 @@ namespace GEngine {
 			HINSTANCE m_hPreInstance;
 			int m_cmdShow;
 
-			GStl::GTString FrameCountDebugString;
+			TCHAR FrameCountDebugString[100];
 		};
 
 #endif // WINDOWS

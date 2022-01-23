@@ -45,7 +45,7 @@ private:
 	GEngine::GStl::GVector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
 
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
-	ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
+	ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;        //ÃèÊö·û¶Ñ
 	GSharedPtr<GUploadBuffer<ObjectConstants>> mObjectCB;
 
 	ComPtr<ID3D12PipelineState> mPSO = nullptr;
@@ -157,7 +157,7 @@ bool CustomWindowApplication::OnDraw()
 	pRender->m_commandList->IASetIndexBuffer(&mBoxGeo.IndexBufferView());
 	pRender->m_commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pRender->m_commandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
-	pRender->m_commandList->DrawIndexedInstanced(mBoxGeo.DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+	pRender->m_commandList->DrawIndexedInstanced(mBoxGeo.DrawArgs[0].IndexCount, 1, 0, 0, 0);
 
 	pRender->m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(pRender->CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 	D3D_THROW_IF_FAILED(pRender->m_commandList->Close());
@@ -317,7 +317,7 @@ void CustomWindowApplication::BuildBoxGeometry()
 	submesh.IndexCount = (UINT)indices.size();
 	submesh.StartIndexLocation = 0;
 	submesh.BaseVertexLocation = 0;
-	mBoxGeo.DrawArgs.insert("box", submesh);
+	mBoxGeo.DrawArgs.insert(0, submesh);
 }
 
 void CustomWindowApplication::BuildShadersAndInputLayout()

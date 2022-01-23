@@ -11,6 +11,7 @@
 #include <GTimer.h>
 #include <GStrings.h>
 #include <GMap.h>
+#include <GMemory.h>
 
 #include "libs/d3dx12.h"
 

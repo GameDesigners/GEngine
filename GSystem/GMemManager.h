@@ -96,6 +96,10 @@ namespace GEngine{
 			Block* m_pTailBlock;
 			GStackWalker m_sw;
 
+			DWORD64 m_LastFrequentlyCallStackAddress[CALLSTACK_NUM];
+			size_t m_MaxFrequentlyBlockCount;
+
+
 			bool InsertBlock(Block* pBlock);
 			bool RemoveBlock(Block* pBlock);
 		};

@@ -60,27 +60,25 @@ bool GEngine::GApp::GWindowApplication::Main(HINSTANCE hInstance, HINSTANCE hPre
 	bool bError = false;
 	while (msg.message!=WM_QUIT)
 	{
-		if(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		while(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		else 
+		if (m_bIsActive)//窗口处于焦点
 		{
 			ShowFrameStats();
-			if (m_bIsActive)//窗口处于焦点
+			if (!Run())
 			{
-				if (!Run())
-				{
-					m_bIsRunning = false;
-					bError = true;
-				}
-				else
-				{
-					//处理其他需要更新的内容
-				}
+				m_bIsRunning = false;
+				bError = true;
+			}
+			else
+			{
+				//处理其他需要更新的内容
 			}
 		}
+
 	}
 
 	//*引擎销毁工作*---------------------------
@@ -311,8 +309,8 @@ void GEngine::GApp::GWindowApplication::ShowFrameStats()
 {
 	m_pGlobalTimer->Tick();
 	float currentFps = m_pGlobalTimer->GetFPS();
-	GWSprintf(FrameCountDebugString.data(), L"%ws  FPS: %f  MSPF: %f", m_ApplicationTitle.c_str(), currentFps, 1000 / currentFps);
-	SetWindowTextW(m_hwnd, FrameCountDebugString.c_str());
+	GWSprintf(FrameCountDebugString,100, L"%S  FPS: %f\tMSPF: %f", m_ApplicationTitle.c_str(), currentFps, 1000 / currentFps);
+	SetWindowTextW(m_hwnd, FrameCountDebugString);
 }
 
 void GEngine::GApp::GWindowApplication::ChangeScreenSize(unsigned int uiWidth, unsigned int uiHeight, bool bWindow, bool isMaxScreen)

@@ -10,6 +10,8 @@ GDebugMem::GDebugMem()
 	m_uiMaxNumBytesInRecord = 0;
 	m_uiMaxNumBlocksInRecord = 0;
 	
+	m_MaxFrequentlyBlockCount = 0;
+
 	for (size_t i = 0; i < RECORD_NUM; i++)
 		m_uiSizeRecords[i] = 0;
 
@@ -77,6 +79,12 @@ void* GDebugMem::Allocate(size_t uiSize, size_t uiAlignment, bool bIsArray)
 		{
 			if (uiSize <= size) {
 				m_uiSizeRecords[i]++;
+				if (m_MaxFrequentlyBlockCount < m_uiSizeRecords[i])
+				{
+					m_MaxFrequentlyBlockCount = m_uiSizeRecords[i];
+					for (int index = 0; index < CALLSTACK_NUM; index++)
+						m_LastFrequentlyCallStackAddress[index] = block->pCallStackRecords[index];
+				}
 				break;
 			}
 		}
@@ -196,6 +204,11 @@ void GDebugMem::PrintMemCallAndReleaseLog()
 		//	current = current->m_pNext;
 		//}
 	}
+
+	GOutputDebugStringW(TEXT("申请最频繁的最后一块内存堆栈信息：(次数：%d)\n"),m_MaxFrequentlyBlockCount);
+	GOutputDebugStringW(TEXT("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n"));
+	m_sw.PrintCallStackFramesLog(m_LastFrequentlyCallStackAddress);
+	GOutputDebugStringW(TEXT("\n"));
 
 
 	GOutputDebugStringW(TEXT("\n\n内存块大小占比：\n"));

@@ -24,6 +24,12 @@ namespace GEngine {
 				return I;
 			}
 		};
+
+		class GRENDER_API GDirect3DSetting
+		{
+		public:
+			static const int gNumFrameResources;
+		};
 		
 		struct GVertex
 		{
@@ -34,6 +40,27 @@ namespace GEngine {
 		struct ObjectConstants
 		{
 			XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
+		};
+
+		struct PassConstants
+		{
+			DirectX::XMFLOAT4X4 View                = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 InvView             = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 Proj                = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 InvProj             = MathHelper::Identity4x4();
+			DirectX::XMFLOAT4X4 ViewProj            = MathHelper::Identity4x4();
+			DirectX::XMFLOAT3   EyePosW             = { 0.0f, 0.0f, 0.0f };
+			float               cbPerObjectPad1     = 0.0f;
+			DirectX::XMFLOAT2   RenderTargetSize    = { 0.0f, 0.0f };
+			DirectX::XMFLOAT2   InvRenderTargetSize = { 0.0f, 0.0f };
+			float               NearZ               = 0.0f;
+			float               FarZ                = 0.0f;
+			float               TotalTime           = 0.0f;
+			float               DeltaTime           = 0.0f;
+
+
+
+			
 		};
 
 		//*******************************************************************************************************
@@ -62,11 +89,11 @@ namespace GEngine {
 			int            LineNumber;
 		};
 
-		inline GStl::GTString AnsiToTString(const char* str)
+		inline TCHAR* AnsiToTString(const char* str)
 		{
-			TCHAR buffer[512];
+			static TCHAR buffer[512];
 			GPConstChar_To_PTCHAR(str, buffer, 512);
-			return GStl::GTString(buffer);
+			return buffer;
 		}
 
 		//Debugºê
@@ -74,9 +101,11 @@ namespace GEngine {
 #define D3D_THROW_IF_FAILED(x) \
         { \
             HRESULT hr__=(x); \
-            GEngine::GStl::GTString wfn=AnsiToTString(__FILE__); \
             if(FAILED(hr__)) \
+            { \
+                TCHAR* wfn=AnsiToTString(__FILE__); \
 		        throw DxException(hr__,L#x,wfn,__LINE__); \
+            } \
 		}
 #endif // !D3D_THROW_IF_FAILED
 
@@ -106,7 +135,7 @@ namespace GEngine {
 			DXGI_FORMAT  IndexFormat = DXGI_FORMAT_R16_UINT;
 			unsigned int IndexBufferByteSize = 0;
 
-			GStl::GMap<GStl::GString, SubmeshGeometry> DrawArgs;
+			GStl::GMap<int, SubmeshGeometry> DrawArgs;
 
 			D3D12_VERTEX_BUFFER_VIEW VertexBufferView() const
 			{
@@ -255,6 +284,38 @@ namespace GEngine {
 			D3D_THROW_IF_FAILED(hr);
 			return byteCode;
 		}
+
+		//Ö¡×ÊÔ´
+		//*******************************************************************************************************
+		struct FrameResource
+		{
+		public:
+			FrameResource(ID3D12Device* device, UINT passCount, unsigned int objCount);
+			FrameResource(const FrameResource& rhs) = delete;
+			FrameResource& operator=(const FrameResource& rhs) = delete;
+			~FrameResource() {}
+
+			Microsoft::WRL::ComPtr<ID3D12CommandAllocator> CmdListAlloc;
+			GStl::GSharedPtr<GUploadBuffer<PassConstants>> PassCB = nullptr;
+			GStl::GSharedPtr<GUploadBuffer<ObjectConstants>> ObjectCB = nullptr;
+			unsigned long mFence = 0;
+		};
+
+
+		//äÖÈ¾Ïî
+		//*******************************************************************************************************
+		struct GRenderItem
+		{
+			GRenderItem() = default;
+			XMFLOAT4X4 World = MathHelper::Identity4x4();
+			int NumFrameDirty = GDirect3DSetting::gNumFrameResources;
+			unsigned int ObjCBIndex = -1;
+			MeshGeometry* Geo = nullptr;
+			D3D12_PRIMITIVE_TOPOLOGY PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			unsigned int IndexCount = 0;
+			unsigned int StartLocation = 0;
+			unsigned int BaseVertexLocation = 0;
+		};
 	}
 }
 
